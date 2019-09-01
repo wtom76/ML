@@ -16,7 +16,7 @@ class MetaDataModel : public QAbstractTableModel
 private:
 	static constexpr int column_count_ = 8;
 
-	std::vector<ColumnInfo> data_;
+	std::vector<ColumnMetaData> data_;
 	std::array<QString, column_count_> col_names_;
 	DbAccess& db_;
 
@@ -38,5 +38,5 @@ public:
 
 	Qt::DropActions supportedDropActions() const override { return Qt::CopyAction; }
 
-	std::vector<ColumnInfo> columnInfos() const noexcept;
+	std::vector<ColumnMetaData> columnInfos() const noexcept;
 };

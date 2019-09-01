@@ -131,6 +131,7 @@
     </QtRcc>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Correlations.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Normalizer.cpp" />
     <ClCompile Include="Omni.cpp" />
@@ -141,6 +142,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Omni.h" />
+    <ClInclude Include="Correlations.h" />
     <ClInclude Include="Normalizer.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>

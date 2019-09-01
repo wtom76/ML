@@ -128,7 +128,7 @@
   <ItemGroup>
     <QtMoc Include="DbAccess.h" />
     <ClInclude Include="ColumnData.h" />
-    <ClInclude Include="ColumnInfo.h" />
+    <ClInclude Include="ColumnMetaData.h" />
     <ClInclude Include="ColumnPath.h" />
     <QtMoc Include="MetaDataModel.h">
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets</IncludePath>

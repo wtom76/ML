@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Omni.h"
 #include "Normalizer.h"
+#include "Correlations.h"
 
 //----------------------------------------------------------------------------------------------------------
 Omni::Omni(QWidget* parent)
@@ -12,13 +13,13 @@ Omni::Omni(QWidget* parent)
 	_createMetadataView();
 
 	connect(ui_.action_normalize_all_, &QAction::triggered, this, &Omni::normalizeAll);
+	connect(ui_.action_correlations_, &QAction::triggered, this, &Omni::showCorrelations);
 }
 //----------------------------------------------------------------------------------------------------------
 void Omni::_createMetadataView()
 {
 	metadata_model_ = std::make_unique<MetaDataModel>(*db_, this);
 	ui_.meta_data_view_->setModel(metadata_model_.get());
-	//setCentralWidget(ui_.meta_data_view_);
 }
 //----------------------------------------------------------------------------------------------------------
 void Omni::normalizeAll()
@@ -29,7 +30,7 @@ void Omni::normalizeAll()
 	int norm_count = 0;
 
 	const Normalizer normalizer;
-	std::vector<ColumnInfo> infos = metadata_model_->columnInfos();
+	std::vector<ColumnMetaData> infos = metadata_model_->columnInfos();
 
 	for (auto& col_info : infos)
 	{
@@ -53,4 +54,23 @@ void Omni::normalizeAll()
 
 	QApplication::restoreOverrideCursor();
 	QMessageBox::information(this, "Normalize all", QString("%1 normalized\n%2 processed").arg(norm_count).arg(total_count));
+}
+//----------------------------------------------------------------------------------------------------------
+void Omni::showCorrelations()
+{
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
+	std::vector<ColumnData> col_data;
+	const std::vector<ColumnMetaData> infos = metadata_model_->columnInfos();
+	for (const auto& col_info : infos)
+	{
+		if (col_info.normalized_)
+		{
+			col_data.emplace_back(db_->loadColumnData("ready", col_info.table_, col_info.column_));
+		}
+	}
+
+	Correlations correlatios(col_data);
+
+	QApplication::restoreOverrideCursor();
 }

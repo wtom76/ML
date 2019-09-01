@@ -6,7 +6,7 @@
 #include <QSqlDatabase>
 #include <Shared/DbAccess/ColumnPath.h>
 #include <Shared/DbAccess/ColumnData.h>
-#include <Shared/DbAccess/ColumnInfo.h>
+#include <Shared/DbAccess/ColumnMetaData.h>
 
 struct ColumnPath;
 
@@ -36,9 +36,9 @@ public:
 
 	std::set<QString> tableColumns(const QString& schema_name, const QString& table_name) const;
 	void addColumn(const QString& dest_schema_name, const QString& dest_table_name, int unit_id, const ColumnPath& col_info);
-	void deleteColumn(const QString& dest_schema_name, const QString& dest_table_name, const ColumnInfo& col_info);
+	void deleteColumn(const QString& dest_schema_name, const QString& dest_table_name, const ColumnMetaData& col_info);
 	std::vector<UnitInfo> loadUnits() const;
-	std::vector<ColumnInfo> loadMetaData() const;
+	std::vector<ColumnMetaData> loadMetaData() const;
 	ColumnData loadColumnData(const QString& schema, const QString& table, const QString& column) const;
-	void storeColumnData(const ColumnInfo& col_info, const ColumnData& data) const;
+	void storeColumnData(const ColumnMetaData& col_info, const ColumnData& data) const;
 };

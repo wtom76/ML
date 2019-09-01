@@ -49,7 +49,7 @@
     <ClInclude Include="ColumnData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ColumnInfo.h">
+    <ClInclude Include="ColumnMetaData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

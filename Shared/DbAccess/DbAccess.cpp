@@ -70,7 +70,7 @@ void DbAccess::addColumn(const QString& dest_schema_name, const QString& dest_ta
 	}
 }
 //----------------------------------------------------------------------------------------------------------
-void DbAccess::deleteColumn(const QString& dest_schema_name, const QString& dest_table_name, const ColumnInfo& col_info)
+void DbAccess::deleteColumn(const QString& dest_schema_name, const QString& dest_table_name, const ColumnMetaData& col_info)
 {
 	const QString query_str(QString(
 		"ALTER TABLE %1.%2 DROP COLUMN %3; "
@@ -112,7 +112,7 @@ std::vector<UnitInfo> DbAccess::loadUnits() const
 	return result;
 }
 //----------------------------------------------------------------------------------------------------------
-std::vector<ColumnInfo> DbAccess::loadMetaData() const
+std::vector<ColumnMetaData> DbAccess::loadMetaData() const
 {
 	static constexpr int id_idx				= 0;
 	static constexpr int table_idx			= 1;
@@ -124,7 +124,7 @@ std::vector<ColumnInfo> DbAccess::loadMetaData() const
 	static constexpr int norm_max_idx		= 7;
 	static constexpr int unit_id_idx		= 8;
 
-	std::vector<ColumnInfo> result;
+	std::vector<ColumnMetaData> result;
 
 	QSqlQuery query("SELECT id, \"table\", \"column\", description, origin, normalized, norm_min, norm_max, unit_id FROM ready.meta_data;");
 	if (query.size() >= 0)
@@ -134,7 +134,7 @@ std::vector<ColumnInfo> DbAccess::loadMetaData() const
 
 	while (query.next())
 	{
-		result.emplace_back(ColumnInfo{});
+		result.emplace_back(ColumnMetaData{});
 		result.back().id_			= query.value(id_idx).toInt();
 		result.back().table_		= query.value(table_idx).toString();
 		result.back().column_		= query.value(column_idx).toString();
@@ -192,7 +192,7 @@ ColumnData DbAccess::loadColumnData(const QString& schema, const QString& table,
 	return result;
 }
 //----------------------------------------------------------------------------------------------------------
-void DbAccess::storeColumnData(const ColumnInfo& col_info, const ColumnData& data) const
+void DbAccess::storeColumnData(const ColumnMetaData& col_info, const ColumnData& data) const
 {
 	{
 		const QString query_str(QString("UPDATE ready.%1 SET %2 = :val WHERE date = :date")

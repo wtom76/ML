@@ -101,7 +101,7 @@ void MetaDataModel::deleteColumn(int idx)
 	load();
 }
 //----------------------------------------------------------------------------------------------------------
-std::vector<ColumnInfo> MetaDataModel::columnInfos() const noexcept
+std::vector<ColumnMetaData> MetaDataModel::columnInfos() const noexcept
 {
 	return data_;
 }

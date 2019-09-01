@@ -23,4 +23,5 @@ public:
 
 public slots:
 	void normalizeAll();
+	void showCorrelations();
 };
