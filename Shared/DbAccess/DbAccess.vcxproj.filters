@@ -46,10 +46,13 @@
     <ClInclude Include="ColumnPath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ColumnData.h">
+    <ClInclude Include="ColumnMetaData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ColumnMetaData.h">
+    <ClInclude Include="IncludeDataFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

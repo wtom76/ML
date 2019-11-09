@@ -1,7 +1,8 @@
 #pragma once
 
+#include <string>
 #include <vector>
-#include <Shared/DbAccess/ColumnData.h>
+#include <Shared/DbAccess/DataFrame.h>
 
 //----------------------------------------------------------------------------------------------------------
 // class Correlations
@@ -13,12 +14,14 @@ private:
 
 private:
 	Matrix matrix_;
-
-private:
-	void _loadCalc(const std::vector<ColumnData>& data);
+	size_t dimention_ = 0;
 
 public:
-	explicit Correlations(const std::vector<ColumnData>& data);
+	explicit Correlations();
 	~Correlations();
+
+	void calculate(const std::vector<std::string>& col_names, const DataFrame& data);
+	size_t dimention() const noexcept { return dimention_; }
+	double value(size_t row, size_t col) const noexcept { return matrix_[row * dimention_ + col]; }
 };
 

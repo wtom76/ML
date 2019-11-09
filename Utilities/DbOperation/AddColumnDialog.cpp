@@ -4,6 +4,8 @@
 #include "DbOperation.h"
 #include "ColumnMetrics.h"
 
+using namespace std;
+
 //----------------------------------------------------------------------------------------------------------
 AddColumnDialog::AddColumnDialog(QWidget* parent)
 	: QDialog(parent)
@@ -34,8 +36,9 @@ void AddColumnDialog::_loadUnits()
 //----------------------------------------------------------------------------------------------------------
 void AddColumnDialog::setColumn(const ColumnPath& path)
 {
-	ui_.column_->setText(path.toString());
-	const ColumnMetrics metrics(DbOperation::instance()->db().loadColumnData(path.schema_, path.table_, path.column_));
+	ui_.column_->setText(QString::fromStdString(path.to_string()));
+	DataFrame df = DbOperation::instance()->db().load_data(path.schema_, path.table_, {path.column_});
+	const ColumnMetrics metrics(path.column_, df);
 	ui_.min_->setText(QString::number(metrics.min_));
 	ui_.max_->setText(QString::number(metrics.max_));
 	ui_.nulls_->setText(QString::number(metrics.null_count_));

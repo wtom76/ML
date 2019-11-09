@@ -1,17 +1,28 @@
 #include "stdafx.h"
-#include <QStringList>
+#include <string>
+#include <vector>
+#include <sstream>
 #include "ColumnPath.h"
 
+using namespace std;
+
 //----------------------------------------------------------------------------------------------------------
-QString ColumnPath::toString() const
+std::string ColumnPath::to_string() const
 {
 	return schema_ + "/" + table_ + "/" + column_ + "/" + data_type_;
 }
 //----------------------------------------------------------------------------------------------------------
-ColumnPath ColumnPath::fromString(const QString& src)
+ColumnPath ColumnPath::from_string(const std::string& src)
 {
 	ColumnPath result;
-	QStringList lst = src.split('/', QString::KeepEmptyParts);
+	vector<string> lst;
+	stringstream sstrm(src);
+	string part;
+	while (getline(sstrm, part, '/'))
+	{
+		lst.emplace_back(std::move(part));
+	}
+
 	if (lst.size() < 4)
 	{
 		return result;

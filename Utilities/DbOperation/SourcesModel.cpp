@@ -99,24 +99,24 @@ void SourcesModel::_buildPath(TreeItem* item, ColumnPath& dest) const
 		return;
 	}
 	QString val = item->data(to_numeric(Fields::Table), Qt::DisplayRole).toString();
-	if (!val.isEmpty() && dest.table_.isEmpty())
+	if (!val.isEmpty() && dest.table_.empty())
 	{
-		dest.table_ = val;
+		dest.table_ = val.toStdString();
 	}
 	val = item->data(to_numeric(Fields::Schema), Qt::DisplayRole).toString();
-	if (!val.isEmpty() && dest.schema_.isEmpty())
+	if (!val.isEmpty() && dest.schema_.empty())
 	{
-		dest.schema_ = val;
+		dest.schema_ = val.toStdString();
 	}
 	val = item->data(to_numeric(Fields::Column), Qt::DisplayRole).toString();
-	if (!val.isEmpty() && dest.column_.isEmpty())
+	if (!val.isEmpty() && dest.column_.empty())
 	{
-		dest.column_ = val;
+		dest.column_ = val.toStdString();
 	}
 	val = item->data(to_numeric(Fields::DataType), Qt::DisplayRole).toString();
-	if (!val.isEmpty() && dest.data_type_.isEmpty())
+	if (!val.isEmpty() && dest.data_type_.empty())
 	{
-		dest.data_type_ = val;
+		dest.data_type_ = val.toStdString();
 	}
 	_buildPath(item->parent(), dest);
 }

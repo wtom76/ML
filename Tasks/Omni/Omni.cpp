@@ -2,6 +2,8 @@
 #include "Omni.h"
 #include "Normalizer.h"
 #include "Correlations.h"
+#include "CorrelationsDlg.h"
+#include "CorrelationsModel.h"
 
 //----------------------------------------------------------------------------------------------------------
 Omni::Omni(QWidget* parent)
@@ -22,6 +24,7 @@ void Omni::_createMetadataView()
 	ui_.meta_data_view_->setModel(metadata_model_.get());
 }
 //----------------------------------------------------------------------------------------------------------
+// TODO: load and store all non-norm cols at once
 void Omni::normalizeAll()
 {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -37,9 +40,9 @@ void Omni::normalizeAll()
 		++total_count;
 		if (!col_info.normalized_)
 		{
-			ColumnData col_data = db_->loadColumnData("ready", col_info.table_, col_info.column_);
+			DataFrame col_data = db_->load_data("ready", col_info.table_, {col_info.column_});
 			std::pair<double, double> min_max;
-			if (normalizer.normalize(col_data, min_max))
+			if (normalizer.normalize(col_info.column_, col_data, min_max))
 			{
 				col_info.normalized_ = true;
 				col_info.norm_min_ = min_max.first;
@@ -59,18 +62,10 @@ void Omni::normalizeAll()
 void Omni::showCorrelations()
 {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
-
-	std::vector<ColumnData> col_data;
 	const std::vector<ColumnMetaData> infos = metadata_model_->columnInfos();
-	for (const auto& col_info : infos)
-	{
-		if (col_info.normalized_)
-		{
-			col_data.emplace_back(db_->loadColumnData("ready", col_info.table_, col_info.column_));
-		}
-	}
-
-	Correlations correlatios(col_data);
-
+	CorrelationsModel* model = new CorrelationsModel(infos, *db_, this);
+	CorrelationsDlg* wnd = new CorrelationsDlg(this);
+	wnd->view()->setModel(model);
+	wnd->show();
 	QApplication::restoreOverrideCursor();
 }

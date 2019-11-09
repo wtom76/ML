@@ -1,5 +1,5 @@
 #pragma once
-#include <QString>
+#include <string>
 
 struct ColumnMetaData;
 
@@ -8,11 +8,11 @@ struct ColumnMetaData;
 //-------------------------------------------------------------------------------------------------
 struct ColumnPath
 {
-	QString schema_;
-	QString table_;
-	QString column_;
-	QString data_type_;
+	std::string schema_;
+	std::string table_;
+	std::string column_;
+	std::string data_type_;
 
-	QString toString() const;
-	static ColumnPath fromString(const QString& src);
+	std::string to_string() const;
+	static ColumnPath from_string(const std::string& src);
 };

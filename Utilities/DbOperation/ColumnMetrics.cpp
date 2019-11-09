@@ -1,27 +1,21 @@
 #include "stdafx.h"
 #include "ColumnMetrics.h"
+#include <Shared/Math/DataFrameVisitors.hpp>
+
+using namespace std;
 
 //----------------------------------------------------------------------------------------------------------
-ColumnMetrics::ColumnMetrics(const ColumnData& col_data)
+ColumnMetrics::ColumnMetrics(const string& col_name, DataFrame& col_data)
 {
-	for (size_t i = 0; i < col_data.values_.size(); ++i)
+	const pair<size_t, size_t> shape = col_data.shape();
+	MinMaxValidCounter<double, hmdf::DateTime> visitor{};
+	col_data.visit<double>(col_name.c_str(), visitor);
+	valid_count_ = visitor.valid_count();
+	null_count_ = shape.first - valid_count_;
+	if (valid_count_)
 	{
-		if (col_data.valid_[i])
-		{
-			++valid_count_;
-			if (max_ < col_data.values_[i])
-			{
-				max_ = col_data.values_[i];
-			}
-			if (min_ > col_data.values_[i])
-			{
-				min_ = col_data.values_[i];
-			}
-		}
-		else
-		{
-			++null_count_;
-		}
+		min_ = visitor.min();
+		max_ = visitor.max();
 	}
 }
 //----------------------------------------------------------------------------------------------------------

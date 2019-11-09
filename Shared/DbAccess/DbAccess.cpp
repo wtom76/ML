@@ -1,13 +1,122 @@
 #include "stdafx.h"
+#include <chrono>
+#include <soci/soci.h>
+#include <soci/postgresql/soci-postgresql.h>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QVariant>
 #include <QDate>
 #include "DbAccess.h"
 
+using namespace std;
+using namespace chrono;
+using namespace soci;
+
+namespace soci
+{
+	//------------------------------------------------------------------------------------------------------
+	/// system_clock::time_point support
+	template <>
+	struct type_conversion<hmdf::DateTime>
+	{
+		using base_type = tm;
+
+		static void from_base(base_type base_val, indicator ind, hmdf::DateTime& val)
+		{
+			switch (ind)
+			{
+			case i_null:
+				throw soci_error("Null DateTime is not supported");
+			default:
+				val = hmdf::DateTime{static_cast<hmdf::DateTime::DateType>(
+					(base_val.tm_year + 1900) * 10000 + (base_val.tm_mon + 1) * 10 + base_val.tm_mday)};
+			}
+		}
+		static void to_base(hmdf::DateTime val, base_type& base_val, indicator& ind)
+		{
+			memset(&base_val, 0, sizeof(base_val));
+			base_val.tm_year = val.year() - 1900;
+			base_val.tm_mon = val.dmonth() - 1;
+			base_val.tm_mday = val.days_in_month();
+			ind = i_ok;
+		}
+	};
+	//------------------------------------------------------------------------------------------------------
+	/// bool support
+	template <>
+	struct type_conversion<bool>
+	{
+		using base_type = int;
+
+		static void from_base(base_type base_val, indicator ind, bool& val)
+		{
+			switch (ind)
+			{
+			case i_null:
+				throw soci_error("Null boolean is not supported");
+			default:
+				val = base_val;
+			}
+		}
+		static void to_base(bool val, base_type& base_val, indicator& ind)
+		{
+			base_val = static_cast<base_type>(val);
+			ind = i_ok;
+		}
+	};
+	//------------------------------------------------------------------------------------------------------
+	/// bool support
+	template <>
+	struct type_conversion<double>
+	{
+		using base_type = double;
+
+		static void from_base(base_type base_val, indicator ind, double& val)
+		{
+			switch (ind)
+			{
+			case i_null:
+				val = numeric_limits<double>::quiet_NaN();
+			default:
+				val = base_val;
+			}
+		}
+		static void to_base(double val, base_type& base_val, indicator& ind)
+		{
+			if (isnan<double>(val))
+			{
+				ind = i_null;
+				base_val = numeric_limits<double>::quiet_NaN();
+			}
+			else
+			{
+				base_val = static_cast<base_type>(val);
+				ind = i_ok;
+			}
+		}
+	};
+}
+
+//----------------------------------------------------------------------------------------------------------
+// Impl
+//----------------------------------------------------------------------------------------------------------
+class DbAccess::Impl
+{
+public:
+	session sql_;
+
+public:
+	Impl();
+};
+//----------------------------------------------------------------------------------------------------------
+DbAccess::Impl::Impl()
+	: sql_{"postgresql://host=localhost dbname=ML user=ml_user password=ml_user"}
+{
+}
 //----------------------------------------------------------------------------------------------------------
 DbAccess::DbAccess()
 	: QObject(nullptr)
+	, impl_{make_unique<Impl>()}
 {
 	QSqlDatabase db = QSqlDatabase::addDatabase(QString::fromStdString("QPSQL"));
 	db.setHostName(QString::fromStdString("localhost"));
@@ -16,7 +125,7 @@ DbAccess::DbAccess()
 	db.setPassword(QString::fromStdString("ml_user"));
 	if (!db.open())
 	{
-		throw std::runtime_error(std::string("Failed to connect to database. ") +
+		throw runtime_error("Failed to connect to database. "s +
 			db.lastError().text().toStdString());
 	}
 }
@@ -25,75 +134,75 @@ DbAccess::~DbAccess()
 {
 }
 //----------------------------------------------------------------------------------------------------------
-std::set<QString> DbAccess::tableColumns(const QString& schema_name, const QString& table_name) const
+set<string> DbAccess::tableColumns(const string& schema_name, const string& table_name) const
 {
-	static constexpr int column_idx = 0;
-
-	std::set<QString> result;
-
-	QSqlQuery query(QString(
-		"SELECT column_name FROM information_schema.columns "
-		"WHERE table_schema = N'%1' AND table_name = N'%2'").arg(schema_name).arg(table_name)
-	);
-	while (query.next())
+	try
 	{
-		result.emplace(query.value(column_idx).toString());
+		rowset<string> rs = (impl_->sql_.prepare <<
+			"SELECT column_name FROM information_schema.columns "
+			"WHERE table_schema = :schema_name AND table_name = :table_name",
+			use(schema_name),
+			use(table_name));
+		return set<string>{begin(rs), end(rs)};
 	}
-	if (query.lastError().isValid())
+	catch (const exception& ex)
 	{
-		throw std::runtime_error(std::string("Failed to load columns. ") + query.lastError().text().toStdString());
+		throw runtime_error("Failed to load columns. "s + ex.what());
 	}
-	return result;
 }
 //----------------------------------------------------------------------------------------------------------
-void DbAccess::addColumn(const QString& dest_schema_name, const QString& dest_table_name, int unit_id,
+void DbAccess::addColumn(const string& dest_schema_name, const string& dest_table_name, int unit_id,
 	const ColumnPath& col_info)
 {
-	const QString query_str(QString(
-		"ALTER TABLE %1.%2 ADD COLUMN %3 %4; "
-		"INSERT INTO %1.%2 (date, %3) SELECT date, %3 FROM %6.%7 ON CONFLICT (date) DO UPDATE SET %3 = excluded.%3; "
-		"INSERT INTO ready.meta_data (\"table\", \"column\", \"origin\", \"unit_id\") VALUES ('%2', '%3', '%5', %8);")
-		.arg(dest_schema_name)			// 1
-		.arg(dest_table_name)			// 2
-		.arg(col_info.column_)			// 3
-		.arg(col_info.data_type_)		// 4
-		.arg(col_info.toString())		// 5
-		.arg(col_info.schema_)			// 6
-		.arg(col_info.table_)			// 7
-		.arg(unit_id)					// 8
-	);
-	QSqlQuery query(query_str);
-	if (query.lastError().isValid())
+	try
 	{
-		throw std::runtime_error(std::string("Failed to load sources. ") +
-			query.lastError().text().toStdString());
+		impl_->sql_ <<
+			"ALTER TABLE :dest_schema_name.:dest_table_name "
+			"ADD COLUMN :column :data_type; "
+			"INSERT INTO :dest_schema_name.:dest_table_name (date, :column) "
+			"SELECT date, :column FROM :schema.:table "
+			"ON CONFLICT (date) DO UPDATE SET :column = excluded.:column; "
+			"INSERT INTO ready.meta_data (\"table\", \"column\", \"origin\", \"unit_id\") "
+			"VALUES (:dest_table_name, :column, :col_path, :unit_id);"
+			, use(dest_schema_name,		"dest_schema_name"s)
+			, use(dest_table_name,		"dest_table_name"s)
+			, use(col_info.column_,		"column"s)
+			, use(col_info.data_type_,	"data_type"s)
+			, use(col_info.to_string(),	"col_path"s)
+			, use(col_info.schema_,		"schema"s)
+			, use(col_info.table_,		"table"s)
+			, use(unit_id,				"unit_id"s);
+	}
+	catch (const exception& ex)
+	{
+		throw runtime_error("Failed to load columns. "s + ex.what());
 	}
 }
 //----------------------------------------------------------------------------------------------------------
-void DbAccess::deleteColumn(const QString& dest_schema_name, const QString& dest_table_name, const ColumnMetaData& col_info)
+void DbAccess::deleteColumn(const string& dest_schema_name, const string& dest_table_name, const ColumnMetaData& col_info)
 {
-	const QString query_str(QString(
-		"ALTER TABLE %1.%2 DROP COLUMN %3; "
-		"DELETE FROM ready.meta_data WHERE id = %4;")
-		.arg(dest_schema_name)			// 1
-		.arg(dest_table_name)			// 2
-		.arg(col_info.column_)			// 3
-		.arg(col_info.id_)				// 4
-	);
-	QSqlQuery query(query_str);
-	if (query.lastError().isValid())
+	try
 	{
-		throw std::runtime_error(std::string("Failed to load sources. ") +
-			query.lastError().text().toStdString());
+		impl_->sql_ <<
+		"ALTER TABLE :dest_schema_name.:dest_table_name DROP COLUMN :column; "
+		"DELETE FROM ready.meta_data WHERE id = :id;"
+		, use(dest_schema_name)
+		, use(dest_table_name)
+		, use(col_info.column_)
+		, use(col_info.id_);
+	}
+	catch (const exception& ex)
+	{
+		throw runtime_error("Failed to delete column. "s + ex.what());
 	}
 }
 //----------------------------------------------------------------------------------------------------------
-std::vector<UnitInfo> DbAccess::loadUnits() const
+vector<UnitInfo> DbAccess::loadUnits() const
 {
 	static constexpr int id_idx = 0;
 	static constexpr int name_idx = 1;
 
-	std::vector<UnitInfo> result;
+	vector<UnitInfo> result;
 
 	QSqlQuery query("SELECT id, name FROM ready.units;");
 	if (query.size() >= 0)
@@ -107,12 +216,12 @@ std::vector<UnitInfo> DbAccess::loadUnits() const
 	}
 	if (query.lastError().isValid())
 	{
-		throw std::runtime_error(std::string("Failed to load units. ") + query.lastError().text().toStdString());
+		throw runtime_error("Failed to load units. "s + query.lastError().text().toStdString());
 	}
 	return result;
 }
 //----------------------------------------------------------------------------------------------------------
-std::vector<ColumnMetaData> DbAccess::loadMetaData() const
+vector<ColumnMetaData> DbAccess::loadMetaData() const
 {
 	static constexpr int id_idx				= 0;
 	static constexpr int table_idx			= 1;
@@ -124,119 +233,96 @@ std::vector<ColumnMetaData> DbAccess::loadMetaData() const
 	static constexpr int norm_max_idx		= 7;
 	static constexpr int unit_id_idx		= 8;
 
-	std::vector<ColumnMetaData> result;
+	vector<ColumnMetaData> result;
 
-	QSqlQuery query("SELECT id, \"table\", \"column\", description, origin, normalized, norm_min, norm_max, unit_id FROM ready.meta_data;");
-	if (query.size() >= 0)
+	try
 	{
-		result.reserve(query.size());
+		rowset<row> rs = (impl_->sql_.prepare <<
+		"SELECT id, \"table\", \"column\", description, origin, normalized, norm_min, norm_max, unit_id FROM ready.meta_data;");
+		for (auto& row : rs)
+		{
+			ColumnMetaData& data = result.emplace_back(ColumnMetaData{});
+			data.id_			= row.get<long long>(id_idx);
+			data.table_			= row.get<string>(table_idx);
+			data.column_		= row.get<string>(column_idx);
+			data.description_	= row.get_indicator(description_idx) == i_ok ? row.get<string>(description_idx) : string{};
+			data.origin_		= row.get<string>(origin_idx);
+			data.normalized_	= row.get<bool>(normalized_idx);
+			data.norm_min_		= row.get<double>(norm_min_idx);
+			data.norm_max_		= row.get<double>(norm_max_idx);
+			data.unit_id_		= row.get<long long>(unit_id_idx);
+		}
+		return result;
 	}
-
-	while (query.next())
+	catch (const exception& ex)
 	{
-		result.emplace_back(ColumnMetaData{});
-		result.back().id_			= query.value(id_idx).toInt();
-		result.back().table_		= query.value(table_idx).toString();
-		result.back().column_		= query.value(column_idx).toString();
-		result.back().description_	= query.value(description_idx).toString();
-		result.back().origin_		= query.value(origin_idx).toString();
-		result.back().normalized_	= query.value(normalized_idx).toBool();
-		result.back().norm_min_		= query.value(norm_min_idx).toDouble();
-		result.back().norm_max_		= query.value(norm_max_idx).toDouble();
-		result.back().unit_id_		= query.value(unit_id_idx).toLongLong();
+		throw runtime_error("Failed to load meta data. "s + ex.what());
 	}
-	if (query.lastError().isValid())
-	{
-		throw std::runtime_error(std::string("Failed to load metadata. ") + query.lastError().text().toStdString());
-	}
-	return result;
 }
 //----------------------------------------------------------------------------------------------------------
-ColumnData DbAccess::loadColumnData(const QString& schema, const QString& table, const QString& column) const
+// 1. count
+// 2. index
+// 3. data
+DataFrame DbAccess::load_data(const string& schema, const string& table_name, const vector<string>& col_names) const
 {
-	static constexpr int date_idx	= 0;
-	static constexpr int value_idx	= 1;
+	DataFrame result;
 
-	ColumnData result;
-
-	const QString query_str(QString("SELECT date, %1 FROM %2.%3")
-		.arg(column)		// 1
-		.arg(schema)		// 2
-		.arg(table)			// 3
-	);
-
-	QSqlQuery query(query_str);
-	if (query.size() >= 0)
+	try
 	{
-		result.dates_.reserve(query.size());
-		result.values_.reserve(query.size());
-		result.valid_.reserve(query.size());
-	}
-	while (query.next())
-	{
-		result.dates_.emplace_back(query.value(date_idx).toDate());
-		result.valid_.emplace_back(!query.value(value_idx).isNull());
-		if (query.value(value_idx).isNull())
+		ptrdiff_t count = 0;
+		// 1,
 		{
-			result.values_.emplace_back(0);
-		}
-		else
-		{
-			result.values_.emplace_back(query.value(value_idx).toDouble());
-		}
-	}
-	if (query.lastError().isValid())
-	{
-		throw std::runtime_error(std::string("Failed to load metadata. ") + query.lastError().text().toStdString());
-	}
-	return result;
-}
-//----------------------------------------------------------------------------------------------------------
-void DbAccess::storeColumnData(const ColumnMetaData& col_info, const ColumnData& data) const
-{
-	{
-		const QString query_str(QString("UPDATE ready.%1 SET %2 = :val WHERE date = :date")
-			.arg(col_info.table_)		// 1
-			.arg(col_info.column_)		// 2
-		);
-		QSqlQuery query;
-		if (!query.prepare(query_str))
-		{
-			throw std::runtime_error(std::string("Failed to store data. ") + query.lastError().text().toStdString());
-		}
-
-		QVariantList date_list;
-		QVariantList val_list;
-
-		for (size_t i = 0; i < data.values_.size(); ++i)
-		{
-			if (data.valid_[i])
+			impl_->sql_ << "SELECT count(date) FROM " << schema << "." << table_name, into(count);
+			if (count <= 0)
 			{
-				date_list.push_back(data.dates_[i]);
-				val_list.push_back(data.values_[i]);
+				return result;
 			}
 		}
-		query.bindValue(":date", date_list);
-		query.bindValue(":val", val_list);
-		if (!query.execBatch())
+		vector<indicator> ind(count);
+		// 2.
 		{
-			throw std::runtime_error(std::string("Failed to store metadata. ") + query.lastError().text().toStdString());
+			vector<hmdf::DateTime> idx(count);
+			impl_->sql_ << "SELECT date FROM " << schema << "." << table_name, into(idx);
+			result.load_index(move(idx));
 		}
+		// 3.
+		for (const string& col_name : col_names)
+		{
+			vector<double> col(count);
+			impl_->sql_ << "SELECT " << col_name << " FROM " << schema << "." << table_name, into(col, ind);
+			result.load_column(col_name.c_str(), move(col));
+		}
+		return result;
 	}
-
+	catch (const exception& ex)
 	{
-		QSqlQuery query;;
-		const QString query_str("UPDATE ready.meta_data SET normalized = :normalized, norm_min = :norm_min, norm_max = :norm_max WHERE id = :id");
-		query.prepare(query_str);
+		throw runtime_error("Failed to load column data. "s + ex.what());
+	}
+}
+//----------------------------------------------------------------------------------------------------------
+void DbAccess::storeColumnData(const ColumnMetaData& col_info, const DataFrame& data) const
+{
+	try
+	{
+		vector<hmdf::DateTime>& idx = const_cast<vector<hmdf::DateTime>&>(data.get_index());
 
-		query.bindValue(":normalized", col_info.normalized_);
-		query.bindValue(":norm_min", col_info.normalized_ ? col_info.norm_min_ : 0.);
-		query.bindValue(":norm_max", col_info.normalized_ ? col_info.norm_max_ : 0.);
-		query.bindValue(":id", col_info.id_);
+		impl_->sql_
+			<< "UPDATE ready." << col_info.table_ << " SET " << col_info.column_ << " = :val WHERE date = :date"
+			, use(data.get_column<double>(col_info.column_.c_str()), "val"s)
+			, use(idx, "date"s);
 
-		if (!query.exec())
-		{
-			throw std::runtime_error(std::string("Failed to store metadata. ") + query.lastError().text().toStdString());
-		}
+		const double norm_min = col_info.normalized_ ? col_info.norm_min_ : 0.;
+		const double norm_max = col_info.normalized_ ? col_info.norm_max_ : 0.;
+
+		impl_->sql_
+			<< "UPDATE ready.meta_data SET normalized = :normalized, norm_min = :norm_min, norm_max = :norm_max WHERE id = :id"
+			, use(col_info.normalized_, "normalized")
+			, use(norm_min, "norm_min")
+			, use(norm_max, "norm_max")
+			, use(col_info.id_, "id");
+	}
+	catch (const exception& ex)
+	{
+		throw runtime_error("Failed to store column data. "s + ex.what());
 	}
 }

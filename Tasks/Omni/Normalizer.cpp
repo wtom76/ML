@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "Normalizer.h"
+#include <Shared/Math/DataFrameVisitors.hpp>
+
+using namespace std;
 
 //----------------------------------------------------------------------------------------------------------
 Normalizer::Normalizer()
@@ -10,41 +13,28 @@ Normalizer::~Normalizer()
 {
 }
 //----------------------------------------------------------------------------------------------------------
-bool Normalizer::normalize(ColumnData& data, std::pair<double, double>& min_max) const
+bool Normalizer::normalize(const string& col_name, DataFrame& data, pair<double, double>& min_max) const
 {
-	bool normalized = false;
-	double min = std::numeric_limits<double>::max();
-	double max = -std::numeric_limits<double>::max();
-
-	auto value_ci = data.values_.cbegin();
-	const auto value_ce = data.values_.cend();
-	auto valid_ci = data.valid_.cbegin();
-	for (; value_ci != value_ce; ++value_ci, ++valid_ci)
+	MinMaxValidCounter<double, hmdf::DateTime> visitor{};
+	data.visit<double>(col_name.c_str(), visitor);
+	if (!visitor.valid_count())
 	{
-		if (*valid_ci)
-		{
-			normalized = true;
-			if (min > *value_ci)
-			{
-				min = *value_ci;
-			}
-			if (max < *value_ci)
-			{
-				max = *value_ci;
-			}
-		}
+		return false;
 	}
+	double min = visitor.min();
+	double max = visitor.max();
 
-	if (max - min < std::numeric_limits<double>::epsilon())
+	if (max - min < numeric_limits<double>::epsilon())
 	{
 		return false;
 	}
 
-	auto value_i = data.values_.begin();
-	valid_ci = data.valid_.cbegin();
-	for (; value_i != value_ce; ++value_i, ++valid_ci)
+	auto& column = data.get_column<double>(col_name.c_str());
+	auto value_i = column.begin();
+	auto value_ce = column.cend();
+	for (; value_i != value_ce; ++value_i)
 	{
-		if (*valid_ci)
+		if (!hmdf::is_nan__(*value_i))
 		{
 			*value_i = (*value_i - min) / (max - min);
 		}

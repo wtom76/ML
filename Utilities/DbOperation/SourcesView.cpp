@@ -43,7 +43,8 @@ void SourcesView::mouseMoveEvent(QMouseEvent* event)
 	}
 
 	std::unique_ptr<QMimeData> mime_data = std::make_unique<QMimeData>();
-	mime_data->setData(column_name_mime_type_name, model_->buildPath(item_idx).toString().toUtf8());
+	mime_data->setData(column_name_mime_type_name,
+		QString::fromStdString(model_->buildPath(item_idx).to_string()).toUtf8());
 	std::unique_ptr<QDrag> drag = std::make_unique<QDrag>(this);
 	drag->setMimeData(mime_data.release());
 

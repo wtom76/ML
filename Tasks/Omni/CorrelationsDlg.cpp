@@ -1,12 +1,13 @@
-#pragma once
-#include <vector>
+#include "stdafx.h"
+#include "CorrelationsDlg.h"
 
 //----------------------------------------------------------------------------------------------------------
-// struct ColumnData
-//----------------------------------------------------------------------------------------------------------
-struct ColumnData
+CorrelationsDlg::CorrelationsDlg(QWidget *parent)
+	: QDialog(parent)
 {
-	std::vector<QDate>	dates_;
-	std::vector<double>	values_;
-	std::vector<bool>	valid_;
-};
+	ui_.setupUi(this);
+}
+//----------------------------------------------------------------------------------------------------------
+CorrelationsDlg::~CorrelationsDlg()
+{
+}

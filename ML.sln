@@ -31,6 +31,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Math", "Math", "{6D5AED50-7CF2-4501-8207-841455861EFC}"
 	ProjectSection(SolutionItems) = preProject
 		Shared\Math\Correlation.hpp = Shared\Math\Correlation.hpp
+		Shared\Math\DataFrameVisitors.hpp = Shared\Math\DataFrameVisitors.hpp
 		Shared\Math\Normalization.hpp = Shared\Math\Normalization.hpp
 	EndProjectSection
 EndProject

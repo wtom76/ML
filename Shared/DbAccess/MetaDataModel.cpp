@@ -6,6 +6,7 @@
 #include <Shared/DbAccess/DbAccess.h>
 #include "MetaDataModel.h"
 
+using namespace std;
 const char* const dest_schema = "ready";
 const char* const dest_table = "daily_0001";
 
@@ -49,10 +50,10 @@ QVariant MetaDataModel::data(const QModelIndex& index, int role) const
 			assert(index.row() < data_.size());
 			switch (index.column())
 			{
-			case 0:	return data_[index.row()].table_;
-			case 1:	return data_[index.row()].column_;
-			case 2:	return data_[index.row()].description_;
-			case 3:	return data_[index.row()].origin_;
+			case 0:	return QString::fromStdString(data_[index.row()].table_);
+			case 1:	return QString::fromStdString(data_[index.row()].column_);
+			case 2:	return QString::fromStdString(data_[index.row()].description_);
+			case 3:	return QString::fromStdString(data_[index.row()].origin_);
 			case 4:	return data_[index.row()].normalized_;
 			case 5:	return data_[index.row()].norm_min_;
 			case 6:	return data_[index.row()].norm_max_;
@@ -79,8 +80,8 @@ QVariant MetaDataModel::headerData(int section, Qt::Orientation orientation, int
 //----------------------------------------------------------------------------------------------------------
 void MetaDataModel::addColumn(const ColumnPath& path, int unit_id)
 {
-	std::set<QString> existing_cols = db_.tableColumns(dest_schema, dest_table);
-	if (existing_cols.find(path.column_) != existing_cols.cend())
+	set<string> std_existing_cols = db_.tableColumns(dest_schema, dest_table);
+	if (std_existing_cols.find(path.column_) != std_existing_cols.cend())
 	{
 		return;
 	}

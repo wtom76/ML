@@ -49,8 +49,8 @@ void MetaDataView::dragMoveEvent(QDragMoveEvent* event)
 //---------------------------------------------------------------------------------------------------------
 void MetaDataView::dropEvent(QDropEvent* event)
 {
-	const ColumnPath path = ColumnPath::fromString(QString::fromUtf8(
-		event->mimeData()->data(column_name_mime_type_name)));
+	const ColumnPath path = ColumnPath::from_string(QString::fromUtf8(
+		event->mimeData()->data(column_name_mime_type_name)).toStdString());
 	AddColumnDialog dlg(qApp->activeWindow());
 	dlg.setColumn(path);
 	if (dlg.exec() == QDialog::Accepted)
