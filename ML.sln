@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.705
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{591E9E78-16C2-4CA3-910E-7FC59B749DD2}"
 EndProject
@@ -30,9 +30,15 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DbAccess", "Shared\DbAccess
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Math", "Math", "{6D5AED50-7CF2-4501-8207-841455861EFC}"
 	ProjectSection(SolutionItems) = preProject
-		Shared\Math\Correlation.hpp = Shared\Math\Correlation.hpp
 		Shared\Math\DataFrameVisitors.hpp = Shared\Math\DataFrameVisitors.hpp
 		Shared\Math\Normalization.hpp = Shared\Math\Normalization.hpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Neuro", "Neuro", "{B497543D-EBB3-491A-B803-6D069D535CFA}"
+	ProjectSection(SolutionItems) = preProject
+		Shared\Neuro\activation.hpp = Shared\Neuro\activation.hpp
+		Shared\Neuro\mfn.hpp = Shared\Neuro\mfn.hpp
+		Shared\Neuro\rprop.hpp = Shared\Neuro\rprop.hpp
 	EndProjectSection
 EndProject
 Global
@@ -71,6 +77,7 @@ Global
 		{AD243205-83FA-42CF-9756-E76CF4350003} = {68606455-0651-46EA-9A42-E30045730E32}
 		{17FA95AB-37A0-45EE-9719-57F016958B6E} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}
 		{6D5AED50-7CF2-4501-8207-841455861EFC} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}
+		{B497543D-EBB3-491A-B803-6D069D535CFA} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A820AB65-6943-4CF3-B936-EE0F8177FCB2}
