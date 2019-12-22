@@ -12,7 +12,7 @@ class Omni : public QMainWindow
 
 private:
 	Ui::OmniClass ui_;
-	std::unique_ptr<DbAccess>		db_;
+	std::shared_ptr<DbAccess>		db_;
 	std::unique_ptr<MetaDataModel>	metadata_model_;
 
 private:
@@ -24,4 +24,5 @@ public:
 public slots:
 	void normalizeAll();
 	void showCorrelations();
+	void showLearnMfn();
 };

@@ -7,13 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{591E9E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tasks", "Tasks", "{68606455-0651-46EA-9A42-E30045730E32}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{42D48603-01EB-4BD6-ABE2-79B27DDE7D20}"
-	ProjectSection(SolutionItems) = preProject
-		Shared\Data\Frame.hpp = Shared\Data\Frame.hpp
-		Shared\Data\Index.hpp = Shared\Data\Index.hpp
-		Shared\Data\View.hpp = Shared\Data\View.hpp
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{93065C32-4231-4FD6-8964-897865D9BC54}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DbOperation", "Utilities\DbOperation\DbOperation.vcxproj", "{D23C4612-477E-4591-8249-CA91DCCD9CD5}"
@@ -72,7 +65,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{42D48603-01EB-4BD6-ABE2-79B27DDE7D20} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}
 		{D23C4612-477E-4591-8249-CA91DCCD9CD5} = {93065C32-4231-4FD6-8964-897865D9BC54}
 		{AD243205-83FA-42CF-9756-E76CF4350003} = {68606455-0651-46EA-9A42-E30045730E32}
 		{17FA95AB-37A0-45EE-9719-57F016958B6E} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}

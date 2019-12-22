@@ -26,7 +26,8 @@ namespace soci
 			switch (ind)
 			{
 			case i_null:
-				throw soci_error("Null DateTime is not supported");
+				val = hmdf::DateTime{};
+				//throw soci_error("Null DateTime is not supported");
 			default:
 				val = hmdf::DateTime{static_cast<hmdf::DateTime::DateType>(
 					(base_val.tm_year + 1900) * 10000 + (base_val.tm_mon + 1) * 10 + base_val.tm_mday)};
@@ -151,29 +152,34 @@ set<string> DbAccess::tableColumns(const string& schema_name, const string& tabl
 	}
 }
 //----------------------------------------------------------------------------------------------------------
+/// 1. Add target column to dest table
+/// 2. Copy data to dest table
+/// 3. Update metadata
 void DbAccess::addColumn(const string& dest_schema_name, const string& dest_table_name, int unit_id,
 	const ColumnPath& col_info)
 {
 	try
 	{
+		 // 1.
 		impl_->sql_ <<
-			"ALTER TABLE :dest_schema_name.:dest_table_name "
-			"ADD COLUMN :column :data_type; "
-			"INSERT INTO :dest_schema_name.:dest_table_name (date, :column) "
-			"SELECT date, :column FROM :schema.:table "
-			"ON CONFLICT (date) DO UPDATE SET :column = excluded.:column; "
-			"INSERT INTO ready.meta_data (\"table\", \"column\", \"origin\", \"unit_id\") "
-			"VALUES (:dest_table_name, :column, :col_path, :unit_id);"
-			, use(dest_schema_name,		"dest_schema_name"s)
-			, use(dest_table_name,		"dest_table_name"s)
-			, use(col_info.column_,		"column"s)
-			, use(col_info.data_type_,	"data_type"s)
-			, use(col_info.to_string(),	"col_path"s)
-			, use(col_info.schema_,		"schema"s)
-			, use(col_info.table_,		"table"s)
-			, use(unit_id,				"unit_id"s);
+			"ALTER TABLE " << dest_schema_name << "." << dest_table_name <<
+			" ADD COLUMN " << col_info.column_ << " " << col_info.data_type_;
+		// 2.
+		impl_->sql_ <<
+			"INSERT INTO " << dest_schema_name << "." << dest_table_name << " (date, " << col_info.column_ << ")"
+			" SELECT date, " << col_info.column_ << " FROM " << col_info.schema_ << "." << col_info.table_ <<
+			" ON CONFLICT (date) DO UPDATE SET " << col_info.column_ << " = excluded." << col_info.column_;
+		// 3.
+		const string col_path = col_info.to_string();
+		impl_->sql_ <<
+			"INSERT INTO " << dest_schema_name << ".meta_data (\"table\", \"column\", \"origin\", \"unit_id\")"
+			" VALUES (:dest_table_name, :column, :col_path, :unit_id);"
+			, use(dest_table_name, "dest_table_name"s)
+			, use(col_info.column_, "column"s)
+			, use(col_path, "col_path"s)
+			, use(unit_id, "unit_id"s);
 	}
-	catch (const exception& ex)
+	catch (const exception & ex)
 	{
 		throw runtime_error("Failed to load columns. "s + ex.what());
 	}
@@ -184,11 +190,9 @@ void DbAccess::deleteColumn(const string& dest_schema_name, const string& dest_t
 	try
 	{
 		impl_->sql_ <<
-		"ALTER TABLE :dest_schema_name.:dest_table_name DROP COLUMN :column; "
-		"DELETE FROM ready.meta_data WHERE id = :id;"
-		, use(dest_schema_name)
-		, use(dest_table_name)
-		, use(col_info.column_)
+			"ALTER TABLE " << dest_schema_name << "." << dest_table_name << " DROP COLUMN " << col_info.column_;
+		impl_->sql_ <<
+			"DELETE FROM " << dest_schema_name << ".meta_data WHERE id = :id;"
 		, use(col_info.id_);
 	}
 	catch (const exception& ex)
@@ -232,13 +236,15 @@ vector<ColumnMetaData> DbAccess::loadMetaData() const
 	static constexpr int norm_min_idx		= 6;
 	static constexpr int norm_max_idx		= 7;
 	static constexpr int unit_id_idx		= 8;
+	static constexpr int date_min_idx		= 9;
+	static constexpr int date_max_idx		= 10;
 
 	vector<ColumnMetaData> result;
 
 	try
 	{
 		rowset<row> rs = (impl_->sql_.prepare <<
-		"SELECT id, \"table\", \"column\", description, origin, normalized, norm_min, norm_max, unit_id FROM ready.meta_data;");
+		"SELECT id, \"table\", \"column\", description, origin, normalized, norm_min, norm_max, unit_id, date_min, date_max FROM ready.meta_data;");
 		for (auto& row : rs)
 		{
 			ColumnMetaData& data = result.emplace_back(ColumnMetaData{});
@@ -251,12 +257,45 @@ vector<ColumnMetaData> DbAccess::loadMetaData() const
 			data.norm_min_		= row.get<double>(norm_min_idx);
 			data.norm_max_		= row.get<double>(norm_max_idx);
 			data.unit_id_		= row.get<long long>(unit_id_idx);
+			data.date_min_		= row.get<decltype(data.date_min_)>(date_min_idx);
+			data.date_max_		= row.get<decltype(data.date_max_)>(date_max_idx);
 		}
 		return result;
 	}
 	catch (const exception& ex)
 	{
 		throw runtime_error("Failed to load meta data. "s + ex.what());
+	}
+}
+//----------------------------------------------------------------------------------------------------------
+void DbAccess::storeMetaData(const ColumnMetaData& col_info, const DataFrame& data) const
+{
+	try
+	{
+		vector<hmdf::DateTime>& idx = const_cast<vector<hmdf::DateTime>&>(data.get_index());
+
+		impl_->sql_
+			<< "UPDATE ready." << col_info.table_ << " SET " << col_info.column_ << " = :val WHERE date = :date"
+			, use(data.get_column<double>(col_info.column_.c_str()), "val"s)
+			, use(idx, "date"s);
+
+		const double norm_min = col_info.normalized_ ? col_info.norm_min_ : 0.;
+		const double norm_max = col_info.normalized_ ? col_info.norm_max_ : 0.;
+
+		impl_->sql_
+			<< "UPDATE ready.meta_data "
+			"SET normalized = :normalized, norm_min = :norm_min, norm_max = :norm_max, date_min = :date_min, date_max = :date_max "
+			"WHERE id = :id"
+			, use(col_info.normalized_, "normalized")
+			, use(norm_min, "norm_min")
+			, use(norm_max, "norm_max")
+			, use(col_info.id_, "id")
+			, use(col_info.date_min_, "date_min")
+			, use(col_info.date_max_, "date_max");
+	}
+	catch (const exception & ex)
+	{
+		throw runtime_error("Failed to store column data. "s + ex.what());
 	}
 }
 //----------------------------------------------------------------------------------------------------------
@@ -297,32 +336,5 @@ DataFrame DbAccess::load_data(const string& schema, const string& table_name, co
 	catch (const exception& ex)
 	{
 		throw runtime_error("Failed to load column data. "s + ex.what());
-	}
-}
-//----------------------------------------------------------------------------------------------------------
-void DbAccess::storeColumnData(const ColumnMetaData& col_info, const DataFrame& data) const
-{
-	try
-	{
-		vector<hmdf::DateTime>& idx = const_cast<vector<hmdf::DateTime>&>(data.get_index());
-
-		impl_->sql_
-			<< "UPDATE ready." << col_info.table_ << " SET " << col_info.column_ << " = :val WHERE date = :date"
-			, use(data.get_column<double>(col_info.column_.c_str()), "val"s)
-			, use(idx, "date"s);
-
-		const double norm_min = col_info.normalized_ ? col_info.norm_min_ : 0.;
-		const double norm_max = col_info.normalized_ ? col_info.norm_max_ : 0.;
-
-		impl_->sql_
-			<< "UPDATE ready.meta_data SET normalized = :normalized, norm_min = :norm_min, norm_max = :norm_max WHERE id = :id"
-			, use(col_info.normalized_, "normalized")
-			, use(norm_min, "norm_min")
-			, use(norm_max, "norm_max")
-			, use(col_info.id_, "id");
-	}
-	catch (const exception& ex)
-	{
-		throw runtime_error("Failed to store column data. "s + ex.what());
 	}
 }

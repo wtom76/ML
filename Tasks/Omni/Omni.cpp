@@ -4,11 +4,12 @@
 #include "Correlations.h"
 #include "CorrelationsDlg.h"
 #include "CorrelationsModel.h"
+#include "LearnMfnDlg.h"
 
 //----------------------------------------------------------------------------------------------------------
 Omni::Omni(QWidget* parent)
 	: QMainWindow(parent)
-	, db_(std::make_unique<DbAccess>())
+	, db_(std::make_shared<DbAccess>())
 {
 	ui_.setupUi(this);
 
@@ -16,12 +17,17 @@ Omni::Omni(QWidget* parent)
 
 	connect(ui_.action_normalize_all_, &QAction::triggered, this, &Omni::normalizeAll);
 	connect(ui_.action_correlations_, &QAction::triggered, this, &Omni::showCorrelations);
+	connect(ui_.action_mfn, &QAction::triggered, this, &Omni::showLearnMfn);
 }
 //----------------------------------------------------------------------------------------------------------
 void Omni::_createMetadataView()
 {
 	metadata_model_ = std::make_unique<MetaDataModel>(*db_, this);
 	ui_.meta_data_view_->setModel(metadata_model_.get());
+	for (int i = 0; i < ui_.meta_data_view_->header()->count(); ++i)
+	{
+		ui_.meta_data_view_->resizeColumnToContents(i);
+	}
 }
 //----------------------------------------------------------------------------------------------------------
 // TODO: load and store all non-norm cols at once
@@ -47,7 +53,7 @@ void Omni::normalizeAll()
 				col_info.normalized_ = true;
 				col_info.norm_min_ = min_max.first;
 				col_info.norm_max_ = min_max.second;
-				db_->storeColumnData(col_info, col_data);
+				db_->storeMetaData(col_info, col_data);
 				++norm_count;
 			}
 		}
@@ -66,6 +72,14 @@ void Omni::showCorrelations()
 	CorrelationsModel* model = new CorrelationsModel(infos, *db_, this);
 	CorrelationsDlg* wnd = new CorrelationsDlg(this);
 	wnd->view()->setModel(model);
+	wnd->show();
+	QApplication::restoreOverrideCursor();
+}
+//----------------------------------------------------------------------------------------------------------
+void Omni::showLearnMfn()
+{
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	LearnMfnDlg* wnd = new LearnMfnDlg(metadata_model_->columnInfos(), db_, this);
 	wnd->show();
 	QApplication::restoreOverrideCursor();
 }

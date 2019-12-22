@@ -13,6 +13,7 @@ Normalizer::~Normalizer()
 {
 }
 //----------------------------------------------------------------------------------------------------------
+// normalize to range [0, 1]
 bool Normalizer::normalize(const string& col_name, DataFrame& data, pair<double, double>& min_max) const
 {
 	MinMaxValidCounter<double, hmdf::DateTime> visitor{};

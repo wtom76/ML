@@ -13,7 +13,7 @@ const char* const dest_table = "daily_0001";
 //----------------------------------------------------------------------------------------------------------
 MetaDataModel::MetaDataModel(DbAccess& db, QObject* parent)
 	: QAbstractTableModel(parent)
-	, col_names_{"table", "column", "description", "origin", "normalized", "norm_min", "norm_max", "unit_id"}
+	, col_names_{"column", "table", "description", "origin", "normalized", "norm_min", "norm_max", "unit_id"}
 	, db_(db)
 {
 	load();
@@ -50,8 +50,8 @@ QVariant MetaDataModel::data(const QModelIndex& index, int role) const
 			assert(index.row() < data_.size());
 			switch (index.column())
 			{
-			case 0:	return QString::fromStdString(data_[index.row()].table_);
-			case 1:	return QString::fromStdString(data_[index.row()].column_);
+			case 0:	return QString::fromStdString(data_[index.row()].column_);
+			case 1:	return QString::fromStdString(data_[index.row()].table_);
 			case 2:	return QString::fromStdString(data_[index.row()].description_);
 			case 3:	return QString::fromStdString(data_[index.row()].origin_);
 			case 4:	return data_[index.row()].normalized_;

@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <Shared/DbAccess/DataFrame.h>
 
 //----------------------------------------------------------------------------------------------------------
 // struct ColumnMetaData
@@ -16,6 +17,8 @@ struct ColumnMetaData
 	double norm_min_ = 0.;
 	double norm_max_ = 0.;
 	long long unit_id_ = 0;
+	hmdf::DateTime date_min_{};
+	hmdf::DateTime date_max_{};
 };
 //----------------------------------------------------------------------------------------------------------
 inline std::vector<std::string> col_names(const std::vector<ColumnMetaData>& metas)

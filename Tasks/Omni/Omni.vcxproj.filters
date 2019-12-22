@@ -51,6 +51,9 @@
     <ClCompile Include="CorrelationsDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LearnMfnDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -73,12 +76,18 @@
     <QtMoc Include="CorrelationsDlg.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="LearnMfnDlg.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="Omni.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="CorrelationsDlg.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="LearnMfnDlg.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
