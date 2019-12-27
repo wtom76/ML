@@ -45,6 +45,6 @@ public:
 	void deleteColumn(const std::string& dest_schema_name, const std::string& dest_table_name, const ColumnMetaData& col_info);
 	std::vector<UnitInfo> loadUnits() const;
 	std::vector<ColumnMetaData> loadMetaData() const;
-	void storeMetaData(const ColumnMetaData& col_info, const DataFrame& data) const;
+	void store_column(const ColumnMetaData& col_info, const DataFrame& data) const;
 	DataFrame load_data(const std::string& schema, const std::string& table_name, const std::vector<std::string>& col_names) const;
 };

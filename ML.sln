@@ -34,6 +34,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Neuro", "Neuro", "{B497543D
 		Shared\Neuro\rprop.hpp = Shared\Neuro\rprop.hpp
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility", "Utility", "{8735BA3A-9C68-4335-906D-81EA7C4D1D43}"
+	ProjectSection(SolutionItems) = preProject
+		Shared\Utilily\types.hpp = Shared\Utilily\types.hpp
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -70,6 +75,7 @@ Global
 		{17FA95AB-37A0-45EE-9719-57F016958B6E} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}
 		{6D5AED50-7CF2-4501-8207-841455861EFC} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}
 		{B497543D-EBB3-491A-B803-6D069D535CFA} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}
+		{8735BA3A-9C68-4335-906D-81EA7C4D1D43} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A820AB65-6943-4CF3-B936-EE0F8177FCB2}

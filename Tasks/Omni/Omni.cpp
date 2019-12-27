@@ -53,7 +53,7 @@ void Omni::normalizeAll()
 				col_info.normalized_ = true;
 				col_info.norm_min_ = min_max.first;
 				col_info.norm_max_ = min_max.second;
-				db_->storeMetaData(col_info, col_data);
+				db_->store_column(col_info, col_data);
 				++norm_count;
 			}
 		}

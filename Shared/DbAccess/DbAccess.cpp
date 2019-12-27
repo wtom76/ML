@@ -2,6 +2,7 @@
 #include <chrono>
 #include <soci/soci.h>
 #include <soci/postgresql/soci-postgresql.h>
+#include <Shared/Utilily/types.hpp>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QVariant>
@@ -28,17 +29,19 @@ namespace soci
 			case i_null:
 				val = hmdf::DateTime{};
 				//throw soci_error("Null DateTime is not supported");
+				break;
 			default:
+				memset(&val, 0, sizeof(val));
 				val = hmdf::DateTime{static_cast<hmdf::DateTime::DateType>(
-					(base_val.tm_year + 1900) * 10000 + (base_val.tm_mon + 1) * 10 + base_val.tm_mday)};
+					(base_val.tm_year + 1900) * 10000 + (base_val.tm_mon + 1) * 100 + base_val.tm_mday)};
 			}
 		}
-		static void to_base(hmdf::DateTime val, base_type& base_val, indicator& ind)
+		static void to_base(const hmdf::DateTime& val, base_type& base_val, indicator& ind)
 		{
 			memset(&base_val, 0, sizeof(base_val));
 			base_val.tm_year = val.year() - 1900;
-			base_val.tm_mon = val.dmonth() - 1;
-			base_val.tm_mday = val.days_in_month();
+			base_val.tm_mon = to_numeric(val.month()) - 1;
+			base_val.tm_mday = val.dmonth();
 			ind = i_ok;
 		}
 	};
@@ -66,7 +69,7 @@ namespace soci
 		}
 	};
 	//------------------------------------------------------------------------------------------------------
-	/// bool support
+	/// double support
 	template <>
 	struct type_conversion<double>
 	{
@@ -78,6 +81,7 @@ namespace soci
 			{
 			case i_null:
 				val = numeric_limits<double>::quiet_NaN();
+				break;
 			default:
 				val = base_val;
 			}
@@ -268,15 +272,28 @@ vector<ColumnMetaData> DbAccess::loadMetaData() const
 	}
 }
 //----------------------------------------------------------------------------------------------------------
-void DbAccess::storeMetaData(const ColumnMetaData& col_info, const DataFrame& data) const
+void DbAccess::store_column(const ColumnMetaData& col_info, const DataFrame& data) const
 {
 	try
 	{
 		vector<hmdf::DateTime>& idx = const_cast<vector<hmdf::DateTime>&>(data.get_index());
-
+		//vector<double>& values = const_cast<vector<double>&>(data.get_column<double>(col_info.column_.c_str()));
+		//const vector<hmdf::DateTime>& idx = data.get_index();
+		const vector<double>& values = data.get_column<double>(col_info.column_.c_str());
+		vector<indicator> value_flags;
+		{
+			value_flags.resize(idx.size(), i_ok);
+			for (size_t i = 0; i != values.size(); ++i)
+			{
+				if (hmdf::is_nan__(values[i]))
+				{
+					value_flags[i] = i_null;
+				}
+			}
+		}
 		impl_->sql_
 			<< "UPDATE ready." << col_info.table_ << " SET " << col_info.column_ << " = :val WHERE date = :date"
-			, use(data.get_column<double>(col_info.column_.c_str()), "val"s)
+			, use(values, value_flags, "val"s)
 			, use(idx, "date"s);
 
 		const double norm_min = col_info.normalized_ ? col_info.norm_min_ : 0.;
@@ -327,8 +344,9 @@ DataFrame DbAccess::load_data(const string& schema, const string& table_name, co
 		// 3.
 		for (const string& col_name : col_names)
 		{
-			vector<double> col(count);
+			vector<double> col(count, numeric_limits<double>::quiet_NaN());
 			impl_->sql_ << "SELECT " << col_name << " FROM " << schema << "." << table_name, into(col, ind);
+			assert(col.size() == static_cast<size_t>(count));
 			result.load_column(col_name.c_str(), move(col));
 		}
 		return result;

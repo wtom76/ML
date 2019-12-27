@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <QAbstractItemModel>
+#include <Shared/Utilily/types.hpp>
 #include "TreeItem.h"
 
 struct ColumnPath;
@@ -17,13 +18,6 @@ enum class Fields : int
 	DataType,
 	FieldsCount
 };
-
-//-------------------------------------------------------------------------------------------------
-template <typename EnumT>
-constexpr typename std::underlying_type<EnumT>::type to_numeric(EnumT val) noexcept
-{
-	return static_cast<typename std::underlying_type<EnumT>::type>(val);
-}
 
 //----------------------------------------------------------------------------------------------------------
 // class SourcesModel
