@@ -21,7 +21,7 @@ AddColumnDialog::~AddColumnDialog()
 void AddColumnDialog::_loadUnits()
 {
 	DbAccess& db = DbOperation::instance()->db();
-	std::vector<UnitInfo> units = db.loadUnits();
+	std::vector<UnitInfo> units = db.load_units();
 	QStringList names;
 	for (const auto& unit : units)
 	{
@@ -38,9 +38,9 @@ void AddColumnDialog::setColumn(const ColumnPath& path)
 {
 	ui_.column_->setText(QString::fromStdString(path.to_string()));
 	DataFrame df = DbOperation::instance()->db().load_data(path.schema_, path.table_, {path.column_});
-	const ColumnMetrics metrics(path.column_, df);
-	ui_.min_->setText(QString::number(metrics.min_));
-	ui_.max_->setText(QString::number(metrics.max_));
+	const ColumnMetrics metrics(df.series(path.column_));
+	ui_.min_->setText(QString::number(metrics.min_max_.min()));
+	ui_.max_->setText(QString::number(metrics.min_max_.max()));
 	ui_.nulls_->setText(QString::number(metrics.null_count_));
 	ui_.rows_->setText(QString::number(metrics.valid_count_ + metrics.null_count_));
 }

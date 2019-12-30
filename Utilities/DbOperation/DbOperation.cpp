@@ -33,7 +33,10 @@ void DbOperation::_createMetadataView()
 
 	setCentralWidget(metadata_view_.get());
 
-	QObject::connect(ui_.actionDeleteColumn, &QAction::triggered, metadata_view_.get(), &MetaDataView::deleteColumn);
+	QObject::connect(ui_.actionDeleteColumn, &QAction::triggered, metadata_view_.get(), &MetaDataView::delete_column);
+	QObject::connect(ui_.actionNormalizeColumn, &QAction::triggered, metadata_view_.get(), &MetaDataView::normalize_column);
+	QObject::connect(ui_.actionNormalizeAll, &QAction::triggered, metadata_view_.get(), &MetaDataView::normalize_all);
+	QObject::connect(ui_.actionMake_target, &QAction::triggered, metadata_view_.get(), &MetaDataView::make_target);
 }
 //----------------------------------------------------------------------------------------------------------
 void DbOperation::_createSourcesView()

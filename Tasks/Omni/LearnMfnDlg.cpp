@@ -2,9 +2,11 @@
 #include <algorithm>
 #include <Shared/DbAccess/ColumnMetaData.h>
 #include <Shared/DbAccess/DbAccess.h>
+#include <Shared/Data/Preparation.hpp>
 #include "LearnMfnDlg.h"
 
 using namespace std;
+using namespace wtom::ml;
 
 //----------------------------------------------------------------------------------------------------------
 LearnMfnDlg::LearnGuiMode::LearnGuiMode(Ui::LearnMfnDlg& ui)
@@ -20,9 +22,9 @@ LearnMfnDlg::LearnGuiMode::~LearnGuiMode()
 
 //----------------------------------------------------------------------------------------------------------
 LearnMfnDlg::LearnMfnDlg(std::vector<ColumnMetaData>&& infos, std::shared_ptr<DbAccess> db, QWidget* parent)
-	: QDialog(parent)
-	, db_(db)
-	, col_infos_(std::move(infos))
+	: QDialog{parent}
+	, db_{db}
+	, col_infos_{std::move(infos)}
 {
 	ui_.setupUi(this);
 	size_t idx = 0;
@@ -116,35 +118,30 @@ bool LearnMfnDlg::_fill_target(const std::vector<double>& src, std::vector<doubl
 /// 1. Load data frame from DB
 /// 2. Fill all non-target-source lacunes by fill_forward policy
 /// 3. Drop all rows where target source is NaN
-/// 4. Create target values
-DataFrame LearnMfnDlg::_prepare_data(const string& schema, const string& table, const string& target_src_col,
-	const vector<string>& input_names, std::string& target_name) const
+std::pair<DataFrame, DataView> LearnMfnDlg::_prepare_data(const string& schema, const string& table, const string& target_name,
+	const vector<string>& input_names) const
 {
+	constexpr size_t max_tolerated_gap = 3;
 	// 1.
 	vector<string> load_names = input_names;
-	load_names.emplace_back(target_src_col);
+	load_names.emplace_back(target_name);
 	DataFrame df = db_->load_data(schema, table, load_names);
+	DataView dv{df};
 	// 2.
 	for (const string& col_name : load_names)
 	{
-		if (col_name != target_src_col)
+		if (col_name != target_name)
 		{
-			array<const char*, 1> param{col_name.c_str()};
-			df.fill_missing<double, 1>(param, hmdf::fill_policy::fill_forward);
+			DataFrame::series_t* series = df.series(col_name);
+			if (series)
+			{
+				data::fill_missing_forward(*series, max_tolerated_gap);
+			}
 		}
 	}
 	// 3.
-	df.drop_missing(hmdf::drop_policy::any);
-	// 4.
-	target_name = target_src_col + "_target";
-	auto& target = df.create_column<double>(target_name.c_str());
-	auto& target_src = df.get_column<double>(target_src_col.c_str());
-	if (_fill_target(target_src, target))
-	{
-		return df;
-	}
-	return {};
-	//std::shift_left(begin(target), end(target), 1);
+	dv.delete_rows_with_nan();
+	return {df, dv};
 }
 //----------------------------------------------------------------------------------------------------------
 void LearnMfnDlg::slot_learn()
@@ -173,6 +170,11 @@ void LearnMfnDlg::slot_learn()
 	{
 		return;
 	}
+	if (!target_column->normalized_)
+	{
+		QMessageBox::warning(this, "Learning is rejected", QString("'%1' should be normalized").arg(target_column->column_.c_str()));
+		return;
+	}
 
 	const double target_error = ui_.target_error_->text().toDouble();
 	if (!target_error)
@@ -181,18 +183,17 @@ void LearnMfnDlg::slot_learn()
 	}
 
 	const vector<string> input_names = _input_names(*target_column);
-	std::string target_name;
-	DataFrame df = _prepare_data("ready"s, target_column->table_, target_column->column_, input_names, target_name);
-	const vector<string> target_names{target_name};
+	std::pair<DataFrame, DataView> dfv = _prepare_data("ready"s, target_column->table_, target_column->column_, input_names);
+	const vector<string> target_names{target_column->column_};
 
-	Neuro::Network::Config mfn_cfg{{col_infos_.size() - 1, 2 * (col_infos_.size() - 1), 1}};
+	wtom::ml::neuro::net::Config mfn_cfg{{col_infos_.size() - 1, 2 * (col_infos_.size() - 1), 1}};
 	mfn_ = std::make_unique<Network>(mfn_cfg);
-	teacher_ = std::make_unique<Teacher>(std::move(df), input_names, target_names);
+	teacher_ = std::make_unique<Teacher>(std::move(dfv), input_names, target_names);
 
 	learn_fut_ = async(launch::async, [this, mfn_cfg, target_error]()
 		{
-			teacher_->teach(mfn_cfg, *mfn_, target_error, *this);
-			teacher_->show_test(*mfn_, *this);
+			teacher_->teach(mfn_cfg, *this->mfn_, target_error, *this);
+			teacher_->show_test(*this->mfn_, *this);
 		}
 	);
 }

@@ -62,7 +62,7 @@ void MetaDataView::dropEvent(QDropEvent* event)
 			{
 				throw std::runtime_error("Unit is not selected");
 			}
-			model_->addColumn(path, unit_id);
+			model_->add_column(path, unit_id);
 		}
 		catch (const std::exception& ex)
 		{
@@ -72,12 +72,35 @@ void MetaDataView::dropEvent(QDropEvent* event)
 	event->acceptProposedAction();
 }
 //----------------------------------------------------------------------------------------------------------
-void MetaDataView::deleteColumn()
+void MetaDataView::delete_column()
 {
 	QModelIndex idx = currentIndex();
 	if (idx.isValid() &&
 		QMessageBox::question(this, "Deleting column", "Confirm column deletion", QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
 	{
-		model_->deleteColumn(idx.row());
+		model_->delete_column(idx.row());
+	}
+}
+//----------------------------------------------------------------------------------------------------------
+void MetaDataView::normalize_column()
+{
+	QModelIndex idx = currentIndex();
+	if (idx.isValid())
+	{
+		model_->normalize_column(idx.row());
+	}
+}
+//----------------------------------------------------------------------------------------------------------
+void MetaDataView::normalize_all()
+{
+	model_->normalize_all();
+}
+//----------------------------------------------------------------------------------------------------------
+void MetaDataView::make_target()
+{
+	QModelIndex idx = currentIndex();
+	if (idx.isValid())
+	{
+		model_->make_target(idx.row());
 	}
 }

@@ -20,5 +20,8 @@ public:
 	virtual ~MetaDataView();
 
 public slots:
-	void deleteColumn();
+	void delete_column();
+	void normalize_column();
+	void normalize_all();
+	void make_target();
 };

@@ -28,6 +28,9 @@
      <string>Ready</string>
     </property>
     <addaction name="actionDeleteColumn"/>
+    <addaction name="actionNormalizeColumn"/>
+    <addaction name="actionNormalizeAll"/>
+    <addaction name="actionMake_target"/>
    </widget>
    <addaction name="menuReady"/>
   </widget>
@@ -43,6 +46,21 @@
   <action name="actionDeleteColumn">
    <property name="text">
     <string>Delete column</string>
+   </property>
+  </action>
+  <action name="actionNormalizeColumn">
+   <property name="text">
+    <string>Normalize column</string>
+   </property>
+  </action>
+  <action name="actionNormalizeAll">
+   <property name="text">
+    <string>Normalize all</string>
+   </property>
+  </action>
+  <action name="actionMake_target">
+   <property name="text">
+    <string>Make target</string>
    </property>
   </action>
  </widget>

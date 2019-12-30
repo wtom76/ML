@@ -1,22 +1,26 @@
 #include "stdafx.h"
 #include "ColumnMetrics.h"
-#include <Shared/Math/DataFrameVisitors.hpp>
+#include <Shared/Data/Frame.hpp>
 
 using namespace std;
 
 //----------------------------------------------------------------------------------------------------------
-ColumnMetrics::ColumnMetrics(const string& col_name, DataFrame& col_data)
+ColumnMetrics::ColumnMetrics(DataFrame::series_t* data)
 {
-	const pair<size_t, size_t> shape = col_data.shape();
-	MinMaxValidCounter<double, hmdf::DateTime> visitor{};
-	col_data.visit<double>(col_name.c_str(), visitor);
-	valid_count_ = visitor.valid_count();
-	null_count_ = shape.first - valid_count_;
-	if (valid_count_)
+	if (!data || data)
 	{
-		min_ = visitor.min();
-		max_ = visitor.max();
+		return;
 	}
+	size_t row_count = data->size();
+	if (!row_count)
+	{
+		return;
+	}
+	size_t nan_count = 0;
+	min_max_ = wtom::ml::math::min_max_nan(*data, nan_count);
+	assert(row_count >= nan_count);
+	valid_count_ = row_count - nan_count;
+	null_count_ = nan_count;
 }
 //----------------------------------------------------------------------------------------------------------
 ColumnMetrics::~ColumnMetrics()

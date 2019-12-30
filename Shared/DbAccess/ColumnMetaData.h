@@ -1,7 +1,10 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <Shared/DbAccess/DataFrame.h>
+#include <optional>
+#include <chrono>
+
+struct ColumnPath;
 
 //----------------------------------------------------------------------------------------------------------
 // struct ColumnMetaData
@@ -17,14 +20,12 @@ struct ColumnMetaData
 	double norm_min_ = 0.;
 	double norm_max_ = 0.;
 	long long unit_id_ = 0;
-	hmdf::DateTime date_min_{};
-	hmdf::DateTime date_max_{};
+	std::optional<std::chrono::system_clock::time_point> date_min_{};
+	std::optional<std::chrono::system_clock::time_point> date_max_{};
+
+	ColumnMetaData() = default;
+	ColumnMetaData(const std::string& dest_table_name, const std::string& dest_column_name, int unit_id, const ColumnPath& origin);
+	ColumnPath column_path() const;
 };
 //----------------------------------------------------------------------------------------------------------
-inline std::vector<std::string> col_names(const std::vector<ColumnMetaData>& metas)
-{
-	std::vector<std::string> result;
-	result.reserve(metas.size());
-	std::transform(metas.cbegin(), metas.cend(), std::back_inserter(result), [](const auto& meta) noexcept { return meta.column_; });
-	return result;
-}
+std::vector<std::string> col_names(const std::vector<ColumnMetaData>& metas);

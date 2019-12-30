@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <QAbstractItemModel>
-#include <Shared/Utilily/types.hpp>
+#include <Shared/Utility/types.hpp>
 #include "TreeItem.h"
 
 struct ColumnPath;

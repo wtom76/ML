@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include <chrono>
+#include <optional>
 #include <soci/soci.h>
 #include <soci/postgresql/soci-postgresql.h>
-#include <Shared/Utilily/types.hpp>
+#include <Shared/Utility/types.hpp>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QVariant>
@@ -18,31 +19,68 @@ namespace soci
 	//------------------------------------------------------------------------------------------------------
 	/// system_clock::time_point support
 	template <>
-	struct type_conversion<hmdf::DateTime>
+	struct type_conversion<system_clock::time_point>
 	{
-		using base_type = tm;
+		using base_type = std::tm;
 
-		static void from_base(base_type base_val, indicator ind, hmdf::DateTime& val)
+		static void from_base(base_type base_val, indicator ind, system_clock::time_point& val)
 		{
 			switch (ind)
 			{
 			case i_null:
-				val = hmdf::DateTime{};
-				//throw soci_error("Null DateTime is not supported");
+				throw soci_error("Null datetime is not supported");
 				break;
 			default:
-				memset(&val, 0, sizeof(val));
-				val = hmdf::DateTime{static_cast<hmdf::DateTime::DateType>(
-					(base_val.tm_year + 1900) * 10000 + (base_val.tm_mon + 1) * 100 + base_val.tm_mday)};
+				val = system_clock::from_time_t(_mkgmtime64(&base_val));
 			}
 		}
-		static void to_base(const hmdf::DateTime& val, base_type& base_val, indicator& ind)
+
+		static void to_base(system_clock::time_point val, base_type& base_val, indicator& ind)
 		{
-			memset(&base_val, 0, sizeof(base_val));
-			base_val.tm_year = val.year() - 1900;
-			base_val.tm_mon = to_numeric(val.month()) - 1;
-			base_val.tm_mday = val.dmonth();
+			__time64_t tt{};
+			const errno_t err = _gmtime64_s(&base_val, &(tt = system_clock::to_time_t(val)));
+			if (err)
+			{
+				throw soci_error("soci::type_conversion: failed to convert system_clock::time_point to tm");
+			}
 			ind = i_ok;
+		}
+	};
+	//------------------------------------------------------------------------------------------------------
+	/// optional system_clock::time_point support
+	template <>
+	struct type_conversion<optional<system_clock::time_point>>
+	{
+		using base_type = std::tm;
+
+		static void from_base(base_type base_val, indicator ind, optional<system_clock::time_point>& val)
+		{
+			switch (ind)
+			{
+			case i_null:
+				val = {};
+				break;
+			default:
+				val = system_clock::from_time_t(_mkgmtime64(&base_val));
+			}
+		}
+
+		static void to_base(optional<system_clock::time_point> val, base_type& base_val, indicator& ind)
+		{
+			if (val)
+			{
+				__time64_t tt{};
+				const errno_t err = _gmtime64_s(&base_val, &(tt = system_clock::to_time_t(val.value())));
+				if (err)
+				{
+					throw soci_error("soci::type_conversion: failed to convert system_clock::time_point to tm");
+				}
+				ind = i_ok;
+			}
+			else
+			{
+				ind = i_null;
+			}
 		}
 	};
 	//------------------------------------------------------------------------------------------------------
@@ -80,7 +118,7 @@ namespace soci
 			switch (ind)
 			{
 			case i_null:
-				val = numeric_limits<double>::quiet_NaN();
+				val = std::numeric_limits<double>::quiet_NaN();
 				break;
 			default:
 				val = base_val;
@@ -91,7 +129,7 @@ namespace soci
 			if (isnan<double>(val))
 			{
 				ind = i_null;
-				base_val = numeric_limits<double>::quiet_NaN();
+				base_val = std::numeric_limits<double>::quiet_NaN();
 			}
 			else
 			{
@@ -157,31 +195,26 @@ set<string> DbAccess::tableColumns(const string& schema_name, const string& tabl
 }
 //----------------------------------------------------------------------------------------------------------
 /// 1. Add target column to dest table
-/// 2. Copy data to dest table
-/// 3. Update metadata
-void DbAccess::addColumn(const string& dest_schema_name, const string& dest_table_name, int unit_id,
-	const ColumnPath& col_info)
+/// 2. Update metadata
+void DbAccess::add_column(const string& dest_schema_name, const ColumnMetaData& col_meta)
 {
 	try
 	{
+		const ColumnPath origin = col_meta.column_path();
 		 // 1.
 		impl_->sql_ <<
-			"ALTER TABLE " << dest_schema_name << "." << dest_table_name <<
-			" ADD COLUMN " << col_info.column_ << " " << col_info.data_type_;
+			"ALTER TABLE " << dest_schema_name << "." << col_meta.table_ <<
+			" ADD COLUMN " << col_meta.column_ << " " << origin.data_type_;
 		// 2.
+		const string origin_str = origin.to_string();
 		impl_->sql_ <<
-			"INSERT INTO " << dest_schema_name << "." << dest_table_name << " (date, " << col_info.column_ << ")"
-			" SELECT date, " << col_info.column_ << " FROM " << col_info.schema_ << "." << col_info.table_ <<
-			" ON CONFLICT (date) DO UPDATE SET " << col_info.column_ << " = excluded." << col_info.column_;
-		// 3.
-		const string col_path = col_info.to_string();
-		impl_->sql_ <<
-			"INSERT INTO " << dest_schema_name << ".meta_data (\"table\", \"column\", \"origin\", \"unit_id\")"
-			" VALUES (:dest_table_name, :column, :col_path, :unit_id);"
-			, use(dest_table_name, "dest_table_name"s)
-			, use(col_info.column_, "column"s)
-			, use(col_path, "col_path"s)
-			, use(unit_id, "unit_id"s);
+			"INSERT INTO " << dest_schema_name << ".meta_data (\"table\", \"column\", \"description\", \"origin\", \"unit_id\")"
+			" VALUES (:dest_table_name, :column, :description, :origin, :unit_id);"
+			, use(col_meta.table_,		"dest_table_name"s)
+			, use(col_meta.description_,"description"s)
+			, use(col_meta.column_,		"column"s)
+			, use(origin_str,			"origin"s)
+			, use(col_meta.unit_id_,	"unit_id"s);
 	}
 	catch (const exception & ex)
 	{
@@ -189,7 +222,26 @@ void DbAccess::addColumn(const string& dest_schema_name, const string& dest_tabl
 	}
 }
 //----------------------------------------------------------------------------------------------------------
-void DbAccess::deleteColumn(const string& dest_schema_name, const string& dest_table_name, const ColumnMetaData& col_info)
+/// 2. Copy data to dest table
+/// 3. Update metadata
+void DbAccess::copy_column_data(const string& dest_schema_name, const string& dest_table_name,
+	const ColumnPath& col_info)
+{
+	try
+	{
+		// 1.
+		impl_->sql_ <<
+			"INSERT INTO " << dest_schema_name << "." << dest_table_name << " (date, " << col_info.column_ << ")"
+			" SELECT date, " << col_info.column_ << " FROM " << col_info.schema_ << "." << col_info.table_ <<
+			" ON CONFLICT (date) DO UPDATE SET " << col_info.column_ << " = excluded." << col_info.column_;
+	}
+	catch (const exception & ex)
+	{
+		throw runtime_error("Failed to load columns. "s + ex.what());
+	}
+}
+//----------------------------------------------------------------------------------------------------------
+void DbAccess::delete_column(const string& dest_schema_name, const string& dest_table_name, const ColumnMetaData& col_info)
 {
 	try
 	{
@@ -205,7 +257,7 @@ void DbAccess::deleteColumn(const string& dest_schema_name, const string& dest_t
 	}
 }
 //----------------------------------------------------------------------------------------------------------
-vector<UnitInfo> DbAccess::loadUnits() const
+vector<UnitInfo> DbAccess::load_units() const
 {
 	static constexpr int id_idx = 0;
 	static constexpr int name_idx = 1;
@@ -229,7 +281,7 @@ vector<UnitInfo> DbAccess::loadUnits() const
 	return result;
 }
 //----------------------------------------------------------------------------------------------------------
-vector<ColumnMetaData> DbAccess::loadMetaData() const
+vector<ColumnMetaData> DbAccess::load_meta_data() const
 {
 	static constexpr int id_idx				= 0;
 	static constexpr int table_idx			= 1;
@@ -276,16 +328,14 @@ void DbAccess::store_column(const ColumnMetaData& col_info, const DataFrame& dat
 {
 	try
 	{
-		vector<hmdf::DateTime>& idx = const_cast<vector<hmdf::DateTime>&>(data.get_index());
-		//vector<double>& values = const_cast<vector<double>&>(data.get_column<double>(col_info.column_.c_str()));
-		//const vector<hmdf::DateTime>& idx = data.get_index();
-		const vector<double>& values = data.get_column<double>(col_info.column_.c_str());
+		vector<system_clock::time_point>& idx = const_cast<vector<system_clock::time_point>&>(data.index());
+		const vector<double>& values = *data.series(col_info.column_);
 		vector<indicator> value_flags;
 		{
 			value_flags.resize(idx.size(), i_ok);
 			for (size_t i = 0; i != values.size(); ++i)
 			{
-				if (hmdf::is_nan__(values[i]))
+				if (std::isnan(values[i]))
 				{
 					value_flags[i] = i_null;
 				}
@@ -337,17 +387,15 @@ DataFrame DbAccess::load_data(const string& schema, const string& table_name, co
 		vector<indicator> ind(count);
 		// 2.
 		{
-			vector<hmdf::DateTime> idx(count);
-			impl_->sql_ << "SELECT date FROM " << schema << "." << table_name, into(idx);
-			result.load_index(move(idx));
+			vector<system_clock::time_point> idx(count);
+			impl_->sql_ << "SELECT date FROM " << schema << "." << table_name << " ORDER BY date", into(idx);
+			result.reset(move(idx), col_names, std::numeric_limits<double>::quiet_NaN());
 		}
 		// 3.
-		for (const string& col_name : col_names)
+		for (size_t i = 0; i != col_names.size(); ++i)
 		{
-			vector<double> col(count, numeric_limits<double>::quiet_NaN());
-			impl_->sql_ << "SELECT " << col_name << " FROM " << schema << "." << table_name, into(col, ind);
-			assert(col.size() == static_cast<size_t>(count));
-			result.load_column(col_name.c_str(), move(col));
+			vector<double>& col = result.data()[i];
+			impl_->sql_ << "SELECT " << col_names[i] << " FROM " << schema << "." << table_name << " ORDER BY date", into(col, ind);
 		}
 		return result;
 	}

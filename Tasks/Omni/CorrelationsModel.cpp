@@ -45,7 +45,7 @@ void CorrelationsModel::_load()
 		}
 	}
 	DataFrame data = db_.load_data("ready", table_name, normalized_cols);
-	data_.calculate(col_names(col_infos_), data);
+	data_.calculate(data);
 	endResetModel();
 }
 //---------------------------------------------------------------------------------------------------------

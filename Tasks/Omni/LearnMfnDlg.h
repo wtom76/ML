@@ -4,6 +4,7 @@
 #include <future>
 #include <Shared/Neuro/mfn.hpp>
 #include <Shared/Neuro/rprop.hpp>
+#include <Shared/Utility/types.hpp>
 #include "ui_LearnMfnDlg.h"
 
 struct ColumnMetaData;
@@ -17,8 +18,8 @@ class LearnMfnDlg : public QDialog
 	Q_OBJECT;
 
 private:
-	using Network = Neuro::Network::MultilayerFeedforward;
-	using Teacher = Neuro::Learn::RProp<Network>;
+	using Network = wtom::ml::neuro::net::MultilayerFeedforward;
+	using Teacher = wtom::ml::neuro::learn::RProp<Network>;
 
 private:
 	Ui::LearnMfnDlg				ui_;
@@ -41,8 +42,8 @@ private:
 	const ColumnMetaData* _target_column() const;
 	std::vector<std::string> _input_names(const ColumnMetaData& target_column) const;
 	bool _fill_target(const std::vector<double>& src, std::vector<double>& dst) const;
-	DataFrame _prepare_data(const std::string& schema, const std::string& table,
-		const std::string& target_src_col, const std::vector<std::string>& input_cols, std::string& target_name) const;
+	std::pair<DataFrame, DataView> _prepare_data(const std::string& schema, const std::string& table,
+		const std::string& target_name, const std::vector<std::string>& input_names) const;
 
 public:
 	LearnMfnDlg(std::vector<ColumnMetaData>&& infos, std::shared_ptr<DbAccess> db, QWidget* parent);

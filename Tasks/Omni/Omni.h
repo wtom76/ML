@@ -22,7 +22,6 @@ public:
 	Omni(QWidget* parent = nullptr);
 
 public slots:
-	void normalizeAll();
 	void showCorrelations();
 	void showLearnMfn();
 };

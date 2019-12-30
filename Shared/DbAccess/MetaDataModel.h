@@ -33,8 +33,11 @@ public:
 	//~QAbstractTableModel impl
 
 	void load();
-	void addColumn(const ColumnPath& path, int unit_id);
-	void deleteColumn(int idx);
+	void add_column(const ColumnPath& path, int unit_id);
+	void delete_column(int idx);
+	void normalize_column(int idx);
+	void normalize_all();
+	void make_target(int idx);
 
 	Qt::DropActions supportedDropActions() const override { return Qt::CopyAction; }
 

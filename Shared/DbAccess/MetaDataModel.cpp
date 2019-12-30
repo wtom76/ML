@@ -4,11 +4,15 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <Shared/DbAccess/DbAccess.h>
+#include <Shared/Math/Normalization.hpp>
+#include <Shared/Math/Feature.hpp>
 #include "MetaDataModel.h"
 
 using namespace std;
-const char* const dest_schema = "ready";
-const char* const dest_table = "daily_0001";
+using namespace wtom::ml;
+
+const string g_dest_schema = "ready"s;
+const string g_dest_table = "daily_0001"s;
 
 //----------------------------------------------------------------------------------------------------------
 MetaDataModel::MetaDataModel(DbAccess& db, QObject* parent)
@@ -26,7 +30,7 @@ MetaDataModel::~MetaDataModel()
 void MetaDataModel::load()
 {
 	beginResetModel();
-	data_ = db_.loadMetaData();
+	data_ = db_.load_meta_data();
 	endResetModel();
 }
 //---------------------------------------------------------------------------------------------------------
@@ -78,31 +82,128 @@ QVariant MetaDataModel::headerData(int section, Qt::Orientation orientation, int
 	return QAbstractTableModel::headerData(section, orientation, role);
 }
 //----------------------------------------------------------------------------------------------------------
-void MetaDataModel::addColumn(const ColumnPath& path, int unit_id)
+std::vector<ColumnMetaData> MetaDataModel::columnInfos() const noexcept
 {
-	set<string> std_existing_cols = db_.tableColumns(dest_schema, dest_table);
+	return data_;
+}
+//----------------------------------------------------------------------------------------------------------
+void MetaDataModel::add_column(const ColumnPath& path, int unit_id)
+{
+	set<string> std_existing_cols = db_.tableColumns(g_dest_schema, g_dest_table);
 	if (std_existing_cols.find(path.column_) != std_existing_cols.cend())
 	{
 		return;
 	}
-	db_.addColumn(dest_schema, dest_table, unit_id, path);
+	const ColumnMetaData meta{g_dest_table, path.column_, unit_id, path};
+	db_.add_column(g_dest_schema, meta);
+	db_.copy_column_data(g_dest_schema, g_dest_table, path);
 	load();
 }
 //----------------------------------------------------------------------------------------------------------
-void MetaDataModel::deleteColumn(int idx)
+void MetaDataModel::delete_column(int idx)
 {
 	assert(idx >= 0);
 	assert(idx < data_.size());
 
 	if (data_[idx].column_ == "date")
 	{
-		QMessageBox::information(qApp->activeWindow(), "Column deletion is rejected", "'data' column should not be deleted");
+		QMessageBox::warning(qApp->activeWindow(), "Column deletion is rejected", "'data' column should not be deleted");
+		return;
 	}
-	db_.deleteColumn(dest_schema, dest_table, data_[idx]);
+	db_.delete_column(g_dest_schema, g_dest_table, data_[idx]);
 	load();
 }
 //----------------------------------------------------------------------------------------------------------
-std::vector<ColumnMetaData> MetaDataModel::columnInfos() const noexcept
+void MetaDataModel::normalize_column(int idx)
 {
-	return data_;
+	assert(idx >= 0);
+	assert(idx < data_.size());
+
+	if (data_[idx].column_ == "date")
+	{
+		QMessageBox::warning(qApp->activeWindow(), "Column normalization is rejected", "'data' column can't be normalized");
+		return;
+	}
+	if (data_[idx].normalized_)
+	{
+		QMessageBox::information(qApp->activeWindow(), QString("Column normalization is rejected"), QString("'%1' is already normalized").arg(data_[idx].column_.c_str()));
+		return;
+	}
+
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
+	DataFrame col_data = db_.load_data(g_dest_schema, data_[idx].table_, {data_[idx].column_});
+	const math::Range min_max = math::min_max(col_data.data().front());
+	math::normalize_range(min_max, math::Range{0., 1.}, col_data.data().front());
+	data_[idx].normalized_ = true;
+	data_[idx].norm_min_ = min_max.min();
+	data_[idx].norm_max_ = min_max.max();
+	db_.store_column(data_[idx], col_data);
+	load();
+
+	QApplication::restoreOverrideCursor();
+	QMessageBox::information(qApp->activeWindow(), QString("Normalization result"), QString("'%1' is normalized").arg(data_[idx].column_.c_str()));
+}
+//----------------------------------------------------------------------------------------------------------
+// TODO: load and store all non-norm cols at once
+void MetaDataModel::normalize_all()
+{
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
+	int total_count = 0;
+	int norm_count = 0;
+
+	for (auto& col_info : data_)
+	{
+		++total_count;
+		if (!col_info.normalized_ && col_info.column_ != "date")
+		{
+			DataFrame col_data = db_.load_data(g_dest_schema, col_info.table_, {col_info.column_});
+			const math::Range min_max = math::min_max(col_data.data().front());
+			math::normalize_range(min_max, math::Range{0., 1.}, col_data.data().front());
+			col_info.normalized_ = true;
+			col_info.norm_min_ = min_max.min();
+			col_info.norm_max_ = min_max.max();
+			db_.store_column(col_info, col_data);
+			++norm_count;
+		}
+	}
+	load();
+
+	QApplication::restoreOverrideCursor();
+	QMessageBox::information(qApp->activeWindow(), "Normalize all", QString("%1 normalized\n%2 processed").arg(norm_count).arg(total_count));
+}
+//----------------------------------------------------------------------------------------------------------
+void MetaDataModel::make_target(int idx)
+{
+	constexpr size_t max_tolerated_gap = 3;
+
+	assert(idx >= 0);
+	assert(idx < data_.size());
+
+	if (data_[idx].column_ == "date")
+	{
+		QMessageBox::warning(qApp->activeWindow(), "Making target is rejected", "'data' column can't be target origin");
+		return;
+	}
+
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
+	ColumnMetaData target_meta{data_[idx]};
+	target_meta.id_ = 0;
+	target_meta.description_ = "next change in "s + target_meta.column_;
+	target_meta.column_ += "_target";
+	target_meta.normalized_ = false;
+	target_meta.norm_max_ = target_meta.norm_min_ = numeric_limits<double>::quiet_NaN();
+
+	DataFrame df = db_.load_data(g_dest_schema, data_[idx].table_, {data_[idx].column_});
+	vector<double>& target_col = *df.create_series(target_meta.column_, numeric_limits<double>::quiet_NaN());
+	const vector<double>& src_col = *df.series(data_[idx].column_);
+	wtom::ml::math::make_target_next_change(src_col, target_col, max_tolerated_gap);
+	db_.add_column(g_dest_schema, target_meta);
+	db_.store_column(target_meta, df);
+	load();
+
+	QApplication::restoreOverrideCursor();
+	QMessageBox::information(qApp->activeWindow(), QString("Making target result"), QString("'%1' is created").arg(target_meta.column_.c_str()));
 }

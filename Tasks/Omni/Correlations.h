@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include <Shared/DbAccess/DataFrame.h>
+#include <Shared/Utility/types.hpp>
 
 //----------------------------------------------------------------------------------------------------------
 // class Correlations
@@ -20,7 +20,7 @@ public:
 	explicit Correlations();
 	~Correlations();
 
-	void calculate(const std::vector<std::string>& col_names, const DataFrame& data);
+	void calculate(const DataFrame& df);
 	size_t dimention() const noexcept { return dimention_; }
 	double value(size_t row, size_t col) const noexcept { return matrix_[row * dimention_ + col]; }
 };

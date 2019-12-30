@@ -33,7 +33,6 @@
     <property name="title">
      <string>Data</string>
     </property>
-    <addaction name="action_normalize_all_"/>
     <addaction name="action_correlations_"/>
    </widget>
    <widget class="QMenu" name="menu_learn">

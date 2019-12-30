@@ -57,7 +57,7 @@
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>UNICODE;_UNICODE;WIN32;WIN64;QT_DLL;SOCI_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_WIDGETS_LIB;DBACCESS_LIB;BUILD_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(SOCI_DIR)\$(ConfigurationName)\include;$(POSTGRES_DIR)\include;$(DATAFRAME_DIR)\$(ConfigurationName)\include;$(ROOT_DIR);$(ROOT_DIR)\Shared;$(ROOT_DIR)\..\boost_1_69_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(SOCI_DIR)\$(ConfigurationName)\include;$(POSTGRES_DIR)\include;$(ROOT_DIR);$(ROOT_DIR)\Shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -79,7 +79,7 @@
     </Link>
     <QtMoc>
       <Define>UNICODE;_UNICODE;WIN32;WIN64;QT_DLL;SOCI_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_WIDGETS_LIB;DBACCESS_LIB;BUILD_STATIC;%(PreprocessorDefinitions)</Define>
-      <IncludePath>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(SOCI_DIR)\$(ConfigurationName)\include;$(POSTGRES_DIR)\include;$(DATAFRAME_DIR)\$(ConfigurationName)\include;$(ROOT_DIR);$(ROOT_DIR)\Shared;$(ROOT_DIR)\..\boost_1_69_0;%(AdditionalIncludeDirectories)</IncludePath>
+      <IncludePath>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(SOCI_DIR)\$(ConfigurationName)\include;$(POSTGRES_DIR)\include;$(ROOT_DIR);$(ROOT_DIR)\Shared;%(AdditionalIncludeDirectories)</IncludePath>
       <OutputFile>.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>
       <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
       <ForceInclude>stdafx.h;../../%(Filename)%(Extension)</ForceInclude>
@@ -89,7 +89,7 @@
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>UNICODE;_UNICODE;WIN32;WIN64;QT_DLL;SOCI_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_WIDGETS_LIB;DBACCESS_LIB;BUILD_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(SOCI_DIR)\$(ConfigurationName)\include;$(POSTGRES_DIR)\include;$(DATAFRAME_DIR)\$(ConfigurationName)\include;$(ROOT_DIR);$(ROOT_DIR)\Shared;$(ROOT_DIR)\..\boost_1_69_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(SOCI_DIR)\$(ConfigurationName)\include;$(POSTGRES_DIR)\include;$(ROOT_DIR);$(ROOT_DIR)\Shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat />
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -110,13 +110,14 @@
     </Link>
     <QtMoc>
       <Define>UNICODE;_UNICODE;WIN32;WIN64;QT_DLL;SOCI_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_SQL_LIB;QT_WIDGETS_LIB;DBACCESS_LIB;BUILD_STATIC;%(PreprocessorDefinitions)</Define>
-      <IncludePath>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(SOCI_DIR)\$(ConfigurationName)\include;$(POSTGRES_DIR)\include;$(DATAFRAME_DIR)\$(ConfigurationName)\include;$(ROOT_DIR);$(ROOT_DIR)\Shared;$(ROOT_DIR)\..\boost_1_69_0;%(AdditionalIncludeDirectories)</IncludePath>
+      <IncludePath>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(SOCI_DIR)\$(ConfigurationName)\include;$(POSTGRES_DIR)\include;$(ROOT_DIR);$(ROOT_DIR)\Shared;%(AdditionalIncludeDirectories)</IncludePath>
       <OutputFile>.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>
       <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
       <ForceInclude>stdafx.h;../../%(Filename)%(Extension)</ForceInclude>
     </QtMoc>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ColumnMetaData.cpp" />
     <ClCompile Include="ColumnPath.cpp" />
     <ClCompile Include="DbAccess.cpp" />
     <ClCompile Include="MetaDataModel.cpp" />
@@ -127,7 +128,6 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="DbAccess.h" />
-    <ClInclude Include="DataFrame.h" />
     <ClInclude Include="ColumnMetaData.h" />
     <ClInclude Include="ColumnPath.h" />
     <QtMoc Include="MetaDataModel.h">
