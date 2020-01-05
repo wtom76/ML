@@ -68,9 +68,9 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration);$(QTDIR)\lib;$(SOCI_DIR)\$(ConfigurationName)\lib64;$(POSTGRES_DIR)\lib;$(DATAFRAME_DIR)\$(ConfigurationName)\lib;$(ROOT_DIR)\..\boost_1_69_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration);$(QTDIR)\lib;$(SOCI_DIR)\$(ConfigurationName)\lib64;$(POSTGRES_DIR)\lib;$(ROOT_DIR)\..\boost_1_69_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DbAccess.$(Platform).$(Configuration).lib;soci_core_4_0.lib;soci_postgresql_4_0.lib;DataFrame.lib;qtmaind.lib;Qt5Chartsd.lib;Qt5Cored.lib;Qt5DataVisualizationd.lib;Qt5Guid.lib;Qt5Networkd.lib;Qt5NetworkAuthd.lib;Qt5Sqld.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DbAccess.$(Platform).$(Configuration).lib;soci_core_4_0.lib;soci_postgresql_4_0.lib;qtmaind.lib;Qt5Chartsd.lib;Qt5Cored.lib;Qt5DataVisualizationd.lib;Qt5Guid.lib;Qt5Networkd.lib;Qt5NetworkAuthd.lib;Qt5Sqld.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <QtMoc>
       <OutputFile>.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>
@@ -106,9 +106,9 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration);$(QTDIR)\lib;$(SOCI_DIR)\$(ConfigurationName)\lib64;$(POSTGRES_DIR)\lib;$(DATAFRAME_DIR)\$(ConfigurationName)\lib;$(ROOT_DIR)\..\boost_1_69_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration);$(QTDIR)\lib;$(SOCI_DIR)\$(ConfigurationName)\lib64;$(POSTGRES_DIR)\lib;$(ROOT_DIR)\..\boost_1_69_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>DbAccess.$(Platform).$(Configuration).lib;soci_core_4_0.lib;soci_postgresql_4_0.lib;DataFrame.lib;qtmain.lib;Qt5Charts.lib;Qt5Core.lib;Qt5DataVisualization.lib;Qt5Gui.lib;Qt5Network.lib;Qt5NetworkAuth.lib;Qt5Sql.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DbAccess.$(Platform).$(Configuration).lib;soci_core_4_0.lib;soci_postgresql_4_0.lib;qtmain.lib;Qt5Charts.lib;Qt5Core.lib;Qt5DataVisualization.lib;Qt5Gui.lib;Qt5Network.lib;Qt5NetworkAuth.lib;Qt5Sql.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <QtMoc>
       <OutputFile>.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>
@@ -128,10 +128,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AddColumnDialog.cpp" />
+    <ClCompile Include="AdjustSplitsDlg.cpp">
+      <OutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\%(Filename).moc</OutputFile>
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">input</DynamicSource>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtDataVisualization;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtNetworkAuth;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(ROOT_DIR);$(ROOT_DIR)\Shared</IncludePath>
+      <OutputFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\%(Filename).moc</OutputFile>
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Release|x64'">input</DynamicSource>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtDataVisualization;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtNetworkAuth;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(ROOT_DIR);$(ROOT_DIR)\Shared</IncludePath>
+    </ClCompile>
     <ClCompile Include="ColumnMetrics.cpp" />
     <ClCompile Include="DbOperation.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MetaDataView.cpp" />
+    <ClCompile Include="NormalizationDlg.cpp" />
     <ClCompile Include="SourcesModel.cpp" />
     <ClCompile Include="SourcesView.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -149,8 +158,16 @@
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtDataVisualization;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtNetworkAuth;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets</IncludePath>
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtDataVisualization;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtNetworkAuth;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets</IncludePath>
     </QtMoc>
+    <QtMoc Include="AdjustSplitsDlg.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtDataVisualization;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtNetworkAuth;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(ROOT_DIR);$(ROOT_DIR)\Shared</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtDataVisualization;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtNetworkAuth;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(ROOT_DIR);$(ROOT_DIR)\Shared</IncludePath>
+    </QtMoc>
     <ClInclude Include="ColumnMetrics.h" />
     <ClInclude Include="MetaDataView.h" />
+    <QtMoc Include="NormalizationDlg.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtDataVisualization;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtNetworkAuth;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(ROOT_DIR);$(ROOT_DIR)\Shared</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtDataVisualization;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtNetworkAuth;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(ROOT_DIR);$(ROOT_DIR)\Shared</IncludePath>
+    </QtMoc>
     <ClInclude Include="TreeItem.h" />
     <QtMoc Include="DbOperation.h" />
     <QtMoc Include="SourcesModel.h">
@@ -161,7 +178,9 @@
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="AddColumnDialog.ui" />
+    <QtUic Include="AdjustSplitsDlg.ui" />
     <QtUic Include="DbOperation.ui" />
+    <QtUic Include="NormalizationDlg.ui" />
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="DbOperation.qrc" />

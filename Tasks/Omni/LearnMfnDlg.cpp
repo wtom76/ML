@@ -121,7 +121,7 @@ bool LearnMfnDlg::_fill_target(const std::vector<double>& src, std::vector<doubl
 std::pair<DataFrame, DataView> LearnMfnDlg::_prepare_data(const string& schema, const string& table, const string& target_name,
 	const vector<string>& input_names) const
 {
-	constexpr size_t max_tolerated_gap = 3;
+	constexpr size_t max_tolerated_gap = std::numeric_limits<size_t>::max();
 	// 1.
 	vector<string> load_names = input_names;
 	load_names.emplace_back(target_name);

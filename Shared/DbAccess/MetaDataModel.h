@@ -4,6 +4,7 @@
 #include <array>
 #include <QAbstractTableModel>
 #include <Shared/DbAccess/DbAccess.h>
+#include <Shared/Math/Normalization.hpp>
 
 //----------------------------------------------------------------------------------------------------------
 // class MetaDataModel
@@ -35,11 +36,13 @@ public:
 	void load();
 	void add_column(const ColumnPath& path, int unit_id);
 	void delete_column(int idx);
-	void normalize_column(int idx);
+	void normalize_column(wtom::ml::math::NormalizationMethod method, int idx);
 	void normalize_all();
 	void make_target(int idx);
 
 	Qt::DropActions supportedDropActions() const override { return Qt::CopyAction; }
 
-	std::vector<ColumnMetaData> columnInfos() const noexcept;
+	std::vector<ColumnMetaData> columnInfos() const noexcept { return data_; }
+	DataFrame load_column(int idx) const;
+	void store_column(int idx, const DataFrame& df) const;
 };

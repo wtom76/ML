@@ -11,9 +11,6 @@
 using namespace std;
 using namespace wtom::ml;
 
-const string g_dest_schema = "ready"s;
-const string g_dest_table = "daily_0001"s;
-
 //----------------------------------------------------------------------------------------------------------
 MetaDataModel::MetaDataModel(DbAccess& db, QObject* parent)
 	: QAbstractTableModel(parent)
@@ -82,11 +79,6 @@ QVariant MetaDataModel::headerData(int section, Qt::Orientation orientation, int
 	return QAbstractTableModel::headerData(section, orientation, role);
 }
 //----------------------------------------------------------------------------------------------------------
-std::vector<ColumnMetaData> MetaDataModel::columnInfos() const noexcept
-{
-	return data_;
-}
-//----------------------------------------------------------------------------------------------------------
 void MetaDataModel::add_column(const ColumnPath& path, int unit_id)
 {
 	set<string> std_existing_cols = db_.tableColumns(g_dest_schema, g_dest_table);
@@ -114,7 +106,7 @@ void MetaDataModel::delete_column(int idx)
 	load();
 }
 //----------------------------------------------------------------------------------------------------------
-void MetaDataModel::normalize_column(int idx)
+void MetaDataModel::normalize_column(math::NormalizationMethod method, int idx)
 {
 	assert(idx >= 0);
 	assert(idx < data_.size());
@@ -132,9 +124,19 @@ void MetaDataModel::normalize_column(int idx)
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 
-	DataFrame col_data = db_.load_data(g_dest_schema, data_[idx].table_, {data_[idx].column_});
+	DataFrame col_data = load_column(idx);
 	const math::Range min_max = math::min_max(col_data.data().front());
-	math::normalize_range(min_max, math::Range{0., 1.}, col_data.data().front());
+	switch (method)
+	{
+	case wtom::ml::math::NormalizationMethod::Sigmoid:
+		math::normalize_range(min_max, math::Range{0., 1.}, col_data.data().front());
+		break;
+	case wtom::ml::math::NormalizationMethod::Tanh:
+		math::normalize_tanh(min_max, col_data.data().front());
+		break;
+	default:
+		assert(false);
+	}
 	data_[idx].normalized_ = true;
 	data_[idx].norm_min_ = min_max.min();
 	data_[idx].norm_max_ = min_max.max();
@@ -196,7 +198,7 @@ void MetaDataModel::make_target(int idx)
 	target_meta.normalized_ = false;
 	target_meta.norm_max_ = target_meta.norm_min_ = numeric_limits<double>::quiet_NaN();
 
-	DataFrame df = db_.load_data(g_dest_schema, data_[idx].table_, {data_[idx].column_});
+	DataFrame df = load_column(idx);
 	vector<double>& target_col = *df.create_series(target_meta.column_, numeric_limits<double>::quiet_NaN());
 	const vector<double>& src_col = *df.series(data_[idx].column_);
 	wtom::ml::math::make_target_next_change(src_col, target_col, max_tolerated_gap);
@@ -206,4 +208,14 @@ void MetaDataModel::make_target(int idx)
 
 	QApplication::restoreOverrideCursor();
 	QMessageBox::information(qApp->activeWindow(), QString("Making target result"), QString("'%1' is created").arg(target_meta.column_.c_str()));
+}
+//----------------------------------------------------------------------------------------------------------
+DataFrame MetaDataModel::load_column(int idx) const
+{
+	return db_.load_data(g_dest_schema, data_[idx].table_, {data_[idx].column_});
+}
+//----------------------------------------------------------------------------------------------------------
+void MetaDataModel::store_column(int idx, const DataFrame& df) const
+{
+	db_.store_column(data_[idx], df);
 }

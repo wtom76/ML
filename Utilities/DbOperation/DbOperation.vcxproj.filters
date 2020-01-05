@@ -57,6 +57,12 @@
     <ClCompile Include="ColumnMetrics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="NormalizationDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AdjustSplitsDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -85,12 +91,24 @@
     <QtMoc Include="AddColumnDialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="NormalizationDlg.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="AdjustSplitsDlg.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="DbOperation.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="AddColumnDialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="NormalizationDlg.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="AdjustSplitsDlg.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

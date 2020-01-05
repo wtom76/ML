@@ -9,6 +9,9 @@
 #include <Shared/DbAccess/ColumnPath.h>
 #include <Shared/DbAccess/ColumnMetaData.h>
 
+extern const std::string g_dest_schema;
+extern const std::string g_dest_table;
+
 struct ColumnPath;
 
 //----------------------------------------------------------------------------------------------------------

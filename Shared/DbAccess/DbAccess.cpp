@@ -14,6 +14,9 @@ using namespace std;
 using namespace chrono;
 using namespace soci;
 
+const string g_dest_schema = "ready"s;
+const string g_dest_table = "daily_0001"s;
+
 namespace soci
 {
 	//------------------------------------------------------------------------------------------------------

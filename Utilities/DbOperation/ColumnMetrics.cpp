@@ -7,7 +7,7 @@ using namespace std;
 //----------------------------------------------------------------------------------------------------------
 ColumnMetrics::ColumnMetrics(DataFrame::series_t* data)
 {
-	if (!data || data)
+	if (!data || data->empty())
 	{
 		return;
 	}

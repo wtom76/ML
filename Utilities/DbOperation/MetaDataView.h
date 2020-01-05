@@ -24,4 +24,5 @@ public slots:
 	void normalize_column();
 	void normalize_all();
 	void make_target();
+	void adjust_splits();
 };

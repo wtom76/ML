@@ -37,6 +37,7 @@ void DbOperation::_createMetadataView()
 	QObject::connect(ui_.actionNormalizeColumn, &QAction::triggered, metadata_view_.get(), &MetaDataView::normalize_column);
 	QObject::connect(ui_.actionNormalizeAll, &QAction::triggered, metadata_view_.get(), &MetaDataView::normalize_all);
 	QObject::connect(ui_.actionMake_target, &QAction::triggered, metadata_view_.get(), &MetaDataView::make_target);
+	QObject::connect(ui_.actionAdjustSplits, &QAction::triggered, metadata_view_.get(), &MetaDataView::adjust_splits);
 }
 //----------------------------------------------------------------------------------------------------------
 void DbOperation::_createSourcesView()

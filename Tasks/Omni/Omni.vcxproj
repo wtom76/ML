@@ -71,9 +71,9 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration);$(SOCI_DIR)\$(ConfigurationName)\lib64;$(POSTGRES_DIR)\lib;$(QTDIR)\lib;$(ROOT_DIR)\..\boost_1_69_0\stage\lib;$(DATAFRAME_DIR)\$(ConfigurationName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration);$(SOCI_DIR)\$(ConfigurationName)\lib64;$(POSTGRES_DIR)\lib;$(QTDIR)\lib;$(ROOT_DIR)\..\boost_1_69_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DbAccess.$(Platform).$(Configuration).lib;soci_core_4_0.lib;soci_postgresql_4_0.lib;DataFrame.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Networkd.lib;Qt5Sqld.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DbAccess.$(Platform).$(Configuration).lib;soci_core_4_0.lib;soci_postgresql_4_0.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Networkd.lib;Qt5Sqld.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <QtMoc>
       <OutputFile>.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>
@@ -110,9 +110,9 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration);$(SOCI_DIR)\$(ConfigurationName)\lib64;$(POSTGRES_DIR)\lib;$(QTDIR)\lib;$(ROOT_DIR)\..\boost_1_69_0\stage\lib;$(DATAFRAME_DIR)\$(ConfigurationName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration);$(SOCI_DIR)\$(ConfigurationName)\lib64;$(POSTGRES_DIR)\lib;$(QTDIR)\lib;$(ROOT_DIR)\..\boost_1_69_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>DbAccess.$(Platform).$(Configuration).lib;soci_core_4_0.lib;soci_postgresql_4_0.lib;DataFrame.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Network.lib;Qt5Sql.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DbAccess.$(Platform).$(Configuration).lib;soci_core_4_0.lib;soci_postgresql_4_0.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Network.lib;Qt5Sql.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <QtMoc>
       <OutputFile>.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>

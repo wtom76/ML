@@ -31,7 +31,7 @@ void CorrelationsModel::_load()
 	string table_name;
 	for (const auto& col_info : col_infos_)
 	{
-		if (col_info.normalized_)
+		//if (col_info.normalized_)
 		{
 			if (table_name.empty())
 			{

@@ -2,6 +2,8 @@
 #include <Shared/DbAccess/MetaDataModel.h>
 #include "MetaDataView.h"
 #include "AddColumnDialog.h"
+#include "NormalizationDlg.h"
+#include "AdjustSplitsDlg.h"
 
 //---------------------------------------------------------------------------------------------------------
 MetaDataView::MetaDataView(MetaDataModel* model)
@@ -87,7 +89,11 @@ void MetaDataView::normalize_column()
 	QModelIndex idx = currentIndex();
 	if (idx.isValid())
 	{
-		model_->normalize_column(idx.row());
+		NormalizationDlg dlg{this};
+		if (dlg.exec() == QDialog::Accepted)
+		{
+			model_->normalize_column(dlg.method(), idx.row());
+		}
 	}
 }
 //----------------------------------------------------------------------------------------------------------
@@ -102,5 +108,21 @@ void MetaDataView::make_target()
 	if (idx.isValid())
 	{
 		model_->make_target(idx.row());
+	}
+}
+//----------------------------------------------------------------------------------------------------------
+void MetaDataView::adjust_splits()
+{
+	QModelIndex idx = currentIndex();
+	if (idx.isValid())
+	{
+		DataFrame df = model_->load_column(idx.row());
+		std::vector<Split> splits = detect_splits(df, 0);
+		AdjustSplitsDlg dlg(splits, this);
+		if (dlg.exec() == QDialog::Accepted)
+		{
+			apply_splits(dlg.splits(), df, 0);
+			model_->store_column(idx.row(), df);
+		}
 	}
 }
