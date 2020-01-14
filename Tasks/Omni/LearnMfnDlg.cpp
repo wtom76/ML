@@ -183,10 +183,11 @@ void LearnMfnDlg::slot_learn()
 	}
 
 	const vector<string> input_names = _input_names(*target_column);
-	std::pair<DataFrame, DataView> dfv = _prepare_data("ready"s, target_column->table_, target_column->column_, input_names);
+	std::pair<DataFrame, DataView> dfv = _prepare_data(g_dest_schema, target_column->table_, target_column->column_, input_names);
 	const vector<string> target_names{target_column->column_};
 
-	wtom::ml::neuro::net::Config mfn_cfg{{col_infos_.size() - 1, 2 * (col_infos_.size() - 1), 1}};
+	const size_t cols_wt_target = col_infos_.size() - 1;
+	wtom::ml::neuro::net::Config mfn_cfg{ {cols_wt_target, cols_wt_target, cols_wt_target, 1} };
 	mfn_ = std::make_unique<Network>(mfn_cfg);
 	teacher_ = std::make_unique<Teacher>(std::move(dfv), input_names, target_names);
 

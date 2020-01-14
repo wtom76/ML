@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
+#include <QtCharts/QChart>
 #include <Shared/DbAccess/DbAccess.h>
 #include <Shared/DbAccess/MetaDataModel.h>
 #include "ui_Omni.h"
@@ -17,6 +18,8 @@ private:
 
 private:
 	void _createMetadataView();
+	QtCharts::QChart* _createChart();
+	void _createChartView();
 
 public:
 	Omni(QWidget* parent = nullptr);

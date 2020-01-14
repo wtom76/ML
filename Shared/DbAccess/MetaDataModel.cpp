@@ -14,33 +14,37 @@ using namespace wtom::ml;
 //----------------------------------------------------------------------------------------------------------
 MetaDataModel::MetaDataModel(DbAccess& db, QObject* parent)
 	: QAbstractTableModel(parent)
-	, col_names_{"column", "table", "description", "origin", "normalized", "norm_min", "norm_max", "unit_id"}
+	, col_names_{"column", "table", "description", "origin", "normalized", "orig_min", "orig_max", "unit_id"}
 	, db_(db)
 {
+	// TEST
+	wtom::ml::math::test_make_delta();
+	//~TEST
+
 	load();
 }
 //----------------------------------------------------------------------------------------------------------
 MetaDataModel::~MetaDataModel()
 {
 }
-//---------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------
 void MetaDataModel::load()
 {
 	beginResetModel();
 	data_ = db_.load_meta_data();
 	endResetModel();
 }
-//---------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------
 int MetaDataModel::rowCount(const QModelIndex& parent) const
 {
 	return parent.isValid() ? 0 : static_cast<int>(data_.size());
 }
-//---------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------
 int MetaDataModel::columnCount(const QModelIndex& parent) const
 {
 	return parent.isValid() ? 0 : column_count_;
 }
-//---------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------
 QVariant MetaDataModel::data(const QModelIndex& index, int role) const
 {
 	switch (role)
@@ -64,7 +68,7 @@ QVariant MetaDataModel::data(const QModelIndex& index, int role) const
 	}
 	return QVariant();
 }
-//---------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------
 QVariant MetaDataModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	switch (orientation)
@@ -176,38 +180,49 @@ void MetaDataModel::normalize_all()
 	QMessageBox::information(qApp->activeWindow(), "Normalize all", QString("%1 normalized\n%2 processed").arg(norm_count).arg(total_count));
 }
 //----------------------------------------------------------------------------------------------------------
-void MetaDataModel::make_target(int idx)
+void MetaDataModel::_make_feature_delta(int idx, ptrdiff_t period, bool next)
 {
-	constexpr size_t max_tolerated_gap = 3;
+	constexpr size_t max_tolerated_gap = 2;
 
 	assert(idx >= 0);
 	assert(idx < data_.size());
 
 	if (data_[idx].column_ == "date")
 	{
-		QMessageBox::warning(qApp->activeWindow(), "Making target is rejected", "'data' column can't be target origin");
+		QMessageBox::warning(qApp->activeWindow(), "Making feature is rejected", "'data' column can't be feature origin");
 		return;
 	}
 
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-
-	ColumnMetaData target_meta{data_[idx]};
+	ColumnMetaData target_meta{ data_[idx] };
 	target_meta.id_ = 0;
-	target_meta.description_ = "next change in "s + target_meta.column_;
-	target_meta.column_ += "_target";
+	target_meta.description_ = (next ? "next "s : ""s) + "delta in "s + target_meta.column_;
+	target_meta.column_ += (next ? "_ft_delta_next_"s : "_ft_delta_"s) + to_string(period);
 	target_meta.normalized_ = false;
 	target_meta.norm_max_ = target_meta.norm_min_ = numeric_limits<double>::quiet_NaN();
 
 	DataFrame df = load_column(idx);
 	vector<double>& target_col = *df.create_series(target_meta.column_, numeric_limits<double>::quiet_NaN());
 	const vector<double>& src_col = *df.series(data_[idx].column_);
-	wtom::ml::math::make_target_next_change(src_col, target_col, max_tolerated_gap);
+	if (next)
+	{
+		wtom::ml::math::make_delta(src_col, target_col, max_tolerated_gap, period, 1);
+	}
+	else
+	{
+		wtom::ml::math::make_delta(src_col, target_col, max_tolerated_gap, period);
+	}
 	db_.add_column(g_dest_schema, target_meta);
 	db_.store_column(target_meta, df);
-	load();
-
-	QApplication::restoreOverrideCursor();
-	QMessageBox::information(qApp->activeWindow(), QString("Making target result"), QString("'%1' is created").arg(target_meta.column_.c_str()));
+}
+//----------------------------------------------------------------------------------------------------------
+void MetaDataModel::make_target(int idx)
+{
+	_make_feature_delta(idx, 1, true);
+}
+//----------------------------------------------------------------------------------------------------------
+void MetaDataModel::make_feature_delta(int idx, ptrdiff_t period)
+{
+	_make_feature_delta(idx, period, false);
 }
 //----------------------------------------------------------------------------------------------------------
 DataFrame MetaDataModel::load_column(int idx) const

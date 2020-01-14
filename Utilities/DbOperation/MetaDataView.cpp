@@ -4,6 +4,7 @@
 #include "AddColumnDialog.h"
 #include "NormalizationDlg.h"
 #include "AdjustSplitsDlg.h"
+#include "CreateFeaturesDlg.h"
 
 //---------------------------------------------------------------------------------------------------------
 MetaDataView::MetaDataView(MetaDataModel* model)
@@ -12,6 +13,7 @@ MetaDataView::MetaDataView(MetaDataModel* model)
 	setAcceptDrops(true);
 	setDropIndicatorShown(true);
 	hideColumn(0); // don't show the ID
+	verticalHeader()->setDefaultSectionSize(16);
 }
 //---------------------------------------------------------------------------------------------------------
 MetaDataView::~MetaDataView()
@@ -123,6 +125,29 @@ void MetaDataView::adjust_splits()
 		{
 			apply_splits(dlg.splits(), df, 0);
 			model_->store_column(idx.row(), df);
+		}
+	}
+}
+//----------------------------------------------------------------------------------------------------------
+void MetaDataView::create_features()
+{
+	QModelIndex idx = currentIndex();
+	if (idx.isValid())
+	{
+		CreateFeaturesDlg dlg(QString::fromStdString(model_->col_meta(idx.row()).column_), this);
+		if (dlg.exec() == QDialog::Accepted)
+		{
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+			for (int period = 1; period <= 5; ++period)
+			{
+				if (dlg.delta(period))
+				{
+					model_->make_feature_delta(idx.row(), period);
+				}
+			}
+			model_->load();
+			QApplication::restoreOverrideCursor();
+			QMessageBox::information(qApp->activeWindow(), QString("Making feature"), QString("Done"));
 		}
 	}
 }

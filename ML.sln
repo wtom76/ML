@@ -48,32 +48,48 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{5B0EB9FD-C
 		Shared\Data\View.hpp = Shared\Data\View.hpp
 	EndProjectSection
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PythonDiscovery", "PythonDiscovery\PythonDiscovery.pyproj", "{087DE0CF-6C98-49A6-8B6D-A03E93DA086A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D23C4612-477E-4591-8249-CA91DCCD9CD5}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{D23C4612-477E-4591-8249-CA91DCCD9CD5}.Debug|x64.ActiveCfg = Debug|x64
 		{D23C4612-477E-4591-8249-CA91DCCD9CD5}.Debug|x64.Build.0 = Debug|x64
 		{D23C4612-477E-4591-8249-CA91DCCD9CD5}.Debug|x86.ActiveCfg = Debug|x64
+		{D23C4612-477E-4591-8249-CA91DCCD9CD5}.Release|Any CPU.ActiveCfg = Release|x64
 		{D23C4612-477E-4591-8249-CA91DCCD9CD5}.Release|x64.ActiveCfg = Release|x64
 		{D23C4612-477E-4591-8249-CA91DCCD9CD5}.Release|x64.Build.0 = Release|x64
 		{D23C4612-477E-4591-8249-CA91DCCD9CD5}.Release|x86.ActiveCfg = Release|x64
+		{AD243205-83FA-42CF-9756-E76CF4350003}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{AD243205-83FA-42CF-9756-E76CF4350003}.Debug|x64.ActiveCfg = Debug|x64
 		{AD243205-83FA-42CF-9756-E76CF4350003}.Debug|x64.Build.0 = Debug|x64
 		{AD243205-83FA-42CF-9756-E76CF4350003}.Debug|x86.ActiveCfg = Debug|x64
+		{AD243205-83FA-42CF-9756-E76CF4350003}.Release|Any CPU.ActiveCfg = Release|x64
 		{AD243205-83FA-42CF-9756-E76CF4350003}.Release|x64.ActiveCfg = Release|x64
 		{AD243205-83FA-42CF-9756-E76CF4350003}.Release|x64.Build.0 = Release|x64
 		{AD243205-83FA-42CF-9756-E76CF4350003}.Release|x86.ActiveCfg = Release|x64
+		{17FA95AB-37A0-45EE-9719-57F016958B6E}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{17FA95AB-37A0-45EE-9719-57F016958B6E}.Debug|x64.ActiveCfg = Debug|x64
 		{17FA95AB-37A0-45EE-9719-57F016958B6E}.Debug|x64.Build.0 = Debug|x64
 		{17FA95AB-37A0-45EE-9719-57F016958B6E}.Debug|x86.ActiveCfg = Debug|x64
+		{17FA95AB-37A0-45EE-9719-57F016958B6E}.Release|Any CPU.ActiveCfg = Release|x64
 		{17FA95AB-37A0-45EE-9719-57F016958B6E}.Release|x64.ActiveCfg = Release|x64
 		{17FA95AB-37A0-45EE-9719-57F016958B6E}.Release|x64.Build.0 = Release|x64
 		{17FA95AB-37A0-45EE-9719-57F016958B6E}.Release|x86.ActiveCfg = Release|x64
+		{087DE0CF-6C98-49A6-8B6D-A03E93DA086A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{087DE0CF-6C98-49A6-8B6D-A03E93DA086A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{087DE0CF-6C98-49A6-8B6D-A03E93DA086A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{087DE0CF-6C98-49A6-8B6D-A03E93DA086A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{087DE0CF-6C98-49A6-8B6D-A03E93DA086A}.Release|x64.ActiveCfg = Release|Any CPU
+		{087DE0CF-6C98-49A6-8B6D-A03E93DA086A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

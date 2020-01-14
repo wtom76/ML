@@ -2,39 +2,132 @@
 #include <vector>
 #include <cmath>
 
+using std::ptrdiff_t;
+
 namespace wtom::ml::math
 {
-	inline void make_target_next_change(const std::vector<double>& src, std::vector<double>& dst, size_t max_tolerated_gap)
+	//---------------------------------------------------------------------------------------------------------
+	template <class Container>
+	constexpr bool safe_advance(typename Container::const_iterator& iter, const Container& cont, ptrdiff_t offset)
 	{
-		dst.resize(src.size(), std::numeric_limits<double>::quiet_NaN());
-		auto src_i = cbegin(src);
-		auto src_e = cend(src);
-		auto dst_i = begin(dst);
-		for (; src_i != src_e && std::isnan(*src_i); ++src_i, ++dst_i)
-		{}
-		double prev_src = *src_i++;
-		assert(!std::isnan(prev_src));
-		size_t cur_gap = 0;
-		for (; src_i != src_e; ++src_i, ++dst_i)
+		if (offset > 0 && std::distance(iter, std::cend(cont)) < offset)
 		{
-			if (std::isnan(*src_i))
+			return false;
+		}
+		if (offset < 0 && std::distance(std::cbegin(cont), iter) < -offset)
+		{
+			return false;
+		}
+		std::advance(iter, offset);
+		return true;
+	}
+	//---------------------------------------------------------------------------------------------------------
+	/// Calculates difference between current value and value \param period ago
+	/// \param future_shift is a shift of dest in relation to source. To make target which contains changes that
+	/// will be on a next day, set future_shift = 1
+	inline void make_delta(const std::vector<double>& src, std::vector<double>& dst, size_t max_tolerated_gap, ptrdiff_t period = 1, ptrdiff_t future_shift = 0)
+	{
+		assert(period > 0);
+		assert(future_shift >= 0);
+
+		dst.resize(src.size(), std::numeric_limits<double>::quiet_NaN());
+		auto src_i = std::cbegin(src);
+		auto src_e = std::cend(src);
+		// 1.
+		if (!safe_advance(src_i, src, period))
+		{
+			return;
+		}
+		// 2.
+		while (src_i != src_e)
+		{
+			for (; src_i != src_e && std::isnan(*src_i); ++src_i)
+			{}
+			if (src_i == src_e)
+			{
+				return;
+			}
+			size_t cur_gap = 0;
+			auto prev_src_ri = std::make_reverse_iterator(src_i);
+			std::advance(prev_src_ri, period - 1);
+			while (prev_src_ri != std::crend(src) && cur_gap < max_tolerated_gap && std::isnan(*prev_src_ri))
 			{
 				++cur_gap;
+				++prev_src_ri;
+			}
+			if (prev_src_ri != std::crend(src) && !std::isnan(*prev_src_ri))
+			{
+				auto dst_i = std::next(std::begin(dst), std::distance(std::cbegin(src), src_i));
+				if (safe_advance(dst_i, dst, -future_shift))
+				{
+					*dst_i = *src_i - *prev_src_ri;
+				}
+			}
+			++src_i;
+		}
+	}
+	//---------------------------------------------------------------------------------------------------------
+	inline bool equal_with_nan(const std::vector<double>& left, const std::vector<double>& right)
+	{
+		if (left.size() != right.size())
+		{
+			return false;
+		}
+		auto left_i = left.cbegin();
+		auto left_e = left.cend();
+		auto right_i = right.cbegin();
+		for (; left_i != left_e; ++left_i, ++right_i)
+		{
+			if (std::isnan(*left_i) && std::isnan(*right_i))
+			{
 				continue;
 			}
-			if (cur_gap)
+			if (*left_i != *right_i)
 			{
-				if (cur_gap > max_tolerated_gap)
-				{
-					prev_src = *src_i;
-					cur_gap = 0;
-					continue;
-				}
-				cur_gap = 0;
+				return false;
 			}
-
-			*dst_i = *src_i - prev_src;
-			prev_src = *src_i;
+		}
+		return true;
+	}
+	//---------------------------------------------------------------------------------------------------------
+	inline void test_make_delta()
+	{
+		constexpr double nan_ = std::numeric_limits<double>::quiet_NaN();
+		// 1.
+		{
+			std::vector<double> dst;
+			make_delta({ 1, 2, 3, 4, 5 }, dst, 0, 1, 0);
+			assert(equal_with_nan({ nan_, 1, 1, 1, 1 }, dst));
+		}
+		// 2.
+		{
+			std::vector<double> dst;
+			make_delta({ 1, 2, nan_, nan_, 3, 4, 5 }, dst, 2, 1, 0);
+			assert(equal_with_nan({ nan_, 1, nan_, nan_, 1, 1, 1 }, dst));
+		}
+		// 3.
+		{
+			std::vector<double> dst;
+			make_delta({ 1, 2, nan_, nan_, nan_, 3, 4, 5 }, dst, 2, 1, 0);
+			assert(equal_with_nan({ nan_, 1, nan_, nan_, nan_, nan_, 1, 1 }, dst));
+		}
+		// 4.
+		{
+			std::vector<double> dst;
+			make_delta({ 1, 2, nan_, nan_, nan_, 3, 4, 5 }, dst, 2, 1, 1);
+			assert(equal_with_nan({ 1, nan_, nan_, nan_, nan_, 1, 1, nan_}, dst));
+		}
+		// 5.
+		{
+			std::vector<double> dst;
+			make_delta({ 1, 2, nan_, nan_, nan_, 3, 4, 5 }, dst, 2, 3, 0);
+			assert(equal_with_nan({ nan_, nan_, nan_, nan_, nan_, 1, 2, nan_ }, dst));
+		}
+		// 6.
+		{
+			std::vector<double> dst;
+			make_delta({ 1, 2, nan_, nan_, nan_, 3, 4, 5 }, dst, 3, 3, 0);
+			assert(equal_with_nan({ nan_, nan_, nan_, nan_, nan_, 1, 2, 3 }, dst));
 		}
 	}
 }

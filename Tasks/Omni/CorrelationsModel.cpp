@@ -8,9 +8,6 @@
 
 using namespace std;
 
-const char* const dest_schema = "ready";
-const char* const dest_table = "daily_0001";
-
 //----------------------------------------------------------------------------------------------------------
 CorrelationsModel::CorrelationsModel(const std::vector<ColumnMetaData>& col_infos, DbAccess& db, QObject* parent)
 	: QAbstractTableModel(parent)
@@ -44,7 +41,7 @@ void CorrelationsModel::_load()
 			normalized_cols.emplace_back(col_info.column_);
 		}
 	}
-	DataFrame data = db_.load_data("ready", table_name, normalized_cols);
+	DataFrame data = db_.load_data(g_dest_schema, table_name, normalized_cols);
 	data_.calculate(data);
 	endResetModel();
 }

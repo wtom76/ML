@@ -22,6 +22,8 @@ private:
 	DbAccess& db_;
 
 // methods
+	void _make_feature_delta(int idx, ptrdiff_t period, bool next);
+
 public:
 	MetaDataModel(DbAccess& db, QObject* parent);
 	~MetaDataModel();
@@ -39,10 +41,12 @@ public:
 	void normalize_column(wtom::ml::math::NormalizationMethod method, int idx);
 	void normalize_all();
 	void make_target(int idx);
+	void make_feature_delta(int idx, ptrdiff_t period);
 
 	Qt::DropActions supportedDropActions() const override { return Qt::CopyAction; }
 
-	std::vector<ColumnMetaData> columnInfos() const noexcept { return data_; }
+	std::vector<ColumnMetaData> columnInfos() const noexcept { return data_; } // copy?
+	const ColumnMetaData& col_meta(int idx) const { return data_[idx]; }
 	DataFrame load_column(int idx) const;
 	void store_column(int idx, const DataFrame& df) const;
 };

@@ -27,11 +27,14 @@
     <property name="title">
      <string>Ready</string>
     </property>
+    <addaction name="actionDeleteColumn"/>
+    <addaction name="separator"/>
     <addaction name="actionAdjustSplits"/>
     <addaction name="actionNormalizeColumn"/>
     <addaction name="actionNormalizeAll"/>
+    <addaction name="separator"/>
     <addaction name="actionMake_target"/>
-    <addaction name="actionDeleteColumn"/>
+    <addaction name="actionCreate_features"/>
    </widget>
    <addaction name="menuReady"/>
   </widget>
@@ -67,6 +70,16 @@
   <action name="actionAdjustSplits">
    <property name="text">
     <string>Adjust splits...</string>
+   </property>
+  </action>
+  <action name="actionColumn">
+   <property name="text">
+    <string>Column</string>
+   </property>
+  </action>
+  <action name="actionCreate_features">
+   <property name="text">
+    <string>Make features...</string>
    </property>
   </action>
  </widget>
