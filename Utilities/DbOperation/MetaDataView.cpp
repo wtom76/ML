@@ -5,6 +5,7 @@
 #include "NormalizationDlg.h"
 #include "AdjustSplitsDlg.h"
 #include "CreateFeaturesDlg.h"
+#include "MakeTargetDlg.h"
 
 //---------------------------------------------------------------------------------------------------------
 MetaDataView::MetaDataView(MetaDataModel* model)
@@ -109,7 +110,19 @@ void MetaDataView::make_target()
 	QModelIndex idx = currentIndex();
 	if (idx.isValid())
 	{
-		model_->make_target(idx.row());
+		MakeTargetDlg dlg{this};
+		if (dlg.exec() == QDialog::Accepted)
+		{
+			switch (dlg.type())
+			{
+			case MakeTargetDlg::Type::Delta:
+				model_->make_target_delta(idx.row(), dlg.period());
+				break;
+			case MakeTargetDlg::Type::WinLoss:
+				model_->make_target_winloss(idx.row(), dlg.win_loss_treshold());
+				break;
+			}
+		}
 	}
 }
 //----------------------------------------------------------------------------------------------------------
@@ -125,6 +138,7 @@ void MetaDataView::adjust_splits()
 		{
 			apply_splits(dlg.splits(), df, 0);
 			model_->store_column(idx.row(), df);
+			model_->load();
 		}
 	}
 }

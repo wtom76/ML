@@ -130,4 +130,53 @@ namespace wtom::ml::math
 			assert(equal_with_nan({ nan_, nan_, nan_, nan_, nan_, 1, 2, 3 }, dst));
 		}
 	}
+	//---------------------------------------------------------------------------------------------------------
+	/// will be on a next day, set future_shift = 1
+	inline void make_win_loss(const std::vector<double>& src, std::vector<double>& dst, double threshold, ptrdiff_t future_shift = 0)
+	{
+		assert(future_shift >= 0);
+
+		dst.resize(src.size(), std::numeric_limits<double>::quiet_NaN());
+		auto src_i = std::cbegin(src);
+		auto dst_i = std::begin(dst);
+		auto src_e = std::cend(src);
+		// 1.
+		if (!safe_advance(src_i, src, future_shift))
+		{
+			return;
+		}
+		// 2.
+		for (; src_i != src_e; ++src_i, ++dst_i)
+		{
+			if (std::isnan(*src_i))
+			{
+				continue;
+			}
+			const double prev_src = *src_i;
+			auto fwd_src_i = src_i;
+			++fwd_src_i;
+			for (; fwd_src_i != src_e; ++fwd_src_i)
+			{
+				if (std::isnan(*fwd_src_i))
+				{
+					continue;
+				}
+				const double delta = *fwd_src_i - prev_src;
+				if (delta >= threshold)
+				{
+					*dst_i = delta;
+					break;
+				}
+				else if (delta <= -threshold)
+				{
+					*dst_i = delta;
+					break;
+				}
+			}
+			if (fwd_src_i == src_e)
+			{
+				*dst_i = 0.;
+			}
+		}
+	}
 }

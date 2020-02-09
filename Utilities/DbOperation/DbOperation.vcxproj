@@ -140,6 +140,7 @@
     <ClCompile Include="CreateFeaturesDlg.cpp" />
     <ClCompile Include="DbOperation.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MakeTargetDlg.cpp" />
     <ClCompile Include="MetaDataView.cpp" />
     <ClCompile Include="NormalizationDlg.cpp" />
     <ClCompile Include="SourcesModel.cpp" />
@@ -168,6 +169,10 @@
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtDataVisualization;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtNetworkAuth;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(ROOT_DIR);$(ROOT_DIR)\Shared</IncludePath>
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtDataVisualization;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtNetworkAuth;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(ROOT_DIR);$(ROOT_DIR)\Shared</IncludePath>
     </QtMoc>
+    <QtMoc Include="MakeTargetDlg.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtDataVisualization;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtNetworkAuth;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(ROOT_DIR);$(ROOT_DIR)\Shared</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtDataVisualization;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtNetworkAuth;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(ROOT_DIR);$(ROOT_DIR)\Shared</IncludePath>
+    </QtMoc>
     <ClInclude Include="MetaDataView.h" />
     <QtMoc Include="NormalizationDlg.h">
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtDataVisualization;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtNetworkAuth;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;$(ROOT_DIR);$(ROOT_DIR)\Shared</IncludePath>
@@ -186,6 +191,7 @@
     <QtUic Include="AdjustSplitsDlg.ui" />
     <QtUic Include="CreateFeaturesDlg.ui" />
     <QtUic Include="DbOperation.ui" />
+    <QtUic Include="MakeTargetDlg.ui" />
     <QtUic Include="NormalizationDlg.ui" />
   </ItemGroup>
   <ItemGroup>

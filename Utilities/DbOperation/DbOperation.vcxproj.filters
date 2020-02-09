@@ -66,6 +66,9 @@
     <ClCompile Include="CreateFeaturesDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MakeTargetDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -103,6 +106,9 @@
     <QtMoc Include="CreateFeaturesDlg.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="MakeTargetDlg.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="DbOperation.ui">
@@ -118,6 +124,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="CreateFeaturesDlg.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="MakeTargetDlg.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

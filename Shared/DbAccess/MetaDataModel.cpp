@@ -18,7 +18,7 @@ MetaDataModel::MetaDataModel(DbAccess& db, QObject* parent)
 	, db_(db)
 {
 	// TEST
-	wtom::ml::math::test_make_delta();
+	//wtom::ml::math::test_make_delta();
 	//~TEST
 
 	load();
@@ -196,7 +196,11 @@ void MetaDataModel::_make_feature_delta(int idx, ptrdiff_t period, bool next)
 	ColumnMetaData target_meta{ data_[idx] };
 	target_meta.id_ = 0;
 	target_meta.description_ = (next ? "next "s : ""s) + "delta in "s + target_meta.column_;
-	target_meta.column_ += (next ? "_ft_delta_next_"s : "_ft_delta_"s) + to_string(period);
+	target_meta.column_ += "_ft_delta_"s + to_string(period);
+	if (next)
+	{
+		target_meta.column_ += "_next"s;
+	}
 	target_meta.normalized_ = false;
 	target_meta.norm_max_ = target_meta.norm_min_ = numeric_limits<double>::quiet_NaN();
 
@@ -215,14 +219,71 @@ void MetaDataModel::_make_feature_delta(int idx, ptrdiff_t period, bool next)
 	db_.store_column(target_meta, df);
 }
 //----------------------------------------------------------------------------------------------------------
-void MetaDataModel::make_target(int idx)
+void MetaDataModel::_make_feature_winloss(int idx, double treshold, bool next)
 {
-	_make_feature_delta(idx, 1, true);
+	assert(idx >= 0);
+	assert(idx < data_.size());
+
+	if (data_[idx].column_ == "date")
+	{
+		QMessageBox::warning(qApp->activeWindow(), "Making feature is rejected", "'data' column can't be feature origin");
+		return;
+	}
+
+	ColumnMetaData target_meta{ data_[idx] };
+	target_meta.id_ = 0;
+	target_meta.description_ = (next ? "next "s : ""s) + "winloss in "s + target_meta.column_;
+	target_meta.column_ += "_ft_winloss"s;
+	if (next)
+	{
+		target_meta.column_ += "_next"s;
+	}
+	target_meta.normalized_ = false;
+	target_meta.norm_max_ = target_meta.norm_min_ = numeric_limits<double>::quiet_NaN();
+
+	DataFrame df = load_column(idx);
+	vector<double>& target_col = *df.create_series(target_meta.column_, numeric_limits<double>::quiet_NaN());
+	const vector<double>& src_col = *df.series(data_[idx].column_);
+	if (next)
+	{
+		wtom::ml::math::make_win_loss(src_col, target_col, treshold, 1);
+	}
+	else
+	{
+		wtom::ml::math::make_win_loss(src_col, target_col, treshold);
+	}
+	db_.add_column(g_dest_schema, target_meta);
+	db_.store_column(target_meta, df);
+}
+//----------------------------------------------------------------------------------------------------------
+void MetaDataModel::make_target_delta(int idx, ptrdiff_t period)
+{
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
+	_make_feature_delta(idx, period, true);
+
+	load();
+	QApplication::restoreOverrideCursor();
+}
+//----------------------------------------------------------------------------------------------------------
+void MetaDataModel::make_target_winloss(int idx, double treshold)
+{
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
+	_make_feature_winloss(idx, treshold, true);
+
+	load();
+	QApplication::restoreOverrideCursor();
 }
 //----------------------------------------------------------------------------------------------------------
 void MetaDataModel::make_feature_delta(int idx, ptrdiff_t period)
 {
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
 	_make_feature_delta(idx, period, false);
+
+	load();
+	QApplication::restoreOverrideCursor();
 }
 //----------------------------------------------------------------------------------------------------------
 DataFrame MetaDataModel::load_column(int idx) const

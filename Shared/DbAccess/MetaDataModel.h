@@ -23,6 +23,7 @@ private:
 
 // methods
 	void _make_feature_delta(int idx, ptrdiff_t period, bool next);
+	void _make_feature_winloss(int idx, double treshold, bool next);
 
 public:
 	MetaDataModel(DbAccess& db, QObject* parent);
@@ -40,7 +41,8 @@ public:
 	void delete_column(int idx);
 	void normalize_column(wtom::ml::math::NormalizationMethod method, int idx);
 	void normalize_all();
-	void make_target(int idx);
+	void make_target_delta(int idx, ptrdiff_t period);
+	void make_target_winloss(int idx, double treshold);
 	void make_feature_delta(int idx, ptrdiff_t period);
 
 	Qt::DropActions supportedDropActions() const override { return Qt::CopyAction; }

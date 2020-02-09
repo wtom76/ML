@@ -64,7 +64,7 @@
   </action>
   <action name="actionMake_target">
    <property name="text">
-    <string>Make target</string>
+    <string>Make target...</string>
    </property>
   </action>
   <action name="actionAdjustSplits">
