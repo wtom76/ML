@@ -332,7 +332,7 @@ void DbAccess::store_column(const ColumnMetaData& col_info, const DataFrame& dat
 	try
 	{
 		vector<system_clock::time_point>& idx = const_cast<vector<system_clock::time_point>&>(data.index());
-		const vector<double>& values = *data.series(col_info.column_);
+		const vector<double>& values = data.series(col_info.column_);
 		vector<indicator> value_flags;
 		{
 			value_flags.resize(idx.size(), i_ok);

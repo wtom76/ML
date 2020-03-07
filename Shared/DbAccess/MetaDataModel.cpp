@@ -32,6 +32,7 @@ void MetaDataModel::load()
 {
 	beginResetModel();
 	data_ = db_.load_meta_data();
+	checked_.resize(data_.size(), Qt::Unchecked);
 	endResetModel();
 }
 //----------------------------------------------------------------------------------------------------------
@@ -43,6 +44,17 @@ int MetaDataModel::rowCount(const QModelIndex& parent) const
 int MetaDataModel::columnCount(const QModelIndex& parent) const
 {
 	return parent.isValid() ? 0 : column_count_;
+}
+//----------------------------------------------------------------------------------------------------------
+Qt::ItemFlags MetaDataModel::flags(const QModelIndex& index) const
+{
+	switch (index.column())
+	{
+	case 0:
+		return QAbstractItemModel::flags(index) | Qt::ItemIsUserCheckable;
+	default:
+		return QAbstractItemModel::flags(index);
+	}
 }
 //----------------------------------------------------------------------------------------------------------
 QVariant MetaDataModel::data(const QModelIndex& index, int role) const
@@ -65,8 +77,33 @@ QVariant MetaDataModel::data(const QModelIndex& index, int role) const
 			case 7:	return data_[index.row()].unit_id_;
 			}
 		}
+		break;
+	case Qt::CheckStateRole:
+		switch (index.column())
+		{
+		case 0:
+			return checked_[index.row()];
+		}
+		break;
 	}
+
 	return QVariant();
+}
+//----------------------------------------------------------------------------------------------------------
+bool MetaDataModel::setData(const QModelIndex& index, const QVariant& value, int role)
+{
+	switch (role)
+	{
+	case Qt::CheckStateRole:
+		switch (index.column())
+		{
+		case 0:
+			checked_[index.row()] = static_cast<Qt::CheckState>(value.toInt());
+			return true;
+		}
+		break;
+	}
+	return false;
 }
 //----------------------------------------------------------------------------------------------------------
 QVariant MetaDataModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -206,7 +243,7 @@ void MetaDataModel::_make_feature_delta(int idx, ptrdiff_t period, bool next)
 
 	DataFrame df = load_column(idx);
 	vector<double>& target_col = *df.create_series(target_meta.column_, numeric_limits<double>::quiet_NaN());
-	const vector<double>& src_col = *df.series(data_[idx].column_);
+	const vector<double>& src_col = df.series(data_[idx].column_);
 	if (next)
 	{
 		wtom::ml::math::make_delta(src_col, target_col, max_tolerated_gap, period, 1);
@@ -243,15 +280,52 @@ void MetaDataModel::_make_feature_winloss(int idx, double treshold, bool next)
 
 	DataFrame df = load_column(idx);
 	vector<double>& target_col = *df.create_series(target_meta.column_, numeric_limits<double>::quiet_NaN());
-	const vector<double>& src_col = *df.series(data_[idx].column_);
+	const vector<double>& src_col = df.series(data_[idx].column_);
 	if (next)
 	{
-		wtom::ml::math::make_win_loss(src_col, target_col, treshold, 1);
+		wtom::ml::math::make_win_loss_close(src_col, target_col, treshold, 1);
 	}
 	else
 	{
-		wtom::ml::math::make_win_loss(src_col, target_col, treshold);
+		wtom::ml::math::make_win_loss_close(src_col, target_col, treshold);
 	}
+	db_.add_column(g_dest_schema, target_meta);
+	db_.store_column(target_meta, df);
+}
+//----------------------------------------------------------------------------------------------------------
+void MetaDataModel::_make_feature_target_ohlc(const array<int, 4>& ohlc_idxs, double treshold, bool next)
+{
+	for (int i : ohlc_idxs)
+	{
+		assert(i >= 0);
+		assert(i < data_.size());
+	}
+
+	ColumnMetaData target_meta{ data_[ohlc_idxs[0]] };
+	target_meta.id_ = 0;
+	target_meta.description_ = "OHLC win/loss";
+	target_meta.column_ = "target_ohlc_winloss"s;
+	if (next)
+	{
+		target_meta.column_ += "_next"s;
+	}
+	target_meta.normalized_ = false;
+	target_meta.norm_max_ = target_meta.norm_min_ = numeric_limits<double>::quiet_NaN();
+
+	DataFrame df = load_column(ohlc_idxs[0]);
+	for (int i : {1, 2, 3})
+	{
+		df.append_equal(load_column(ohlc_idxs[i]));
+	}
+
+	vector<double>& target_col = *df.create_series(target_meta.column_, numeric_limits<double>::quiet_NaN());
+	std::array<const vector<double>*, 4> ohlc_series{
+		&df.series(data_[ohlc_idxs[0]].column_),
+		&df.series(data_[ohlc_idxs[1]].column_),
+		&df.series(data_[ohlc_idxs[2]].column_),
+		&df.series(data_[ohlc_idxs[3]].column_)
+	};
+	wtom::ml::math::make_target_ohlc(ohlc_series, target_col, treshold, next ? 1 : 0);
 	db_.add_column(g_dest_schema, target_meta);
 	db_.store_column(target_meta, df);
 }
@@ -271,6 +345,16 @@ void MetaDataModel::make_target_winloss(int idx, double treshold)
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 
 	_make_feature_winloss(idx, treshold, true);
+
+	load();
+	QApplication::restoreOverrideCursor();
+}
+//----------------------------------------------------------------------------------------------------------
+void MetaDataModel::make_target_ohlc(const std::array<int, 4>& ohlc_idxs, double treshold)
+{
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
+	_make_feature_target_ohlc(ohlc_idxs, treshold, true);
 
 	load();
 	QApplication::restoreOverrideCursor();

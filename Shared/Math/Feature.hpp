@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <array>
 #include <cmath>
 
 using std::ptrdiff_t;
@@ -132,7 +133,8 @@ namespace wtom::ml::math
 	}
 	//---------------------------------------------------------------------------------------------------------
 	/// will be on a next day, set future_shift = 1
-	inline void make_win_loss(const std::vector<double>& src, std::vector<double>& dst, double threshold, ptrdiff_t future_shift = 0)
+	/// Filtered by threshold next_non_nan_close - prev_close (prev means that current figure is shifted one step backward)
+	inline void make_win_loss_close(const std::vector<double>& src, std::vector<double>& dst, double threshold, ptrdiff_t future_shift = 0)
 	{
 		assert(future_shift >= 0);
 
@@ -174,6 +176,58 @@ namespace wtom::ml::math
 				}
 			}
 			if (fwd_src_i == src_e)
+			{
+				*dst_i = 0.;
+			}
+		}
+	}
+	//---------------------------------------------------------------------------------------------------------
+	/// will be on a next day, set future_shift = 1
+	/// Filtered by threshold c > o ? h - o : o - l : 0.
+	inline void make_target_ohlc(
+		const std::array<const std::vector<double>*, 4>& ohlc,
+		std::vector<double>& dst,
+		double threshold,
+		ptrdiff_t future_shift = 0
+	)
+	{
+		assert(future_shift >= 0);
+		assert(ohlc[0]->size() == ohlc[1]->size());
+		assert(ohlc[0]->size() == ohlc[2]->size());
+		assert(ohlc[0]->size() == ohlc[3]->size());
+
+		dst.resize(ohlc[0]->size(), std::numeric_limits<double>::quiet_NaN());
+		auto src_o_i = std::cbegin(*ohlc[0]);
+		auto src_h_i = std::cbegin(*ohlc[1]);
+		auto src_l_i = std::cbegin(*ohlc[2]);
+		auto src_c_i = std::cbegin(*ohlc[3]);
+		auto dst_i = std::begin(dst);
+		auto src_o_e = std::cend(*ohlc[0]);
+		// 1.
+		if (!safe_advance(src_o_i, *ohlc[0], future_shift))
+		{
+			return;
+		}
+		++src_h_i;
+		++src_l_i;
+		++src_c_i;
+		// 2.
+		for (; src_o_i != src_o_e; ++src_o_i, ++src_h_i, ++src_l_i, ++src_c_i, ++dst_i)
+		{
+			if (std::isnan(*src_o_i) || std::isnan(*src_h_i) || std::isnan(*src_l_i) || std::isnan(*src_c_i))
+			{
+				continue;
+			}
+			const double delta = *src_c_i > *src_o_i ? *src_h_i - *src_o_i : (*src_c_i < *src_o_i ? *src_o_i - *src_l_i : 0.);
+			if (delta >= threshold)
+			{
+				*dst_i = delta;
+			}
+			else if (delta <= -threshold)
+			{
+				*dst_i = delta;
+			}
+			else
 			{
 				*dst_i = 0.;
 			}

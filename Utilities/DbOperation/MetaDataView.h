@@ -15,6 +15,9 @@ protected:
 	void dragMoveEvent(QDragMoveEvent* event) override;
 	void dropEvent(QDropEvent* event) override;
 
+	std::vector<std::pair<std::string, int>> _series_names() const;
+	void _show_make_target_ohlc_dlg(double wl_threshold) const;
+
 public:
 	explicit MetaDataView(MetaDataModel* model);
 	virtual ~MetaDataView();

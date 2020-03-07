@@ -25,6 +25,10 @@ MakeTargetDlg::Type MakeTargetDlg::type() const noexcept
 	{
 		return Type::WinLoss;
 	}
+	else if (text == "OHLC")
+	{
+		return Type::OHLC;
+	}
 	else
 	{
 		return Type::Undefined;
@@ -43,7 +47,7 @@ ptrdiff_t MakeTargetDlg::period() const noexcept
 	return ui_.period_->text().toInt();
 }
 //---------------------------------------------------------------------------------------------------------
-double MakeTargetDlg::win_loss_treshold() const noexcept
+double MakeTargetDlg::win_loss_threshold() const noexcept
 {
 	return ui_.win_loss_threshold_->text().toDouble();
 }

@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>087de0cf-6c98-49a6-8b6d-a03e93da086a</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>PythonDiscovery.py</StartupFile>
+    <StartupFile>Charts_ohlc.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,6 +22,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Charts.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Charts_ohlc.py" />
     <Compile Include="PythonDiscovery.py" />
   </ItemGroup>
   <ItemGroup>

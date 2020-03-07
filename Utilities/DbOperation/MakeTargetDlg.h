@@ -15,7 +15,8 @@ public:
 	{
 		Undefined = 0,
 		Delta,
-		WinLoss
+		WinLoss,
+		OHLC
 	};
 
 private:
@@ -30,5 +31,5 @@ public:
 
 	Type type() const noexcept;
 	ptrdiff_t period() const noexcept;
-	double win_loss_treshold() const noexcept;
+	double win_loss_threshold() const noexcept;
 };

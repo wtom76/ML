@@ -51,6 +51,9 @@
    <property name="text">
     <string>Delete column</string>
    </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
   </action>
   <action name="actionNormalizeColumn">
    <property name="text">
