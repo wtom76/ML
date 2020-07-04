@@ -4,18 +4,15 @@
 #include <soci/soci.h>
 #include <soci/postgresql/soci-postgresql.h>
 #include <Shared/Utility/types.hpp>
-#include <QSqlQuery>
-#include <QSqlError>
-#include <QVariant>
-#include <QDate>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
+#include <QtCore/QVariant>
+#include <QtCore/QDate>
 #include "DbAccess.h"
 
 using namespace std;
 using namespace chrono;
 using namespace soci;
-
-const string g_dest_schema = "ready"s;
-const string g_dest_table = "daily_0001"s;
 
 namespace soci
 {
@@ -211,13 +208,14 @@ void DbAccess::add_column(const string& dest_schema_name, const ColumnMetaData& 
 		// 2.
 		const string origin_str = origin.to_string();
 		impl_->sql_ <<
-			"INSERT INTO " << dest_schema_name << ".meta_data (\"table\", \"column\", \"description\", \"origin\", \"unit_id\")"
-			" VALUES (:dest_table_name, :column, :description, :origin, :unit_id);"
+			"INSERT INTO " << dest_schema_name << ".meta_data (\"table\", \"column\", \"description\", \"origin\", \"unit_id\", \"is_target\")"
+			" VALUES (:dest_table_name, :column, :description, :origin, :unit_id, :is_target);"
 			, use(col_meta.table_,		"dest_table_name"s)
 			, use(col_meta.description_,"description"s)
 			, use(col_meta.column_,		"column"s)
 			, use(origin_str,			"origin"s)
-			, use(col_meta.unit_id_,	"unit_id"s);
+			, use(col_meta.unit_id_,	"unit_id"s)
+			, use(col_meta.is_target_,	"is_target"s);
 	}
 	catch (const exception & ex)
 	{
@@ -244,12 +242,12 @@ void DbAccess::copy_column_data(const string& dest_schema_name, const string& de
 	}
 }
 //----------------------------------------------------------------------------------------------------------
-void DbAccess::delete_column(const string& dest_schema_name, const string& dest_table_name, const ColumnMetaData& col_info)
+void DbAccess::delete_column(const string& dest_schema_name, const ColumnMetaData& col_info)
 {
 	try
 	{
 		impl_->sql_ <<
-			"ALTER TABLE " << dest_schema_name << "." << dest_table_name << " DROP COLUMN " << col_info.column_;
+			"ALTER TABLE " << dest_schema_name << "." << col_info.table_ << " DROP COLUMN " << col_info.column_;
 		impl_->sql_ <<
 			"DELETE FROM " << dest_schema_name << ".meta_data WHERE id = :id;"
 		, use(col_info.id_);
@@ -297,13 +295,14 @@ vector<ColumnMetaData> DbAccess::load_meta_data() const
 	static constexpr int unit_id_idx		= 8;
 	static constexpr int date_min_idx		= 9;
 	static constexpr int date_max_idx		= 10;
+	static constexpr int is_target_idx		= 11;
 
 	vector<ColumnMetaData> result;
 
 	try
 	{
 		rowset<row> rs = (impl_->sql_.prepare <<
-		"SELECT id, \"table\", \"column\", description, origin, normalized, norm_min, norm_max, unit_id, date_min, date_max FROM ready.meta_data;");
+		"SELECT id, \"table\", \"column\", description, origin, normalized, norm_min, norm_max, unit_id, date_min, date_max, is_target FROM ready.meta_data;");
 		for (auto& row : rs)
 		{
 			ColumnMetaData& data = result.emplace_back(ColumnMetaData{});
@@ -318,6 +317,7 @@ vector<ColumnMetaData> DbAccess::load_meta_data() const
 			data.unit_id_		= row.get<long long>(unit_id_idx);
 			data.date_min_		= row.get<decltype(data.date_min_)>(date_min_idx);
 			data.date_max_		= row.get<decltype(data.date_max_)>(date_max_idx);
+			data.is_target_		= row.get<char>(is_target_idx) == '1';
 		}
 		return result;
 	}

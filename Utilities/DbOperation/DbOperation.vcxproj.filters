@@ -72,6 +72,9 @@
     <ClCompile Include="TargetOhlcSourceDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DbParamsDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -115,6 +118,9 @@
     <QtMoc Include="TargetOhlcSourceDlg.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="DbParamsDlg.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="DbOperation.ui">
@@ -136,6 +142,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="TargetOhlcSourceDlg.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="DbParamsDlg.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

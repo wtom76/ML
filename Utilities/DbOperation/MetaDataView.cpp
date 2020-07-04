@@ -1,4 +1,7 @@
 #include "stdafx.h"
+#include <QDragEnterEvent>
+#include <QMimeData>
+#include <QMessageBox>
 #include <Shared/DbAccess/MetaDataModel.h>
 #include "MetaDataView.h"
 #include "AddColumnDialog.h"
@@ -68,7 +71,7 @@ void MetaDataView::dropEvent(QDropEvent* event)
 			{
 				throw std::runtime_error("Unit is not selected");
 			}
-			model_->add_column(path, unit_id);
+			model_->add_column(path, dlg.dest_table(), unit_id, dlg.is_target());
 		}
 		catch (const std::exception& ex)
 		{
@@ -91,26 +94,20 @@ std::vector<std::pair<std::string, int>> MetaDataView::_series_names() const
 	return names;
 }
 //----------------------------------------------------------------------------------------------------------
-void MetaDataView::delete_column()
+void MetaDataView::delete_checked_columns()
 {
-	QModelIndex idx = currentIndex();
-	if (idx.isValid() &&
-		QMessageBox::question(this, "Deleting column", "Confirm column deletion", QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
+	if (QMessageBox::question(this, "Deleting columns", "Confirm checked columns deletion", QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
 	{
-		model_->delete_column(idx.row());
+		model_->delete_checked_columns();
 	}
 }
 //----------------------------------------------------------------------------------------------------------
-void MetaDataView::normalize_column()
+void MetaDataView::normalize_checked_columns()
 {
-	QModelIndex idx = currentIndex();
-	if (idx.isValid())
+	NormalizationDlg dlg{this};
+	if (dlg.exec() == QDialog::Accepted)
 	{
-		NormalizationDlg dlg{this};
-		if (dlg.exec() == QDialog::Accepted)
-		{
-			model_->normalize_column(dlg.method(), idx.row());
-		}
+		model_->normalize_checked_columns(dlg.method());
 	}
 }
 //----------------------------------------------------------------------------------------------------------

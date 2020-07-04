@@ -15,7 +15,7 @@ public:
 	wtom::ml::math::Range min_max_{std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()};
 
 public:
-	explicit ColumnMetrics(DataFrame::series_t* data);
+	explicit ColumnMetrics(DataFrame::series_t& data);
 	~ColumnMetrics();
 };
 

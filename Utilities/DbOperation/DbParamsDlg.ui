@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DbParamsDlg</class>
+ <widget class="QDialog" name="DbParamsDlg">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>235</width>
+    <height>71</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>DbParamsDlg</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Destinaion DB schema</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="dest_schema_">
+         <item>
+          <property name="text">
+           <string>ready</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>DbParamsDlg</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>232</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>174</x>
+     <y>200</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>DbParamsDlg</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>309</x>
+     <y>269</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>197</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

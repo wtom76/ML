@@ -5,19 +5,19 @@
 using namespace std;
 
 //----------------------------------------------------------------------------------------------------------
-ColumnMetrics::ColumnMetrics(DataFrame::series_t* data)
+ColumnMetrics::ColumnMetrics(DataFrame::series_t& data)
 {
-	if (!data || data->empty())
+	if (data.empty())
 	{
 		return;
 	}
-	size_t row_count = data->size();
+	size_t row_count = data.size();
 	if (!row_count)
 	{
 		return;
 	}
 	size_t nan_count = 0;
-	min_max_ = wtom::ml::math::min_max_nan(*data, nan_count);
+	min_max_ = wtom::ml::math::min_max_nan(data, nan_count);
 	assert(row_count >= nan_count);
 	valid_count_ = row_count - nan_count;
 	null_count_ = nan_count;

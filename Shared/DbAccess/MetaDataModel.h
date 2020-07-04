@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <array>
-#include <QAbstractTableModel>
+#include <QtCore/QAbstractTableModel>
 #include <Shared/DbAccess/DbAccess.h>
 #include <Shared/Math/Normalization.hpp>
 
@@ -15,7 +15,7 @@ class MetaDataModel : public QAbstractTableModel
 
 // data
 private:
-	static constexpr int column_count_ = 8;
+	static constexpr int column_count_ = 9;
 
 	std::vector<ColumnMetaData> data_;
 	std::vector<Qt::CheckState> checked_;
@@ -41,9 +41,9 @@ public:
 	//~QAbstractTableModel impl
 
 	void load();
-	void add_column(const ColumnPath& path, int unit_id);
-	void delete_column(int idx);
-	void normalize_column(wtom::ml::math::NormalizationMethod method, int idx);
+	void add_column(const ColumnPath& path, const std::string& dest_table, int unit_id, bool is_target);
+	void delete_checked_columns();
+	void normalize_checked_columns(wtom::ml::math::NormalizationMethod method);
 	void normalize_all();
 	void make_target_delta(int idx, ptrdiff_t period);
 	void make_target_winloss(int idx, double treshold);
@@ -54,6 +54,6 @@ public:
 
 	std::vector<ColumnMetaData> columnInfos() const noexcept { return data_; } // copy?
 	const ColumnMetaData& col_meta(int idx) const { return data_[idx]; }
-	DataFrame load_column(int idx) const;
-	void store_column(int idx, const DataFrame& df) const;
+	DataFrame load_column(size_t idx) const;
+	void store_column(size_t idx, const DataFrame& df) const;
 };

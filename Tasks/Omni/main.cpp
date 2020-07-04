@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Omni.h"
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QMessageBox>
 
 int main(int argc, char *argv[])
 {

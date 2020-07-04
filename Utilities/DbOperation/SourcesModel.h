@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <QAbstractItemModel>
+#include <QtCore/QAbstractItemModel>
 #include <Shared/Utility/types.hpp>
 #include "TreeItem.h"
 

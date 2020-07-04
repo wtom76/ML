@@ -5,11 +5,17 @@
 using namespace std;
 
 //----------------------------------------------------------------------------------------------------------
-ColumnMetaData::ColumnMetaData(const string& dest_table_name, const std::string& dest_column_name, int unit_id, const ColumnPath& origin)
+ColumnMetaData::ColumnMetaData(
+	const string& dest_table_name,
+	const std::string& dest_column_name,
+	int unit_id,
+	const ColumnPath& origin,
+	bool is_target)
 	: table_{dest_table_name}
 	, column_{dest_column_name}
 	, unit_id_{unit_id}
 	, origin_{origin.to_string()}
+	, is_target_{is_target}
 {}
 //----------------------------------------------------------------------------------------------------------
 ColumnPath ColumnMetaData::column_path() const

@@ -1,4 +1,8 @@
 #include "stdafx.h"
+#include <QApplication>
+#include <QMouseEvent>
+#include <QMimeData>
+#include <QDrag>
 #include <Shared/DbAccess/ColumnPath.h>
 #include "SourcesView.h"
 #include "SourcesModel.h"

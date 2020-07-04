@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>087de0cf-6c98-49a6-8b6d-a03e93da086a</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Charts_ohlc.py</StartupFile>
+    <StartupFile>Patterns.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -26,6 +26,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Charts_ohlc.py" />
+    <Compile Include="Patterns.py" />
     <Compile Include="PythonDiscovery.py" />
   </ItemGroup>
   <ItemGroup>

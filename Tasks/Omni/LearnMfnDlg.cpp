@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <QMessageBox>
 #include <algorithm>
 #include <Shared/DbAccess/ColumnMetaData.h>
 #include <Shared/DbAccess/DbAccess.h>
@@ -132,11 +133,7 @@ std::pair<DataFrame, DataView> LearnMfnDlg::_prepare_data(const string& schema, 
 	{
 		if (col_name != target_name)
 		{
-			DataFrame::series_t* series = df.series(col_name);
-			if (series)
-			{
-				data::fill_missing_forward(*series, max_tolerated_gap);
-			}
+			data::fill_missing_forward(df.series(col_name), max_tolerated_gap);
 		}
 	}
 	// 3.
@@ -183,11 +180,12 @@ void LearnMfnDlg::slot_learn()
 	}
 
 	const vector<string> input_names = _input_names(*target_column);
-	std::pair<DataFrame, DataView> dfv = _prepare_data(g_dest_schema, target_column->table_, target_column->column_, input_names);
+	std::pair<DataFrame, DataView> dfv = _prepare_data(db_->dest_schema(), target_column->table_, target_column->column_, input_names);
 	const vector<string> target_names{target_column->column_};
 
 	const size_t cols_wt_target = col_infos_.size() - 1;
-	wtom::ml::neuro::net::Config mfn_cfg{ {cols_wt_target, cols_wt_target, cols_wt_target, 1} };
+	//wtom::ml::neuro::net::Config mfn_cfg{ {cols_wt_target, cols_wt_target, cols_wt_target, 1} };
+	wtom::ml::neuro::net::Config mfn_cfg{ {cols_wt_target, 2, 1} };
 	mfn_ = std::make_unique<Network>(mfn_cfg);
 	teacher_ = std::make_unique<Teacher>(std::move(dfv), input_names, target_names);
 

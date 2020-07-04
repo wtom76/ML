@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include <QSqlQuery>
-#include <QSqlError>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
 #include <QMessageBox>
 #include <QApplication>
 #include <Shared/DbAccess/DbAccess.h>
@@ -41,7 +41,7 @@ void CorrelationsModel::_load()
 			normalized_cols.emplace_back(col_info.column_);
 		}
 	}
-	DataFrame data = db_.load_data(g_dest_schema, table_name, normalized_cols);
+	DataFrame data = db_.load_data(db_.dest_schema(), table_name, normalized_cols);
 	data_.calculate(data);
 	endResetModel();
 }

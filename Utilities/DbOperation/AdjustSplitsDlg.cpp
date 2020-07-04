@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <QAbstractTableModel>
+#include <QDateTime>
 #include "AdjustSplitsDlg.h"
 
 using namespace std;
@@ -106,7 +107,7 @@ QVariant SplitsModel::headerData(int section, Qt::Orientation orientation, int r
 //---------------------------------------------------------------------------------------------------------
 Qt::ItemFlags SplitsModel::flags(const QModelIndex& index) const
 {
-	return !index.isValid() ? 0 : Qt::ItemIsEditable | QAbstractItemModel::flags(index);
+	return !index.isValid() ? Qt::ItemFlags{} : Qt::ItemIsEditable | QAbstractItemModel::flags(index);
 }
 //---------------------------------------------------------------------------------------------------------
 bool SplitsModel::setData(const QModelIndex& index, const QVariant& value, int role)

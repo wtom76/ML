@@ -221,7 +221,7 @@ ColumnPath SourcesModel::buildPath(const QModelIndex& index) const
 //---------------------------------------------------------------------------------------------------------
 Qt::ItemFlags SourcesModel::flags(const QModelIndex& index) const
 {
-	return !index.isValid() ? 0 : QAbstractItemModel::flags(index) | Qt::ItemIsDragEnabled;
+	return !index.isValid() ? Qt::ItemFlags{} : QAbstractItemModel::flags(index) | Qt::ItemIsDragEnabled;
 }
 //---------------------------------------------------------------------------------------------------------
 bool SourcesModel::setData(const QModelIndex& index, const QVariant& value, int role)

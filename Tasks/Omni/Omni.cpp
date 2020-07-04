@@ -51,14 +51,14 @@ QtCharts::QChart* Omni::_createChart()
 		}
 		col_names.emplace_back(col_info.column_);
 	}
-	DataFrame df = db_->load_data(g_dest_schema, table_name, col_names);
+	DataFrame df = db_->load_data(db_->dest_schema(), table_name, col_names);
 	for (const string& col_name : df.names())
 	{
 		QtCharts::QScatterSeries* dst_series = new QtCharts::QScatterSeries(chart);
 		dst_series->setName(QString::fromStdString(col_name));
 		{
 			auto idx_i = df.index().cbegin();
-			const DataFrame::series_t& series = *df.series(col_name);
+			const DataFrame::series_t& series = df.series(col_name);
 			for (double point : series)
 			{
 				dst_series->append(static_cast<double>(idx_i->time_since_epoch().count()), point);

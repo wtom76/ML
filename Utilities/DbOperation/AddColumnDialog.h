@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QDialog>
+#include <QtWidgets/QDialog>
 #include "ui_AddColumnDialog.h"
 #include "SourcesModel.h"
 
@@ -21,4 +21,6 @@ public:
 
 	void setColumn(const ColumnPath& path);
 	int selectedUnitId() const;
+	std::string dest_table() const;
+	bool is_target() const;
 };

@@ -6,7 +6,7 @@ MakeTargetDlg::MakeTargetDlg(QWidget* parent)
 	: QDialog(parent)
 {
 	ui_.setupUi(this);
-	connect(ui_.type_, QOverload<const QString&>::of(&QComboBox::currentIndexChanged),
+	connect(ui_.type_, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		[this](){ _on_type_changed(); });
 }
 //---------------------------------------------------------------------------------------------------------

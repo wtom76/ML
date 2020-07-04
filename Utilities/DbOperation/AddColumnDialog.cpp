@@ -50,3 +50,13 @@ int AddColumnDialog::selectedUnitId() const
 	const QVariant var = ui_.units_->currentData(Qt::UserRole);
 	return var.isValid() ? var.toInt() : -1;
 }
+//----------------------------------------------------------------------------------------------------------
+std::string AddColumnDialog::dest_table() const
+{
+	return ui_.dest_table_->currentText().toStdString();
+}
+//----------------------------------------------------------------------------------------------------------
+bool AddColumnDialog::is_target() const
+{
+	return ui_.is_target_->checkState() == Qt::Checked;
+}
