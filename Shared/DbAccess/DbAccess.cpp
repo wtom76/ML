@@ -317,7 +317,7 @@ vector<ColumnMetaData> DbAccess::load_meta_data() const
 			data.unit_id_		= row.get<long long>(unit_id_idx);
 			data.date_min_		= row.get<decltype(data.date_min_)>(date_min_idx);
 			data.date_max_		= row.get<decltype(data.date_max_)>(date_max_idx);
-			data.is_target_		= row.get<char>(is_target_idx) == '1';
+			data.is_target_		= row.get<bool>(is_target_idx, false);
 		}
 		return result;
 	}
@@ -348,24 +348,51 @@ void DbAccess::store_column(const ColumnMetaData& col_info, const DataFrame& dat
 			<< "UPDATE ready." << col_info.table_ << " SET " << col_info.column_ << " = :val WHERE date = :date"
 			, use(values, value_flags, "val"s)
 			, use(idx, "date"s);
+	}
+	catch (const exception & ex)
+	{
+		throw runtime_error("Failed to store column data. "s + ex.what());
+	}
 
+	store_column_metadata(col_info);
+}
+//----------------------------------------------------------------------------------------------------------
+void DbAccess::store_column_metadata(const ColumnMetaData& col_info) const
+{
+	try
+	{
 		const double norm_min = col_info.normalized_ ? col_info.norm_min_ : 0.;
 		const double norm_max = col_info.normalized_ ? col_info.norm_max_ : 0.;
 
 		impl_->sql_
 			<< "UPDATE ready.meta_data "
-			"SET normalized = :normalized, norm_min = :norm_min, norm_max = :norm_max, date_min = :date_min, date_max = :date_max "
+			"SET normalized = :normalized, norm_min = :norm_min, norm_max = :norm_max, date_min = :date_min, date_max = :date_max, is_target = :is_target "
 			"WHERE id = :id"
 			, use(col_info.normalized_, "normalized")
 			, use(norm_min, "norm_min")
 			, use(norm_max, "norm_max")
 			, use(col_info.id_, "id")
 			, use(col_info.date_min_, "date_min")
-			, use(col_info.date_max_, "date_max");
+			, use(col_info.date_max_, "date_max")
+			, use(col_info.is_target_, "is_target");
 	}
 	catch (const exception & ex)
 	{
-		throw runtime_error("Failed to store column data. "s + ex.what());
+		throw runtime_error("Failed to store column metadata. "s + ex.what());
+	}
+}
+//----------------------------------------------------------------------------------------------------------
+void DbAccess::store_column_metadata_is_target(const ColumnMetaData& col_info) const
+{
+	try
+	{
+		impl_->sql_ << "UPDATE ready.meta_data SET is_target = :is_target WHERE id = :id"
+			, use(col_info.id_, "id")
+			, use(col_info.is_target_, "is_target");
+	}
+	catch (const exception & ex)
+	{
+		throw runtime_error("Failed to store column metadata. "s + ex.what());
 	}
 }
 //----------------------------------------------------------------------------------------------------------

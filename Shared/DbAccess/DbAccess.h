@@ -50,5 +50,7 @@ public:
 	std::vector<UnitInfo> load_units() const;
 	std::vector<ColumnMetaData> load_meta_data() const;
 	void store_column(const ColumnMetaData& col_info, const DataFrame& data) const;
+	void store_column_metadata(const ColumnMetaData& col_info) const;
+	void store_column_metadata_is_target(const ColumnMetaData& col_info) const;
 	DataFrame load_data(const std::string& schema, const std::string& table_name, const std::vector<std::string>& col_names) const;
 };

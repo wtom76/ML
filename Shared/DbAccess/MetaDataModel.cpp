@@ -86,7 +86,7 @@ QVariant MetaDataModel::data(const QModelIndex& index, int role) const
 		case 0:
 			return checked_[index.row()];
 		case 8:
-			return data_[index.row()].is_target_;
+			return data_[index.row()].is_target_ ? Qt::Checked : Qt::Unchecked;
 		}
 		break;
 	}
@@ -106,6 +106,7 @@ bool MetaDataModel::setData(const QModelIndex& index, const QVariant& value, int
 			return true;
 		case 8:
 			data_[index.row()].is_target_ = value.toInt() == Qt::Checked;
+			db_.store_column_metadata_is_target(data_[index.row()]);
 			return true;
 		}
 		break;
