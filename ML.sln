@@ -38,7 +38,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Neuro", "Neuro", "{B497543D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility", "Utility", "{8735BA3A-9C68-4335-906D-81EA7C4D1D43}"
 	ProjectSection(SolutionItems) = preProject
+		Shared\Utility\Event.hpp = Shared\Utility\Event.hpp
+		Shared\Utility\SysIncludes.hpp = Shared\Utility\SysIncludes.hpp
 		Shared\Utility\types.hpp = Shared\Utility\types.hpp
+		Shared\Utility\Unicode.hpp = Shared\Utility\Unicode.hpp
+		Shared\Utility\util.h = Shared\Utility\util.h
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{5B0EB9FD-C8D6-4FA0-87B5-97D01FBB3325}"

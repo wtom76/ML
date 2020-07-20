@@ -141,8 +141,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TrainingSupervision.cpp" />
+    <ClCompile Include="TrainingTask.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="TrainingSupervision.h" />
+    <ClInclude Include="TrainingTask.h" />
     <QtMoc Include="Omni.h" />
     <ClInclude Include="Correlations.h" />
     <QtMoc Include="CorrelationsModel.h" />
