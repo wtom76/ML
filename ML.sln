@@ -52,8 +52,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{5B0EB9FD-C
 		Shared\Data\View.hpp = Shared\Data\View.hpp
 	EndProjectSection
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PythonDiscovery", "PythonDiscovery\PythonDiscovery.pyproj", "{087DE0CF-6C98-49A6-8B6D-A03E93DA086A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,12 +86,6 @@ Global
 		{17FA95AB-37A0-45EE-9719-57F016958B6E}.Release|x64.ActiveCfg = Release|x64
 		{17FA95AB-37A0-45EE-9719-57F016958B6E}.Release|x64.Build.0 = Release|x64
 		{17FA95AB-37A0-45EE-9719-57F016958B6E}.Release|x86.ActiveCfg = Release|x64
-		{087DE0CF-6C98-49A6-8B6D-A03E93DA086A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{087DE0CF-6C98-49A6-8B6D-A03E93DA086A}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{087DE0CF-6C98-49A6-8B6D-A03E93DA086A}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{087DE0CF-6C98-49A6-8B6D-A03E93DA086A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{087DE0CF-6C98-49A6-8B6D-A03E93DA086A}.Release|x64.ActiveCfg = Release|Any CPU
-		{087DE0CF-6C98-49A6-8B6D-A03E93DA086A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
