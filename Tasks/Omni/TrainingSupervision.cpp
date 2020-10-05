@@ -81,4 +81,5 @@ void TrainingSupervision::stop()
 	{
 		thread_in_pool.join();
 	}
+	thread_pool_.clear();
 }

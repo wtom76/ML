@@ -23,6 +23,7 @@ struct ColumnMetaData
 	std::optional<std::chrono::system_clock::time_point> date_min_{};
 	std::optional<std::chrono::system_clock::time_point> date_max_{};
 	bool is_target_{false};
+	double target_error_{0.};
 
 	ColumnMetaData() = default;
 	ColumnMetaData(
@@ -30,7 +31,8 @@ struct ColumnMetaData
 		const std::string& dest_column_name,
 		int unit_id,
 		const ColumnPath& origin,
-		bool is_target
+		bool is_target,
+		double target_error
 	);
 	ColumnPath column_path() const;
 };

@@ -128,7 +128,7 @@ QVariant MetaDataModel::headerData(int section, Qt::Orientation orientation, int
 	return QAbstractTableModel::headerData(section, orientation, role);
 }
 //----------------------------------------------------------------------------------------------------------
-void MetaDataModel::add_column(const ColumnPath& path, const std::string& dest_table, int unit_id, bool is_target)
+void MetaDataModel::add_column(const ColumnPath& path, const std::string& dest_table, int unit_id, bool is_target, double target_error)
 {
 	assert(!dest_table.empty());
 	set<string> std_existing_cols = db_.tableColumns(db_.dest_schema(), dest_table);
@@ -136,7 +136,7 @@ void MetaDataModel::add_column(const ColumnPath& path, const std::string& dest_t
 	{
 		return;
 	}
-	const ColumnMetaData meta{dest_table, path.column_, unit_id, path, is_target};
+	const ColumnMetaData meta{dest_table, path.column_, unit_id, path, is_target, target_error};
 	db_.add_column(db_.dest_schema(), meta);
 	db_.copy_column_data(db_.dest_schema(), dest_table, path);
 	load();
@@ -302,11 +302,13 @@ void MetaDataModel::_make_feature_winloss(int idx, double treshold, bool next)
 //----------------------------------------------------------------------------------------------------------
 void MetaDataModel::_make_feature_target_ohlc(const array<int, 4>& ohlc_idxs, double treshold, bool next)
 {
+#if !defined(NDEBUG)
 	for (int i : ohlc_idxs)
 	{
 		assert(i >= 0);
 		assert(i < data_.size());
 	}
+#endif
 
 	ColumnMetaData target_meta{ data_[ohlc_idxs[0]] };
 	target_meta.id_ = 0;

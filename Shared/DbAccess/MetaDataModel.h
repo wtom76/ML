@@ -41,7 +41,7 @@ public:
 	//~QAbstractTableModel impl
 
 	void load();
-	void add_column(const ColumnPath& path, const std::string& dest_table, int unit_id, bool is_target);
+	void add_column(const ColumnPath& path, const std::string& dest_table, int unit_id, bool is_target, double target_error);
 	void delete_checked_columns();
 	void normalize_checked_columns(wtom::ml::math::NormalizationMethod method);
 	void normalize_all();

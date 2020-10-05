@@ -60,3 +60,8 @@ bool AddColumnDialog::is_target() const
 {
 	return ui_.is_target_->checkState() == Qt::Checked;
 }
+//----------------------------------------------------------------------------------------------------------
+double AddColumnDialog::target_error() const
+{
+	return ui_.target_error_->text().toDouble();
+}

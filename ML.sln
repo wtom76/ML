@@ -39,7 +39,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility", "Utility", "{8735BA3A-9C68-4335-906D-81EA7C4D1D43}"
 	ProjectSection(SolutionItems) = preProject
 		Shared\Utility\Event.hpp = Shared\Utility\Event.hpp
+		Shared\Utility\Logger.hpp = Shared\Utility\Logger.hpp
+		Shared\Utility\ScopeLifeTime.hpp = Shared\Utility\ScopeLifeTime.hpp
 		Shared\Utility\SysIncludes.hpp = Shared\Utility\SysIncludes.hpp
+		Shared\Utility\System.hpp = Shared\Utility\System.hpp
 		Shared\Utility\types.hpp = Shared\Utility\types.hpp
 		Shared\Utility\Unicode.hpp = Shared\Utility\Unicode.hpp
 		Shared\Utility\util.h = Shared\Utility\util.h

@@ -10,12 +10,14 @@ ColumnMetaData::ColumnMetaData(
 	const std::string& dest_column_name,
 	int unit_id,
 	const ColumnPath& origin,
-	bool is_target)
+	bool is_target,
+	double target_error)
 	: table_{dest_table_name}
 	, column_{dest_column_name}
 	, unit_id_{unit_id}
 	, origin_{origin.to_string()}
 	, is_target_{is_target}
+	, target_error_{target_error}
 {}
 //----------------------------------------------------------------------------------------------------------
 ColumnPath ColumnMetaData::column_path() const

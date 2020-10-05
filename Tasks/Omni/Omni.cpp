@@ -17,6 +17,7 @@ Omni::Omni(QWidget* parent)
 	ui_.setupUi(this);
 
 	_createMetadataView();
+	_createMainLearnProcWidget();
 
 	connect(ui_.action_correlations_, &QAction::triggered, this, &Omni::showCorrelations);
 	connect(ui_.action_mfn, &QAction::triggered, this, &Omni::showLearnMfn);
@@ -94,4 +95,16 @@ void Omni::showLearnMfn()
 	LearnMfnDlg* wnd = new LearnMfnDlg(metadata_model_->columnInfos(), db_, this);
 	wnd->show();
 	QApplication::restoreOverrideCursor();
+}
+//----------------------------------------------------------------------------------------------------------
+void Omni::_createMainLearnProcWidget()
+{
+	main_learn_proc_ = make_unique<MainLearnWidget>(this);
+	unique_ptr<QDockWidget> dock_wnd = make_unique<QDockWidget>("Main Learn Proc", this);
+	dock_wnd->setAllowedAreas(Qt::AllDockWidgetAreas);
+	dock_wnd->setWidget(main_learn_proc_.get());
+	addDockWidget(Qt::RightDockWidgetArea, dock_wnd.get());
+	ui_.menu_learn->addAction(dock_wnd->toggleViewAction());
+
+	dock_wnd.release();
 }

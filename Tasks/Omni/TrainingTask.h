@@ -7,18 +7,8 @@
 //----------------------------------------------------------------------------------------------------------
 class TrainingTask
 {
-// data
-private:
-
-protected:
-	//std::atomic_bool cancel_{false};
-
-// methods
-private:
-
 public:
-	TrainingTask();
-	virtual ~TrainingTask();
+	virtual ~TrainingTask(){}
 
 	virtual void run() = 0;
 	virtual void cancel() = 0;

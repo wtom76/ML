@@ -28,6 +28,9 @@
       <Extensions>moc;h;cpp</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="TrainingTask">
+      <UniqueIdentifier>{3df59066-49c9-471a-a762-5b0065e266c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -54,7 +57,13 @@
     <ClCompile Include="TrainingSupervision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TrainingTask.cpp">
+    <ClCompile Include="TrainingTask\MfnProbe.cpp">
+      <Filter>TrainingTask</Filter>
+    </ClCompile>
+    <ClCompile Include="TrainingTask\MfnProbeContext.cpp">
+      <Filter>TrainingTask</Filter>
+    </ClCompile>
+    <ClCompile Include="MainLearnWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,6 +80,12 @@
     <ClInclude Include="TrainingTask.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TrainingTask\MfnProbe.h">
+      <Filter>TrainingTask</Filter>
+    </ClInclude>
+    <ClInclude Include="TrainingTask\MfnProbeContext.h">
+      <Filter>TrainingTask</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Omni.h">
@@ -85,6 +100,9 @@
     <QtMoc Include="LearnMfnDlg.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="MainLearnWidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="Omni.ui">
@@ -94,6 +112,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="LearnMfnDlg.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="MainLearnWidget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

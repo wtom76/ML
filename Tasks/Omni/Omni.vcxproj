@@ -55,7 +55,7 @@
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>UNICODE;_UNICODE;WIN32;WIN64;QT_CORE_LIB;QT_GUI_LIB;QT_WIDGETS_LIB;QT_CHARTS_LIB;QT_SQL_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(ROOT_DIR);$(ROOT_DIR)\Shared;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtSql;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(ROOT_DIR);$(ROOT_DIR)\Shared;$(SPDLOG_DIR)\include;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtSql;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -78,7 +78,7 @@
     <QtMoc>
       <OutputFile>.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>
       <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
-      <IncludePath>.\GeneratedFiles;.;$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(ROOT_DIR);$(ROOT_DIR)\Shared;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtSql;%(AdditionalIncludeDirectories)</IncludePath>
+      <IncludePath>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(ROOT_DIR);$(ROOT_DIR)\Shared;$(SPDLOG_DIR)\include;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtSql;%(AdditionalIncludeDirectories)</IncludePath>
       <Define>UNICODE;_UNICODE;WIN32;WIN64;QT_CORE_LIB;QT_GUI_LIB;QT_WIDGETS_LIB;QT_CHARTS_LIB;QT_SQL_LIB;%(PreprocessorDefinitions)</Define>
       <ForceInclude>stdafx.h;../../%(Filename)%(Extension)</ForceInclude>
     </QtMoc>
@@ -95,7 +95,7 @@
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>UNICODE;_UNICODE;WIN32;WIN64;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_WIDGETS_LIB;QT_CHARTS_LIB;QT_SQL_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(ROOT_DIR);$(ROOT_DIR)\Shared;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtSql;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(ROOT_DIR);$(ROOT_DIR)\Shared;$(SPDLOG_DIR)\include;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtSql;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat />
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -117,7 +117,7 @@
     <QtMoc>
       <OutputFile>.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>
       <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
-      <IncludePath>.\GeneratedFiles;.;$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(ROOT_DIR);$(ROOT_DIR)\Shared;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtSql;%(AdditionalIncludeDirectories)</IncludePath>
+      <IncludePath>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(ROOT_DIR);$(ROOT_DIR)\Shared;$(SPDLOG_DIR)\include;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtSql;%(AdditionalIncludeDirectories)</IncludePath>
       <Define>UNICODE;_UNICODE;WIN32;WIN64;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_WIDGETS_LIB;QT_CHARTS_LIB;QT_SQL_LIB;%(PreprocessorDefinitions)</Define>
       <ForceInclude>stdafx.h;../../%(Filename)%(Extension)</ForceInclude>
     </QtMoc>
@@ -136,17 +136,25 @@
     <ClCompile Include="CorrelationsModel.cpp" />
     <ClCompile Include="LearnMfnDlg.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainLearnWidget.cpp" />
     <ClCompile Include="Omni.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TrainingSupervision.cpp" />
-    <ClCompile Include="TrainingTask.cpp" />
+    <ClCompile Include="TrainingTask\MfnProbe.cpp" />
+    <ClCompile Include="TrainingTask\MfnProbeContext.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="MainLearnWidget.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(ROOT_DIR);$(ROOT_DIR)\Shared;$(SPDLOG_DIR)\include;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtSql</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(ROOT_DIR);$(ROOT_DIR)\Shared;$(SPDLOG_DIR)\include;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtCharts;$(QTDIR)\include\QtSql</IncludePath>
+    </QtMoc>
     <ClInclude Include="TrainingSupervision.h" />
     <ClInclude Include="TrainingTask.h" />
+    <ClInclude Include="TrainingTask\MfnProbe.h" />
+    <ClInclude Include="TrainingTask\MfnProbeContext.h" />
     <QtMoc Include="Omni.h" />
     <ClInclude Include="Correlations.h" />
     <QtMoc Include="CorrelationsModel.h" />
@@ -157,6 +165,7 @@
   <ItemGroup>
     <QtUic Include="CorrelationsDlg.ui" />
     <QtUic Include="LearnMfnDlg.ui" />
+    <QtUic Include="MainLearnWidget.ui" />
     <QtUic Include="Omni.ui" />
   </ItemGroup>
   <ItemGroup>

@@ -68,6 +68,14 @@
     <string>MFN</string>
    </property>
   </action>
+  <action name="action_main_learn_proc_">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Main Learn Procedure</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

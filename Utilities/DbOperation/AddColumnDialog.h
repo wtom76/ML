@@ -23,4 +23,5 @@ public:
 	int selectedUnitId() const;
 	std::string dest_table() const;
 	bool is_target() const;
+	double target_error() const;
 };
