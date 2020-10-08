@@ -99,7 +99,7 @@ void Omni::showLearnMfn()
 //----------------------------------------------------------------------------------------------------------
 void Omni::_createMainLearnProcWidget()
 {
-	main_learn_proc_ = make_unique<MainLearnWidget>(this);
+	main_learn_proc_ = make_unique<MainLearnWidget>(db_, this);
 	unique_ptr<QDockWidget> dock_wnd = make_unique<QDockWidget>("Main Learn Proc", this);
 	dock_wnd->setAllowedAreas(Qt::AllDockWidgetAreas);
 	dock_wnd->setWidget(main_learn_proc_.get());

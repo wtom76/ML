@@ -5,6 +5,12 @@
 #include "ui_MainLearnWidget.h"
 
 class TrainingSupervision;
+class DbAccess;
+
+namespace training_task
+{
+	class MfnProbeContext;
+}
 
 //----------------------------------------------------------------------------------------------------------
 class MainLearnWidget : public QWidget
@@ -12,11 +18,13 @@ class MainLearnWidget : public QWidget
 	Q_OBJECT;
 
 private:
-	Ui::MainLearnWidget ui_;
-	unique_ptr<TrainingSupervision> train_supervisor_;
+	Ui::MainLearnWidget							ui_;
+	shared_ptr<DbAccess>						db_;
+	unique_ptr<TrainingSupervision>				train_supervisor_;
+	shared_ptr<training_task::MfnProbeContext>	mfn_ctx_;
 
 public:
-	MainLearnWidget(QWidget* parent = nullptr);
+	MainLearnWidget(shared_ptr<DbAccess> db, QWidget* parent = nullptr);
 	~MainLearnWidget();
 
 private slots:

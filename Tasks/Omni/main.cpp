@@ -5,6 +5,7 @@
 
 int main(int argc, char *argv[])
 {
+	util::SpdlogAsyncInit logger_init;
 	QApplication a(argc, argv);
 	try
 	{

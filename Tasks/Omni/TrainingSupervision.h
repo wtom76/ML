@@ -16,19 +16,20 @@ class TrainingTask;
 /// class TrainingSupervision
 //----------------------------------------------------------------------------------------------------------
 class TrainingSupervision
+	: private util::Logged
 {
 // types
 private:
-	using task_ptr = std::shared_ptr<TrainingTask>;
+	using task_ptr = shared_ptr<TrainingTask>;
 // data
 private:
-	std::atomic_bool			run_{false};
+	atomic_bool			run_{false};
 	// task queue
-	std::mutex					task_queue_mutex_;
-	std::condition_variable		task_queue_cv_;
-	std::deque<task_ptr>		task_queue_;
+	mutex				task_queue_mutex_;
+	condition_variable	task_queue_cv_;
+	deque<task_ptr>		task_queue_;
 	//~task queue
-	std::vector<std::thread>	thread_pool_;
+	vector<thread>		thread_pool_;
 
 // methods
 private:
@@ -37,6 +38,9 @@ private:
 
 public:
 	~TrainingSupervision();
+
+	/// is to be called before start
+	void init_tasks(shared_ptr<TrainingTask> initial_task);
 
 	void start();
 	void stop();

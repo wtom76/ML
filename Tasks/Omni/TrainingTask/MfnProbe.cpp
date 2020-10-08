@@ -11,15 +11,22 @@ using Network = wtom::ml::neuro::net::MultilayerFeedforward;
 using Teacher = wtom::ml::neuro::learn::RProp<Network>;
 
 //----------------------------------------------------------------------------------------------------------
+training_task::MfnProbe::MfnProbe(shared_ptr<MfnProbeContext> ctx)
+	: ctx_{ctx}
+	, input_col_idxs_{ctx->next_input_col_idxs()}
+	, target_idx_{ctx->target_idx()}
+{}
+
+//----------------------------------------------------------------------------------------------------------
 vector<string> training_task::MfnProbe::_input_names() const
 {
 	const vector<ColumnMetaData>& col_infos{ctx_->col_infos()};
 
 	vector<string> input_names;
-	input_names.reserve(columns_.size());
-	for (size_t i = 0; i != columns_.size(); ++i)
+	input_names.reserve(input_col_idxs_.size());
+	for (ptrdiff_t idx : input_col_idxs_)
 	{
-		input_names.emplace_back(col_infos[columns_[i]].column_);
+		input_names.emplace_back(col_infos[idx].column_);
 	}
 	return input_names;
 }
@@ -30,11 +37,11 @@ vector<string> training_task::MfnProbe::_input_names() const
 std::pair<DataFrame, DataView> training_task::MfnProbe::_prepare_data(const string& schema, const string& table, const string& target_name,
 	const vector<string>& input_names) const
 {
-	constexpr size_t max_tolerated_gap = std::numeric_limits<size_t>::max();
+	constexpr size_t max_tolerated_gap{std::numeric_limits<size_t>::max()};
 	// 1.
-	vector<string> load_names = input_names;
+	vector<string> load_names{input_names};
 	load_names.emplace_back(target_name);
-	DataFrame df = ctx_->db().load_data(schema, table, load_names);
+	DataFrame df{ctx_->db().load_data(schema, table, load_names)};
 	DataView dv{df};
 	// 2.
 	for (const string& col_name : load_names)
@@ -52,9 +59,8 @@ std::pair<DataFrame, DataView> training_task::MfnProbe::_prepare_data(const stri
 //----------------------------------------------------------------------------------------------------------
 void training_task::MfnProbe::run()
 {
-	assert(columns_.size() > 1);
+	assert(input_col_idxs_.size() > 0);
 	assert(target_idx_ >= 0);
-	assert(static_cast<size_t>(target_idx_) < columns_.size());
 
 	const vector<ColumnMetaData>& col_infos{ctx_->col_infos()};
 	const ColumnMetaData& target_col{col_infos[target_idx_]};
@@ -70,12 +76,11 @@ void training_task::MfnProbe::run()
 	}
 
 	const vector<string> input_names{_input_names()};
-	pair<DataFrame, DataView> dfv = _prepare_data(ctx_->db().dest_schema(), target_col.table_, target_col.column_, input_names);
+	pair<DataFrame, DataView> dfv{_prepare_data(ctx_->db().dest_schema(), target_col.table_, target_col.column_, input_names)};
 	const vector<string> target_names{target_col.column_};
 
-	const size_t cols_wt_target = ctx_->col_infos().size() - 1;
 	//wtom::ml::neuro::net::Config mfn_cfg{ {cols_wt_target, cols_wt_target, cols_wt_target, 1} };
-	wtom::ml::neuro::net::Config mfn_cfg{ {cols_wt_target, 2, 1} };
+	wtom::ml::neuro::net::Config mfn_cfg{{input_col_idxs_.size(), 2, 1}};
 	Network mfn{mfn_cfg};
 	Teacher teacher{move(dfv), input_names, target_names};
 
@@ -90,6 +95,7 @@ void training_task::MfnProbe::cancel()
 //----------------------------------------------------------------------------------------------------------
 shared_ptr<TrainingTask> training_task::MfnProbe::create_next()
 {
+	return make_shared<MfnProbe>(ctx_);
 }
 ///~TrainingTask impl
 //----------------------------------------------------------------------------------------------------------

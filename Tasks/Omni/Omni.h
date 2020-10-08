@@ -14,7 +14,7 @@ class Omni : public QMainWindow
 	Q_OBJECT;
 
 private:
-	Ui::OmniClass ui_;
+	Ui::OmniClass				ui_;
 	shared_ptr<DbAccess>		db_;
 	unique_ptr<MetaDataModel>	metadata_model_;
 	unique_ptr<MainLearnWidget>	main_learn_proc_;

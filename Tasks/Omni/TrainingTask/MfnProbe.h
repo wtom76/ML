@@ -21,7 +21,7 @@ namespace training_task
 	// data
 	private:
 		shared_ptr<MfnProbeContext>	ctx_;
-		vector<ptrdiff_t>			columns_;
+		vector<ptrdiff_t>			input_col_idxs_;
 		ptrdiff_t					target_idx_{-1};
 		atomic_bool					stop_flag_{false};
 
@@ -31,7 +31,7 @@ namespace training_task
 		pair<DataFrame, DataView> _prepare_data(const std::string& schema, const std::string& table,
 			const std::string& target_name, const std::vector<std::string>& input_names) const;
 	public:
-		MfnProbe();
+		explicit MfnProbe(shared_ptr<MfnProbeContext> ctx);
 		//----------------------------------------------------------------------------------------------------------
 		/// TrainingTask impl
 		void run() override;
