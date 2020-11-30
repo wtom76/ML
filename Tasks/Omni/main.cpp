@@ -6,6 +6,7 @@
 int main(int argc, char *argv[])
 {
 	util::SpdlogAsyncInit logger_init;
+	shared_ptr<spdlog::logger> log{util::create_console_logger()};
 	QApplication a(argc, argv);
 	try
 	{

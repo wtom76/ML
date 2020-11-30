@@ -1,21 +1,9 @@
 #pragma once
-//#include <memory>
-//#include <string>
-#include <spdlog/spdlog.h>
-#include <spdlog/async.h>
-#include <spdlog/sinks/wincolor_sink.h>
-#include <spdlog/sinks/rotating_file_sink.h>
-#include <spdlog/sinks/daily_file_sink.h>
-#include <spdlog/fmt/ostr.h>
+#include <Shared/LibIncludes/IncludeSpdlog.h>
 #include <Shared/Utility/System.hpp>
 #include <Shared/Utility/ScopeLifeTime.hpp>
-//#include <Shared/Utility/Unicode.hpp>
 
 // TODO: now createConsoleLogger should be called before creation of any derivative of Logged with "log". Refactor.
-
-// In case of "Console logger error: async log: thread pool doens't exist anymore" probably
-//    const util::SpdlogAsyncInit spdlog_init;
-// is missed before log creation.
 
 namespace util
 {
@@ -91,6 +79,7 @@ namespace util
 	}
 
 	//---------------------------------------------------------------------------------------------------------
+	// An object should exist while logger lib is used
 	class SpdlogAsyncInit : private ScopeLifeTime<void>
 	{
 	public:

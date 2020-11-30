@@ -39,6 +39,7 @@ private:
 public:
 	~TrainingSupervision();
 
+	atomic_bool& run_flag() noexcept { return run_; }
 	/// is to be called before start
 	void init_tasks(shared_ptr<TrainingTask> initial_task);
 

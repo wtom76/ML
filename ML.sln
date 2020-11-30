@@ -40,10 +40,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility", "Utility", "{8735
 	ProjectSection(SolutionItems) = preProject
 		Shared\Utility\Event.hpp = Shared\Utility\Event.hpp
 		Shared\Utility\Logger.hpp = Shared\Utility\Logger.hpp
+		Shared\Utility\Multithreading.hpp = Shared\Utility\Multithreading.hpp
+		Shared\Utility\PreprocessorDefs.hpp = Shared\Utility\PreprocessorDefs.hpp
 		Shared\Utility\ScopeLifeTime.hpp = Shared\Utility\ScopeLifeTime.hpp
 		Shared\Utility\SysIncludes.hpp = Shared\Utility\SysIncludes.hpp
 		Shared\Utility\System.hpp = Shared\Utility\System.hpp
-		Shared\Utility\types.hpp = Shared\Utility\types.hpp
+		Shared\Utility\Types.hpp = Shared\Utility\Types.hpp
 		Shared\Utility\Unicode.hpp = Shared\Utility\Unicode.hpp
 		Shared\Utility\util.h = Shared\Utility\util.h
 	EndProjectSection
@@ -53,6 +55,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{5B0EB9FD-C
 		Shared\Data\Frame.hpp = Shared\Data\Frame.hpp
 		Shared\Data\Preparation.hpp = Shared\Data\Preparation.hpp
 		Shared\Data\View.hpp = Shared\Data\View.hpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LibIncludes", "LibIncludes", "{2D55C7F9-18EF-4677-AECB-4FB85D76BFCD}"
+	ProjectSection(SolutionItems) = preProject
+		Shared\LibIncludes\IncludeJson.h = Shared\LibIncludes\IncludeJson.h
+		Shared\LibIncludes\IncludeQt.h = Shared\LibIncludes\IncludeQt.h
+		Shared\LibIncludes\IncludeSpdlog.h = Shared\LibIncludes\IncludeSpdlog.h
 	EndProjectSection
 EndProject
 Global
@@ -101,6 +110,7 @@ Global
 		{B497543D-EBB3-491A-B803-6D069D535CFA} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}
 		{8735BA3A-9C68-4335-906D-81EA7C4D1D43} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}
 		{5B0EB9FD-C8D6-4FA0-87B5-97D01FBB3325} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}
+		{2D55C7F9-18EF-4677-AECB-4FB85D76BFCD} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A820AB65-6943-4CF3-B936-EE0F8177FCB2}

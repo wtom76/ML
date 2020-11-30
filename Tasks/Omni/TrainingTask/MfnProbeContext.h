@@ -32,6 +32,10 @@ namespace training_task
 		/// \return column indexes of inputs
 		vector<ptrdiff_t> next_input_col_idxs();
 
-		DbAccess& db() noexcept { return *db_; }
+		double& target_error()
+		{
+			assert(target_idx_ >= 0);
+			return col_infos_[target_idx_].target_error_;
+		}
 	};
 }

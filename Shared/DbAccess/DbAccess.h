@@ -8,6 +8,7 @@
 #include <Shared/Utility/types.hpp>
 #include <Shared/DbAccess/ColumnPath.h>
 #include <Shared/DbAccess/ColumnMetaData.h>
+#include <Shared/LibIncludes/IncludeJson.h>
 
 struct ColumnPath;
 
@@ -28,11 +29,13 @@ struct UnitInfo
 //----------------------------------------------------------------------------------------------------------
 class DbAccess
 	: public QObject
+	, private util::Logged
 {
 	Q_OBJECT;
 
 	class Impl;
 
+	util::mt::CriticalSection cs_;
 	std::unique_ptr<Impl> impl_;
 	std::string dest_schema_{"ready"};
 
@@ -53,4 +56,6 @@ public:
 	void store_column_metadata(const ColumnMetaData& col_info) const;
 	void store_column_metadata_is_target(const ColumnMetaData& col_info) const;
 	DataFrame load_data(const std::string& schema, const std::string& table_name, const std::vector<std::string>& col_names) const;
+	void store_net(const std::string& descriptor, double error, const json& data);
+	void load_net(const std::string& descriptor, double& error, json& dest);
 };

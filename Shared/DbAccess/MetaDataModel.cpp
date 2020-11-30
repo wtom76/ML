@@ -28,14 +28,7 @@ MetaDataModel::~MetaDataModel()
 {
 }
 //----------------------------------------------------------------------------------------------------------
-void MetaDataModel::load()
-{
-	beginResetModel();
-	data_ = db_.load_meta_data();
-	checked_.resize(data_.size(), Qt::Unchecked);
-	fill(checked_.begin(), checked_.end(), Qt::Unchecked);
-	endResetModel();
-}
+// QAbstractTableModel impl
 //----------------------------------------------------------------------------------------------------------
 int MetaDataModel::rowCount(const QModelIndex& parent) const
 {
@@ -126,6 +119,16 @@ QVariant MetaDataModel::headerData(int section, Qt::Orientation orientation, int
 		}
 	}
 	return QAbstractTableModel::headerData(section, orientation, role);
+}
+//~QAbstractTableModel impl
+//----------------------------------------------------------------------------------------------------------
+void MetaDataModel::load()
+{
+	beginResetModel();
+	data_ = db_.load_meta_data();
+	checked_.resize(data_.size(), Qt::Unchecked);
+	fill(checked_.begin(), checked_.end(), Qt::Unchecked);
+	endResetModel();
 }
 //----------------------------------------------------------------------------------------------------------
 void MetaDataModel::add_column(const ColumnPath& path, const std::string& dest_table, int unit_id, bool is_target, double target_error)

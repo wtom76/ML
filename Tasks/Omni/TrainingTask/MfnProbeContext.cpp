@@ -44,6 +44,11 @@ void training_task::MfnProbeContext::_init()
 	{
 		throw runtime_error("MfnProbeContext error: no target is found. Should be one.");
 	}
+	// temp HACK
+	if (col_infos_[target_idx_].target_error_ <= 0.)
+	{
+		col_infos_[target_idx_].target_error_ = 0.01;
+	}
 }
 //----------------------------------------------------------------------------------------------------------
 vector<ptrdiff_t> training_task::MfnProbeContext::next_input_col_idxs()

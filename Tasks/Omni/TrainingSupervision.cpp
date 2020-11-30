@@ -57,23 +57,22 @@ void TrainingSupervision::init_tasks(shared_ptr<TrainingTask> initial_task)
 {
 	assert(!run_);
 	assert(thread_pool_.empty());
-	assert(task_queue_.empty());
 
+	task_queue_.clear();
 	task_queue_.emplace_back(move(initial_task));
 }
 //----------------------------------------------------------------------------------------------------------
 // will be 1 taks more that thread_count
 void TrainingSupervision::start()
 {
-	assert(thread_pool_.empty());
-	assert(task_queue_.size() == 1);
-
 	run_ = true;
 	const size_t thread_count = thread::hardware_concurrency();
-	for (size_t i = 0; i < thread_count; ++i)
+	assert(task_queue_.size() == 1);
+	for (size_t i = 1; i < thread_count; ++i)
 	{
 		task_queue_.emplace_back(task_queue_.back()->create_next());
 	}
+	assert(thread_pool_.empty());
 	thread_pool_.reserve(thread_count);
 	for (size_t i = 0; i < thread_count; ++i)
 	{
@@ -88,10 +87,6 @@ void TrainingSupervision::stop()
 		if (run_)
 		{
 			run_ = false;
-			for (task_ptr& task : task_queue_)
-			{
-				task->cancel();
-			}
 			task_queue_cv_.notify_all();
 		}
 	}

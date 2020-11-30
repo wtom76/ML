@@ -103,7 +103,7 @@ void Omni::_createMainLearnProcWidget()
 	unique_ptr<QDockWidget> dock_wnd = make_unique<QDockWidget>("Main Learn Proc", this);
 	dock_wnd->setAllowedAreas(Qt::AllDockWidgetAreas);
 	dock_wnd->setWidget(main_learn_proc_.get());
-	addDockWidget(Qt::RightDockWidgetArea, dock_wnd.get());
+	addDockWidget(Qt::BottomDockWidgetArea, dock_wnd.get());
 	ui_.menu_learn->addAction(dock_wnd->toggleViewAction());
 
 	dock_wnd.release();

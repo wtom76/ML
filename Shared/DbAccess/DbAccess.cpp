@@ -161,16 +161,16 @@ DbAccess::DbAccess()
 	: QObject(nullptr)
 	, impl_{make_unique<Impl>()}
 {
-	QSqlDatabase db = QSqlDatabase::addDatabase(QString::fromStdString("QPSQL"));
-	db.setHostName(QString::fromStdString("localhost"));
-	db.setDatabaseName(QString::fromStdString("ML"));
-	db.setUserName(QString::fromStdString("ml_user"));
-	db.setPassword(QString::fromStdString("ml_user"));
-	if (!db.open())
-	{
-		throw runtime_error("Failed to connect to database. "s +
-			db.lastError().text().toStdString());
-	}
+	//QSqlDatabase db = QSqlDatabase::addDatabase(QString::fromStdString("QPSQL"));
+	//db.setHostName(QString::fromStdString("localhost"));
+	//db.setDatabaseName(QString::fromStdString("ML"));
+	//db.setUserName(QString::fromStdString("ml_user"));
+	//db.setPassword(QString::fromStdString("ml_user"));
+	//if (!db.open())
+	//{
+	//	throw runtime_error("Failed to connect to database. "s +
+	//		db.lastError().text().toStdString());
+	//}
 }
 //----------------------------------------------------------------------------------------------------------
 DbAccess::~DbAccess()
@@ -186,6 +186,7 @@ set<string> DbAccess::tableColumns(const string& schema_name, const string& tabl
 			"WHERE table_schema = :schema_name AND table_name = :table_name",
 			use(schema_name),
 			use(table_name));
+		SPDLOG_LOGGER_TRACE(log(), "column_name from information_schema.columns is loaded");
 		return set<string>{begin(rs), end(rs)};
 	}
 	catch (const exception& ex)
@@ -216,6 +217,8 @@ void DbAccess::add_column(const string& dest_schema_name, const ColumnMetaData& 
 			, use(origin_str,			"origin"s)
 			, use(col_meta.unit_id_,	"unit_id"s)
 			, use(col_meta.is_target_,	"is_target"s);
+
+		SPDLOG_LOGGER_TRACE(log(), "column is inserted into meta_data");
 	}
 	catch (const exception & ex)
 	{
@@ -279,6 +282,7 @@ vector<UnitInfo> DbAccess::load_units() const
 	{
 		throw runtime_error("Failed to load units. "s + query.lastError().text().toStdString());
 	}
+	SPDLOG_LOGGER_TRACE(log(), "units table is loaded");
 	return result;
 }
 //----------------------------------------------------------------------------------------------------------
@@ -319,6 +323,7 @@ vector<ColumnMetaData> DbAccess::load_meta_data() const
 			data.date_max_		= row.get<decltype(data.date_max_)>(date_max_idx);
 			data.is_target_		= row.get<bool>(is_target_idx, false);
 		}
+		SPDLOG_LOGGER_TRACE(log(), "meta_data is loaded");
 		return result;
 	}
 	catch (const exception& ex)
@@ -403,6 +408,8 @@ DataFrame DbAccess::load_data(const string& schema, const string& table_name, co
 {
 	DataFrame result;
 
+	const auto lock{cs_.read_lock()};
+
 	try
 	{
 		ptrdiff_t count = 0;
@@ -427,10 +434,46 @@ DataFrame DbAccess::load_data(const string& schema, const string& table_name, co
 			vector<double>& col = result.data()[i];
 			impl_->sql_ << "SELECT " << col_names[i] << " FROM " << schema << "." << table_name << " ORDER BY date", into(col, ind);
 		}
+		SPDLOG_LOGGER_TRACE(log(), "{} is loaded", table_name);
 		return result;
 	}
 	catch (const exception& ex)
 	{
 		throw runtime_error("Failed to load column data. "s + ex.what());
+	}
+}
+//----------------------------------------------------------------------------------------------------------
+void DbAccess::store_net(const std::string& descriptor, double error, const json& data)
+{
+	try
+	{
+		const string data_str{data.dump()};
+		impl_->sql_
+			<< "INSERT INTO ready.trained_nets "
+			"(descriptor, time_stamp, train_error, data) "
+			"VALUES (:descriptor, current_timestamp, :train_error, :data) "
+			, use(descriptor, "descriptor")
+			, use(error, "train_error")
+			, use(data_str, "data");
+	}
+	catch (const exception & ex)
+	{
+		throw runtime_error("Failed to store net. "s + ex.what());
+	}
+}
+//----------------------------------------------------------------------------------------------------------
+void DbAccess::load_net(const std::string& descriptor, double& error, json& dest)
+{
+	try
+	{
+		dest.clear();
+		string data;
+		impl_->sql_ << "SELECT data, train_error FROM ready.trained_nets WHERE descriptor = :descriptor",
+			into(data), into(error), use(descriptor);
+		dest = json::parse(data);
+	}
+	catch (const exception & ex)
+	{
+		throw runtime_error("Failed to load net. "s + ex.what());
 	}
 }
