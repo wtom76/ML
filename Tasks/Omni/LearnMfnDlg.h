@@ -4,7 +4,6 @@
 #include <future>
 #include <Shared/Neuro/mfn.hpp>
 #include <Shared/Neuro/rprop.hpp>
-#include <Shared/Utility/types.hpp>
 #include "ui_LearnMfnDlg.h"
 
 struct ColumnMetaData;

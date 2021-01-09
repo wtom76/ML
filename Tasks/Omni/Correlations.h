@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <Shared/Utility/types.hpp>
 
 //----------------------------------------------------------------------------------------------------------
 // class Correlations

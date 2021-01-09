@@ -1,11 +1,8 @@
 #pragma once
 #include <vector>
 #include <atomic>
-#include <Shared/Utility/types.hpp>
 #include <TrainingTask.h>
 #include <TrainLogger.h>
-
-using namespace std;
 
 namespace training_task
 {

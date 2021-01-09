@@ -1,6 +1,4 @@
 #include "stdafx.h"
-#include <QtSql/QSqlQuery>
-#include <QtSql/QSqlError>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QApplication>
 #include <Shared/DbAccess/DbAccess.h>
@@ -8,7 +6,6 @@
 #include <Shared/Math/Feature.hpp>
 #include "MetaDataModel.h"
 
-using namespace std;
 using namespace wtom::ml;
 
 //----------------------------------------------------------------------------------------------------------

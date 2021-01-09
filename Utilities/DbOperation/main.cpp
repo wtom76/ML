@@ -4,9 +4,13 @@
 #include <QtWidgets/QApplication>
 #include <QMessageBox>
 
+shared_ptr<spdlog::logger> g_log;
+
 //----------------------------------------------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
+	util::SpdlogAsyncInit logger_init;
+	g_log = util::create_logger("log");
 	QApplication a(argc, argv);
 	try
 	{
@@ -17,7 +21,6 @@ int main(int argc, char *argv[])
 		}
 		DbOperation w;
 		w.db().set_dest_schema(dlg.dest_schema());
-		//w.db().set_dest_table(dlg.dest_table());
 		w.show();
 		return a.exec();
 	}

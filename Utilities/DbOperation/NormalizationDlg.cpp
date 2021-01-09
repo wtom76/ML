@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "NormalizationDlg.h"
-#include <Shared/Utility/types.hpp>
 
 //----------------------------------------------------------------------------------------------------------
 NormalizationDlg::NormalizationDlg(QWidget* parent)

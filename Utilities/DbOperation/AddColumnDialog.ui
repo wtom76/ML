@@ -42,6 +42,11 @@
          <string>test_data</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>sber_week</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>

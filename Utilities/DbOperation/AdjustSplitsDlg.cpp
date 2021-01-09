@@ -3,9 +3,6 @@
 #include <QDateTime>
 #include "AdjustSplitsDlg.h"
 
-using namespace std;
-using namespace std::chrono;
-
 //----------------------------------------------------------------------------------------------------------
 long round_split_den(long den)
 {

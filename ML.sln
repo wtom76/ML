@@ -12,11 +12,13 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DbOperation", "Utilities\DbOperation\DbOperation.vcxproj", "{D23C4612-477E-4591-8249-CA91DCCD9CD5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{17FA95AB-37A0-45EE-9719-57F016958B6E} = {17FA95AB-37A0-45EE-9719-57F016958B6E}
+		{B9A0C4C1-0739-41E0-9FAF-D799A68C5D1D} = {B9A0C4C1-0739-41E0-9FAF-D799A68C5D1D}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Omni", "Tasks\Omni\Omni.vcxproj", "{AD243205-83FA-42CF-9756-E76CF4350003}"
 	ProjectSection(ProjectDependencies) = postProject
 		{17FA95AB-37A0-45EE-9719-57F016958B6E} = {17FA95AB-37A0-45EE-9719-57F016958B6E}
+		{B9A0C4C1-0739-41E0-9FAF-D799A68C5D1D} = {B9A0C4C1-0739-41E0-9FAF-D799A68C5D1D}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DbAccess", "Shared\DbAccess\DbAccess.vcxproj", "{17FA95AB-37A0-45EE-9719-57F016958B6E}"
@@ -38,6 +40,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Neuro", "Neuro", "{B497543D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility", "Utility", "{8735BA3A-9C68-4335-906D-81EA7C4D1D43}"
 	ProjectSection(SolutionItems) = preProject
+		Shared\Utility\Configuration.hpp = Shared\Utility\Configuration.hpp
 		Shared\Utility\Event.hpp = Shared\Utility\Event.hpp
 		Shared\Utility\Logger.hpp = Shared\Utility\Logger.hpp
 		Shared\Utility\Multithreading.hpp = Shared\Utility\Multithreading.hpp
@@ -61,7 +64,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LibIncludes", "LibIncludes"
 	ProjectSection(SolutionItems) = preProject
 		Shared\LibIncludes\IncludeJson.h = Shared\LibIncludes\IncludeJson.h
 		Shared\LibIncludes\IncludeQt.h = Shared\LibIncludes\IncludeQt.h
+		Shared\LibIncludes\IncludeSoci.h = Shared\LibIncludes\IncludeSoci.h
 		Shared\LibIncludes\IncludeSpdlog.h = Shared\LibIncludes\IncludeSpdlog.h
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChartLib", "Shared\ChartLib\ChartLib.vcxproj", "{B9A0C4C1-0739-41E0-9FAF-D799A68C5D1D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{17FA95AB-37A0-45EE-9719-57F016958B6E} = {17FA95AB-37A0-45EE-9719-57F016958B6E}
 	EndProjectSection
 EndProject
 Global
@@ -98,6 +107,14 @@ Global
 		{17FA95AB-37A0-45EE-9719-57F016958B6E}.Release|x64.ActiveCfg = Release|x64
 		{17FA95AB-37A0-45EE-9719-57F016958B6E}.Release|x64.Build.0 = Release|x64
 		{17FA95AB-37A0-45EE-9719-57F016958B6E}.Release|x86.ActiveCfg = Release|x64
+		{B9A0C4C1-0739-41E0-9FAF-D799A68C5D1D}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{B9A0C4C1-0739-41E0-9FAF-D799A68C5D1D}.Debug|x64.ActiveCfg = Debug|x64
+		{B9A0C4C1-0739-41E0-9FAF-D799A68C5D1D}.Debug|x64.Build.0 = Debug|x64
+		{B9A0C4C1-0739-41E0-9FAF-D799A68C5D1D}.Debug|x86.ActiveCfg = Debug|x64
+		{B9A0C4C1-0739-41E0-9FAF-D799A68C5D1D}.Release|Any CPU.ActiveCfg = Release|x64
+		{B9A0C4C1-0739-41E0-9FAF-D799A68C5D1D}.Release|x64.ActiveCfg = Release|x64
+		{B9A0C4C1-0739-41E0-9FAF-D799A68C5D1D}.Release|x64.Build.0 = Release|x64
+		{B9A0C4C1-0739-41E0-9FAF-D799A68C5D1D}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,6 +128,7 @@ Global
 		{8735BA3A-9C68-4335-906D-81EA7C4D1D43} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}
 		{5B0EB9FD-C8D6-4FA0-87B5-97D01FBB3325} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}
 		{2D55C7F9-18EF-4677-AECB-4FB85D76BFCD} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}
+		{B9A0C4C1-0739-41E0-9FAF-D799A68C5D1D} = {591E9E78-16C2-4CA3-910E-7FC59B749DD2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A820AB65-6943-4CF3-B936-EE0F8177FCB2}

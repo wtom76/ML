@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <QtWidgets/QMainWindow>
-#include <QSqlTableModel>
+//#include <QSqlTableModel>
 #include <QTableView>
 #include <QDockWidget>
 #include <Shared/DbAccess/DbAccess.h>
@@ -46,4 +46,7 @@ public:
 	DbAccess& db() const { return *db_; }
 
 	static DbOperation* instance() noexcept { return instance_; }
+
+private	slots:
+	void show_candlestick();
 };

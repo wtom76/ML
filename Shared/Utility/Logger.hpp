@@ -1,7 +1,7 @@
 #pragma once
 #include <Shared/LibIncludes/IncludeSpdlog.h>
-#include <Shared/Utility/System.hpp>
-#include <Shared/Utility/ScopeLifeTime.hpp>
+//#include <Shared/Utility/System.hpp>
+//#include <Shared/Utility/ScopeLifeTime.hpp>
 
 // TODO: now createConsoleLogger should be called before creation of any derivative of Logged with "log". Refactor.
 
@@ -71,7 +71,7 @@ namespace util
 		log->set_pattern(pattern);
 		log->set_error_handler([name](const std::string& msg)
 			{
-				std::cout << name << " logger error: " << msg << std::endl;
+				std::cerr << name << " logger error: " << msg << std::endl;
 			});
 		spdlog::register_logger(log);
 

@@ -6,7 +6,6 @@
 #include <Shared/Data/Preparation.hpp>
 #include "LearnMfnDlg.h"
 
-using namespace std;
 using namespace wtom::ml;
 
 //----------------------------------------------------------------------------------------------------------

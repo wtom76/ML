@@ -2,8 +2,6 @@
 #include "ColumnMetrics.h"
 #include <Shared/Data/Frame.hpp>
 
-using namespace std;
-
 //----------------------------------------------------------------------------------------------------------
 ColumnMetrics::ColumnMetrics(DataFrame::series_t& data)
 {

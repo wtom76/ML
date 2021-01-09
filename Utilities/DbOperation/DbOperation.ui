@@ -41,8 +41,15 @@
      <string>File</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuChart">
+    <property name="title">
+     <string>Chart</string>
+    </property>
+    <addaction name="actionCandlestick"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuReady"/>
+   <addaction name="menuChart"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -94,6 +101,11 @@
   <action name="action_set_destination_schema_">
    <property name="text">
     <string>Set destination schema...</string>
+   </property>
+  </action>
+  <action name="actionCandlestick">
+   <property name="text">
+    <string>Candlestick</string>
    </property>
   </action>
  </widget>

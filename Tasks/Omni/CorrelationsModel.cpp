@@ -1,12 +1,8 @@
 #include "stdafx.h"
-#include <QtSql/QSqlQuery>
-#include <QtSql/QSqlError>
 #include <QMessageBox>
 #include <QApplication>
 #include <Shared/DbAccess/DbAccess.h>
 #include "CorrelationsModel.h"
-
-using namespace std;
 
 //----------------------------------------------------------------------------------------------------------
 CorrelationsModel::CorrelationsModel(const std::vector<ColumnMetaData>& col_infos, DbAccess& db, QObject* parent)

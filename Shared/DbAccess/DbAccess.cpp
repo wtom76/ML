@@ -1,144 +1,9 @@
 #include "stdafx.h"
 #include <chrono>
-#include <optional>
-#include <soci/soci.h>
-#include <soci/postgresql/soci-postgresql.h>
-#include <Shared/Utility/types.hpp>
-#include <QtSql/QSqlQuery>
-#include <QtSql/QSqlError>
-#include <QtCore/QVariant>
-#include <QtCore/QDate>
+#include <Shared/LibIncludes/IncludeSoci.h>
 #include "DbAccess.h"
 
-using namespace std;
-using namespace chrono;
 using namespace soci;
-
-namespace soci
-{
-	//------------------------------------------------------------------------------------------------------
-	/// system_clock::time_point support
-	template <>
-	struct type_conversion<system_clock::time_point>
-	{
-		using base_type = std::tm;
-
-		static void from_base(base_type base_val, indicator ind, system_clock::time_point& val)
-		{
-			switch (ind)
-			{
-			case i_null:
-				throw soci_error("Null datetime is not supported");
-				break;
-			default:
-				val = system_clock::from_time_t(_mkgmtime64(&base_val));
-			}
-		}
-
-		static void to_base(system_clock::time_point val, base_type& base_val, indicator& ind)
-		{
-			__time64_t tt{};
-			const errno_t err = _gmtime64_s(&base_val, &(tt = system_clock::to_time_t(val)));
-			if (err)
-			{
-				throw soci_error("soci::type_conversion: failed to convert system_clock::time_point to tm");
-			}
-			ind = i_ok;
-		}
-	};
-	//------------------------------------------------------------------------------------------------------
-	/// optional system_clock::time_point support
-	template <>
-	struct type_conversion<optional<system_clock::time_point>>
-	{
-		using base_type = std::tm;
-
-		static void from_base(base_type base_val, indicator ind, optional<system_clock::time_point>& val)
-		{
-			switch (ind)
-			{
-			case i_null:
-				val = {};
-				break;
-			default:
-				val = system_clock::from_time_t(_mkgmtime64(&base_val));
-			}
-		}
-
-		static void to_base(optional<system_clock::time_point> val, base_type& base_val, indicator& ind)
-		{
-			if (val)
-			{
-				__time64_t tt{};
-				const errno_t err = _gmtime64_s(&base_val, &(tt = system_clock::to_time_t(val.value())));
-				if (err)
-				{
-					throw soci_error("soci::type_conversion: failed to convert system_clock::time_point to tm");
-				}
-				ind = i_ok;
-			}
-			else
-			{
-				ind = i_null;
-			}
-		}
-	};
-	//------------------------------------------------------------------------------------------------------
-	/// bool support
-	template <>
-	struct type_conversion<bool>
-	{
-		using base_type = int;
-
-		static void from_base(base_type base_val, indicator ind, bool& val)
-		{
-			switch (ind)
-			{
-			case i_null:
-				throw soci_error("Null boolean is not supported");
-			default:
-				val = base_val;
-			}
-		}
-		static void to_base(bool val, base_type& base_val, indicator& ind)
-		{
-			base_val = static_cast<base_type>(val);
-			ind = i_ok;
-		}
-	};
-	//------------------------------------------------------------------------------------------------------
-	/// double support
-	template <>
-	struct type_conversion<double>
-	{
-		using base_type = double;
-
-		static void from_base(base_type base_val, indicator ind, double& val)
-		{
-			switch (ind)
-			{
-			case i_null:
-				val = std::numeric_limits<double>::quiet_NaN();
-				break;
-			default:
-				val = base_val;
-			}
-		}
-		static void to_base(double val, base_type& base_val, indicator& ind)
-		{
-			if (isnan<double>(val))
-			{
-				ind = i_null;
-				base_val = std::numeric_limits<double>::quiet_NaN();
-			}
-			else
-			{
-				base_val = static_cast<base_type>(val);
-				ind = i_ok;
-			}
-		}
-	};
-}
 
 //----------------------------------------------------------------------------------------------------------
 // Impl
@@ -149,28 +14,18 @@ public:
 	session sql_;
 
 public:
-	Impl();
+	Impl(const std::string& connection_str);
 };
 //----------------------------------------------------------------------------------------------------------
-DbAccess::Impl::Impl()
-	: sql_{"postgresql://host=localhost dbname=ML user=ml_user password=ml_user"}
+DbAccess::Impl::Impl(const std::string& connection_str)
+	: sql_{connection_str}
 {
 }
 //----------------------------------------------------------------------------------------------------------
-DbAccess::DbAccess()
-	: QObject(nullptr)
-	, impl_{make_unique<Impl>()}
+DbAccess::DbAccess(const std::string& connection_str)
+	: impl_{make_unique<Impl>(connection_str)}
 {
-	//QSqlDatabase db = QSqlDatabase::addDatabase(QString::fromStdString("QPSQL"));
-	//db.setHostName(QString::fromStdString("localhost"));
-	//db.setDatabaseName(QString::fromStdString("ML"));
-	//db.setUserName(QString::fromStdString("ml_user"));
-	//db.setPassword(QString::fromStdString("ml_user"));
-	//if (!db.open())
-	//{
-	//	throw runtime_error("Failed to connect to database. "s +
-	//		db.lastError().text().toStdString());
-	//}
+	SPDLOG_LOGGER_DEBUG(log(), "DbAccess is connected to {:s}", connection_str);
 }
 //----------------------------------------------------------------------------------------------------------
 DbAccess::~DbAccess()
@@ -263,26 +118,14 @@ void DbAccess::delete_column(const string& dest_schema_name, const ColumnMetaDat
 //----------------------------------------------------------------------------------------------------------
 vector<UnitInfo> DbAccess::load_units() const
 {
-	static constexpr int id_idx = 0;
-	static constexpr int name_idx = 1;
+	rowset<row> rs{impl_->sql_.prepare << "SELECT id, name FROM ready.units;"};
 
 	vector<UnitInfo> result;
-
-	QSqlQuery query("SELECT id, name FROM ready.units;");
-	if (query.size() >= 0)
+	for (const auto& row : rs)
 	{
-		result.reserve(query.size());
+		result.emplace_back(row.get<long long>(0), row.get<string>(1));
 	}
 
-	while (query.next())
-	{
-		result.emplace_back(query.value(id_idx).toInt(), query.value(name_idx).toString().toStdString());
-	}
-	if (query.lastError().isValid())
-	{
-		throw runtime_error("Failed to load units. "s + query.lastError().text().toStdString());
-	}
-	SPDLOG_LOGGER_TRACE(log(), "units table is loaded");
 	return result;
 }
 //----------------------------------------------------------------------------------------------------------
@@ -413,7 +256,7 @@ DataFrame DbAccess::load_data(const string& schema, const string& table_name, co
 	try
 	{
 		ptrdiff_t count = 0;
-		// 1,
+		// 1.
 		{
 			impl_->sql_ << "SELECT count(date) FROM " << schema << "." << table_name, into(count);
 			if (count <= 0)
@@ -434,7 +277,7 @@ DataFrame DbAccess::load_data(const string& schema, const string& table_name, co
 			vector<double>& col = result.data()[i];
 			impl_->sql_ << "SELECT " << col_names[i] << " FROM " << schema << "." << table_name << " ORDER BY date", into(col, ind);
 		}
-		SPDLOG_LOGGER_TRACE(log(), "{} is loaded", table_name);
+		SPDLOG_LOGGER_TRACE(log(), "{:s} is loaded", table_name);
 		return result;
 	}
 	catch (const exception& ex)

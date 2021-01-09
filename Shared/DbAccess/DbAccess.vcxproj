@@ -56,8 +56,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>UNICODE;_UNICODE;WIN32;WIN64;SOCI_DLL;DBACCESS_LIB;BUILD_STATIC;QT_CORE_LIB;QT_SQL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;$(JSON_DIR)\nlohmann\single_include;$(SPDLOG_DIR)\include;$(SOCI_DIR)\$(ConfigurationName)\include;$(POSTGRES_DIR)\include;$(ROOT_DIR);$(ROOT_DIR)\Shared;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>UNICODE;_UNICODE;WIN32;WIN64;DBACCESS_LIB;BUILD_STATIC;QT_CORE_LIB;QT_SQL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;$(JSON_DIR)\nlohmann\single_include;$(SPDLOG_DIR)\include;$(SOCI_DIR)\$(ConfigurationName)\include;$(POSTGRES_DIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -88,8 +88,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>UNICODE;_UNICODE;WIN32;WIN64;SOCI_DLL;QT_NO_DEBUG;NDEBUG;DBACCESS_LIB;BUILD_STATIC;QT_CORE_LIB;QT_SQL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;$(JSON_DIR)\nlohmann\single_include;$(SPDLOG_DIR)\include;$(SOCI_DIR)\$(ConfigurationName)\include;$(POSTGRES_DIR)\include;$(ROOT_DIR);$(ROOT_DIR)\Shared;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>UNICODE;_UNICODE;WIN32;WIN64;QT_NO_DEBUG;NDEBUG;DBACCESS_LIB;BUILD_STATIC;QT_CORE_LIB;QT_SQL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;$(JSON_DIR)\nlohmann\single_include;$(SPDLOG_DIR)\include;$(SOCI_DIR)\$(ConfigurationName)\include;$(POSTGRES_DIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat />
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -127,7 +127,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="DbAccess.h" />
+    <ClInclude Include="DbAccess.h" />
     <ClInclude Include="ColumnMetaData.h" />
     <ClInclude Include="ColumnPath.h" />
     <QtMoc Include="MetaDataModel.h" />

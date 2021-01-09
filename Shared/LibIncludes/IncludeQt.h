@@ -1,16 +1,16 @@
 #pragma once
 #pragma warning (push)
 #pragma warning (disable: 5054)
-#include <QSqlQuery>
-#include <QSqlError>
+#if defined (QT_SQL_LIB)
+	#include <QSqlQuery>
+	#include <QSqlError>
+	#include <QSqlDatabase>
+#endif
 #include <QMessageBox>
 #include <QApplication>
-#include <QSqlQuery>
-#include <QSqlError>
 #include <QVariant>
 #include <QDate>
 #include <QObject>
-#include <QSqlDatabase>
 #include <QAbstractTableModel>
 #include <QDialog>
 

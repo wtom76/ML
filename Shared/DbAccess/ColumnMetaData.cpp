@@ -2,8 +2,6 @@
 #include <Shared/DbAccess/ColumnMetaData.h>
 #include <Shared/DbAccess/ColumnPath.h>
 
-using namespace std;
-
 //----------------------------------------------------------------------------------------------------------
 ColumnMetaData::ColumnMetaData(
 	const string& dest_table_name,

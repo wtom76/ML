@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "DbOperation.h"
 #include <QSqlError>
+#include <Shared/ChartLib/Candlestick.h>
 
 //----------------------------------------------------------------------------------------------------------
 DbOperation* DbOperation::instance_ = nullptr;
@@ -17,6 +18,8 @@ DbOperation::DbOperation(QWidget* parent)
 
 	_createMetadataView();
 	_createSourcesView();
+
+	QObject::connect(ui_.actionCandlestick, &QAction::triggered, this, &DbOperation::show_candlestick);
 }
 //----------------------------------------------------------------------------------------------------------
 DbOperation::~DbOperation()
@@ -57,4 +60,23 @@ void DbOperation::_createSourcesView()
 	sources_view_->setModel(sources_model_.get());
 	
 	sources_widget_->setWidget(sources_view_.get());
+}
+//----------------------------------------------------------------------------------------------------------
+void DbOperation::show_candlestick()
+{
+	unique_ptr<QDockWidget> dock{make_unique<QDockWidget>("Candlestick", this)};
+	dock->setAllowedAreas(Qt::AllDockWidgetAreas);
+	addDockWidget(Qt::RightDockWidgetArea, dock.get());
+	unique_ptr<chart::Candlestick> chart{make_unique<chart::Candlestick>()};
+	if (!chart->show_load_data_dlg(*db_))
+	{
+		return;
+	}
+	unique_ptr<QtCharts::QChartView> chart_view{make_unique<QtCharts::QChartView>(chart.get())};
+	chart_view->setRenderHint(QPainter::Antialiasing);
+	dock->setWidget(chart_view.get());
+
+	chart.release();
+	chart_view.release();
+	dock.release();
 }

@@ -6,7 +6,8 @@
 int main(int argc, char *argv[])
 {
 	util::SpdlogAsyncInit logger_init;
-	shared_ptr<spdlog::logger> log{util::create_console_logger()};
+	shared_ptr<spdlog::logger> log{util::create_logger("log")};
+	SPDLOG_LOGGER_DEBUG(log, "Omni main test {:s}", "test string"s);
 	QApplication a(argc, argv);
 	try
 	{

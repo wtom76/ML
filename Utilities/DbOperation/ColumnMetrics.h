@@ -2,7 +2,6 @@
 #include <limits>
 #include <Shared/DbAccess/DbAccess.h>
 #include <Shared/Math/Statistics.hpp>
-#include <Shared/Utility/types.hpp>
 
 //----------------------------------------------------------------------------------------------------------
 // class ColumnMetrics

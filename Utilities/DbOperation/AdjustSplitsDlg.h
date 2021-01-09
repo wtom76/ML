@@ -4,7 +4,6 @@
 #include <vector>
 #include <chrono>
 #include <QDialog>
-#include <Shared/Utility/types.hpp>
 #include "ui_AdjustSplitsDlg.h"
 
 //----------------------------------------------------------------------------------------------------------

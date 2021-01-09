@@ -7,8 +7,6 @@
 #include "CorrelationsModel.h"
 #include "LearnMfnDlg.h"
 
-using namespace std;
-
 //----------------------------------------------------------------------------------------------------------
 Omni::Omni(QWidget* parent)
 	: QMainWindow(parent)

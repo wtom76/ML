@@ -3,6 +3,9 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <Shared/DbAccess/ColumnPath.h>
+#include <Shared/LibIncludes/IncludeSoci.h>
+
+using namespace soci;
 
 //SELECT * FROM information_schema.columns
 //WHERE table_schema = N'original';
@@ -39,60 +42,71 @@ TreeItem* SourcesModel::_item(const QModelIndex& index) const
 	return root_item_.get();
 }
 //----------------------------------------------------------------------------------------------------------
-void SourcesModel::_load()
+void SourcesModel::_load(session& sql)
 {
 	static constexpr int table_schema_idx	= 0;
 	static constexpr int table_name_idx		= 1;
 
-	QSqlQuery query(
-		"SELECT table_schema, table_name FROM information_schema.tables "
-		"WHERE table_type = N'BASE TABLE' AND table_schema = N'original'"
-	);
-	std::unique_ptr<TreeItem> root_item = _createRoot();
-	while (query.next())
+	try
 	{
-		const QVariant table_name = query.value(table_name_idx);
-		std::unique_ptr<TreeItem> table_item = std::make_unique<TreeItem>(root_item.get());
-		table_item->setData(to_numeric(Fields::Schema), query.value(table_schema_idx));
-		table_item->setData(to_numeric(Fields::Table), table_name);
+		//string table_schema_str;
+		//string table_name_str;
+		//sql << "SELECT table_schema, table_name FROM information_schema.tables WHERE table_type = N'BASE TABLE' AND table_schema = N'original'",
+		//	into(table_schema_str), into(table_name_str);
 
-		_loadTableColumns(table_name.toString(), table_item.get());
+		rowset<row> rs = (sql.prepare <<
+			"SELECT CAST(table_schema AS TEXT), CAST(table_name AS TEXT) FROM information_schema.tables "
+			"WHERE table_type = N'BASE TABLE' AND table_schema = N'original';"
+		);
+		std::unique_ptr<TreeItem> root_item = _createRoot();
+		for (const auto& row : rs)
+		{
+			const string table_name = row.get<string>(table_name_idx);
+			std::unique_ptr<TreeItem> table_item = std::make_unique<TreeItem>(root_item.get());
+			table_item->setData(to_numeric(Fields::Schema), QVariant{QString::fromStdString(row.get<string>(table_schema_idx))});
+			table_item->setData(to_numeric(Fields::Table), QVariant{QString::fromStdString(table_name)});
 
-		root_item->appendChild(table_item.get());
-		table_item.release();
+			_load_table_columns(sql, table_name, table_item.get());
+
+			root_item->appendChild(table_item.get());
+			table_item.release();
+		}
+		root_item_.swap(root_item);
 	}
-	if (query.lastError().isValid())
+	catch (const exception& ex)
 	{
-		throw std::runtime_error(std::string("Failed to load sources. ") +
-			query.lastError().text().toStdString());
+		throw runtime_error{"Failed to load sources. "s + ex.what()};
 	}
-	root_item_.swap(root_item);
 }
 //----------------------------------------------------------------------------------------------------------
-void SourcesModel::_loadTableColumns(const QString table_name, TreeItem* table_item)
+void SourcesModel::_load_table_columns(session& sql, const string& table_name, TreeItem* table_item)
 {
 	static constexpr int column_idx		= 0;
 	static constexpr int data_type_idx	= 1;
 
-	QSqlQuery query(QString(
-		"SELECT column_name, data_type FROM information_schema.columns "
-		"WHERE table_schema = N'original' AND table_name = '%1'").arg(table_name)
-	);
-	while (query.next())
+	try
 	{
-		std::unique_ptr<TreeItem> column = std::make_unique<TreeItem>(table_item);
-		column->setData(to_numeric(Fields::Column), query.value(column_idx));
-		column->setData(to_numeric(Fields::DataType), query.value(data_type_idx));
-		table_item->appendChild(column.get());
-		column.release();
+		rowset<row> rs = (sql.prepare <<
+			"SELECT CAST(column_name AS TEXT), data_type FROM information_schema.columns "
+			"WHERE table_schema = N'original' AND table_name = :table_name"
+			, use(table_name, "table_name")
+		);
+		for (const auto& row : rs)
+		{
+			std::unique_ptr<TreeItem> column = std::make_unique<TreeItem>(table_item);
+			column->setData(to_numeric(Fields::Column), QVariant{QString::fromStdString(row.get<string>(column_idx))});
+			column->setData(to_numeric(Fields::DataType), QVariant{QString::fromStdString(row.get<string>(data_type_idx))});
+			table_item->appendChild(column.get());
+			column.release();
+		}
 	}
-	if (query.lastError().isValid())
+	catch (const exception& ex)
 	{
-		throw std::runtime_error(std::string("Failed to load columns. ") + query.lastError().text().toStdString());
+		throw runtime_error{"Failed to load columns. "s + ex.what()};
 	}
 }
 //----------------------------------------------------------------------------------------------------------
-void SourcesModel::_buildPath(TreeItem* item, ColumnPath& dest) const
+void SourcesModel::_build_path(TreeItem* item, ColumnPath& dest) const
 {
 	if (!item)
 	{
@@ -118,16 +132,18 @@ void SourcesModel::_buildPath(TreeItem* item, ColumnPath& dest) const
 	{
 		dest.data_type_ = val.toStdString();
 	}
-	_buildPath(item->parent(), dest);
+	_build_path(item->parent(), dest);
 }
 //----------------------------------------------------------------------------------------------------------
-void SourcesModel::load()
+void SourcesModel::load(const string& connection_str)
 {
+	session sql{connection_str};
+
 	beginResetModel();
 
 	try
 	{
-		_load();
+		_load(sql);
 	}
 	catch (...)
 	{
@@ -215,7 +231,7 @@ QModelIndex SourcesModel::parent(const QModelIndex& index) const
 ColumnPath SourcesModel::buildPath(const QModelIndex& index) const
 {
 	ColumnPath path;
-	_buildPath(_item(index), path);
+	_build_path(_item(index), path);
 	return path;
 }
 //---------------------------------------------------------------------------------------------------------

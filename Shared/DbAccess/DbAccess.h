@@ -4,8 +4,6 @@
 #include <vector>
 #include <string>
 #include <QtCore/QObject>
-#include <QtSql/QSqlDatabase>
-#include <Shared/Utility/types.hpp>
 #include <Shared/DbAccess/ColumnPath.h>
 #include <Shared/DbAccess/ColumnMetaData.h>
 #include <Shared/LibIncludes/IncludeJson.h>
@@ -17,9 +15,10 @@ struct ColumnPath;
 //----------------------------------------------------------------------------------------------------------
 struct UnitInfo
 {
-	int id_ = 0;
+	int id_{0};
 	std::string name_;
 
+	UnitInfo(){}
 	template <typename NameT>
 	UnitInfo(int id, NameT&& name) : id_(id), name_(std::forward<NameT>(name))
 	{}
@@ -28,11 +27,8 @@ struct UnitInfo
 // class DbAccess
 //----------------------------------------------------------------------------------------------------------
 class DbAccess
-	: public QObject
-	, private util::Logged
+	: private util::Logged
 {
-	Q_OBJECT;
-
 	class Impl;
 
 	util::mt::CriticalSection cs_;
@@ -40,7 +36,7 @@ class DbAccess
 	std::string dest_schema_{"ready"};
 
 public:
-	DbAccess();
+	DbAccess(const std::string& connection_str = "postgresql://host=localhost dbname=ML user=ml_user password=ml_user");
 	~DbAccess();
 
 	const std::string& dest_schema() const noexcept { return dest_schema_; }

@@ -4,8 +4,6 @@
 #include <sstream>
 #include "ColumnPath.h"
 
-using namespace std;
-
 //----------------------------------------------------------------------------------------------------------
 std::string ColumnPath::to_string() const
 {

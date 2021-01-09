@@ -2,10 +2,14 @@
 
 #include <memory>
 #include <QtCore/QAbstractItemModel>
-#include <Shared/Utility/types.hpp>
 #include "TreeItem.h"
 
 struct ColumnPath;
+
+namespace soci
+{
+	class session;
+}
 
 //---------------------------------------------------------------------------------------------------------
 // enum class Fields
@@ -33,15 +37,15 @@ class SourcesModel : public QAbstractItemModel
 private:
 	std::unique_ptr<TreeItem> _createRoot() const;
 	TreeItem* _item(const QModelIndex& index) const;
-	void _load();
-	void _loadTableColumns(const QString table_name, TreeItem* table_item);
-	void _buildPath(TreeItem* item, ColumnPath& dest) const;
+	void _load(soci::session& sql);
+	void _load_table_columns(soci::session& sql, const string& table_name, TreeItem* table_item);
+	void _build_path(TreeItem* item, ColumnPath& dest) const;
 
 public:
 	SourcesModel(QObject* parent);
 	~SourcesModel();
 
-	void load();
+	void load(const string& connection_str = "postgresql://host=localhost dbname=ML user=ml_user password=ml_user"s);
 
 	// read
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;

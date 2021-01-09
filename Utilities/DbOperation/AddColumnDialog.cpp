@@ -4,8 +4,6 @@
 #include "DbOperation.h"
 #include "ColumnMetrics.h"
 
-using namespace std;
-
 //----------------------------------------------------------------------------------------------------------
 AddColumnDialog::AddColumnDialog(QWidget* parent)
 	: QDialog(parent)
