@@ -24,15 +24,10 @@ namespace chart
 		if (QDialog::Accepted == dlg->exec())
 		{
 			util::config::store(*dlg, util::config::file_path("chart"));
-			_load_data(dlg->schema(), dlg->table(), {dlg->open_col(), dlg->high_col(), dlg->low_col(), dlg->close_col()}, db);
+			_set_data(db.load_data(dlg->schema(), dlg->table(), {dlg->open_col(), dlg->high_col(), dlg->low_col(), dlg->close_col()}));
 			return true;
 		}
 		return false;
-	}
-	//---------------------------------------------------------------------------------------------------------
-	void Candlestick::_load_data(const std::string& schema, const std::string& table_name, const std::vector<std::string>& col_names, DbAccess& db)
-	{
-		_set_data(db.load_data(schema, table_name, col_names));
 	}
 	//---------------------------------------------------------------------------------------------------------
 	void Candlestick::_set_data(const DataFrame& df)

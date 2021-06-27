@@ -84,6 +84,10 @@
       <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
       <ForceInclude>stdafx.h;../../%(Filename)%(Extension)</ForceInclude>
     </QtMoc>
+    <QtUic>
+      <ExecutionDescription>Uic'ing %(Identity)...</ExecutionDescription>
+      <OutputFile>.\GeneratedFiles\ui_%(Filename).h</OutputFile>
+    </QtUic>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -115,12 +119,17 @@
       <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
       <ForceInclude>stdafx.h;../../%(Filename)%(Extension)</ForceInclude>
     </QtMoc>
+    <QtUic>
+      <ExecutionDescription>Uic'ing %(Identity)...</ExecutionDescription>
+      <OutputFile>.\GeneratedFiles\ui_%(Filename).h</OutputFile>
+    </QtUic>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ColumnMetaData.cpp" />
     <ClCompile Include="ColumnPath.cpp" />
     <ClCompile Include="DbAccess.cpp" />
     <ClCompile Include="MetaDataModel.cpp" />
+    <ClCompile Include="OhlcDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -132,7 +141,16 @@
     <ClInclude Include="ColumnPath.h" />
     <QtMoc Include="MetaDataModel.h" />
     <ClInclude Include="IncludeDataFrame.h" />
+    <QtMoc Include="OhlcDlg.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;$(JSON_DIR)\nlohmann\single_include;$(SPDLOG_DIR)\include;$(SOCI_DIR)\$(ConfigurationName)\include;$(POSTGRES_DIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets</IncludePath>
+      <Define Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">UNICODE;_UNICODE;WIN32;WIN64;DBACCESS_LIB;BUILD_STATIC;QT_CORE_LIB;QT_SQL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</Define>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\GeneratedFiles;.\GeneratedFiles\$(ConfigurationName);$(ML_DIR);$(ML_DIR)\..\boost_1_69_0;$(QTDIR)\include;$(JSON_DIR)\nlohmann\single_include;$(SPDLOG_DIR)\include;$(SOCI_DIR)\$(ConfigurationName)\include;$(POSTGRES_DIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets</IncludePath>
+      <Define Condition="'$(Configuration)|$(Platform)'=='Release|x64'">UNICODE;_UNICODE;WIN32;WIN64;QT_NO_DEBUG;NDEBUG;DBACCESS_LIB;BUILD_STATIC;QT_CORE_LIB;QT_SQL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</Define>
+    </QtMoc>
     <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="OhlcDlg.ui" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

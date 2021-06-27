@@ -15,7 +15,7 @@ class MetaDataModel : public QAbstractTableModel
 
 // data
 private:
-	static constexpr int column_count_ = 9;
+	static constexpr int column_count_ = 11;
 
 	std::vector<ColumnMetaData> data_;
 	std::vector<Qt::CheckState> checked_;
@@ -31,6 +31,8 @@ public:
 	MetaDataModel(DbAccess& db, QObject* parent);
 	~MetaDataModel();
 
+	DbAccess& db() noexcept { return db_; }
+
 	// QAbstractTableModel impl
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
 	int columnCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -40,8 +42,11 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 	//~QAbstractTableModel impl
 
+	Qt::DropActions supportedDropActions() const override { return Qt::CopyAction; }
+
 	void load();
 	void add_column(const ColumnPath& path, const std::string& dest_table, int unit_id, bool is_target, double target_error);
+	void store_col_meta(int idx);
 	void delete_checked_columns();
 	void normalize_checked_columns(wtom::ml::math::NormalizationMethod method);
 	void normalize_all();
@@ -50,10 +55,10 @@ public:
 	void make_target_ohlc(const std::array<int, 4>& ohlc_idxs, double treshold);
 	void make_feature_delta(int idx, ptrdiff_t period);
 
-	Qt::DropActions supportedDropActions() const override { return Qt::CopyAction; }
-
 	std::vector<ColumnMetaData> columnInfos() const noexcept { return data_; } // copy?
 	const ColumnMetaData& col_meta(int idx) const { return data_[idx]; }
+	ColumnMetaData& col_meta(int idx) { return data_[idx]; }
 	DataFrame load_column(size_t idx) const;
 	void store_column(size_t idx, const DataFrame& df) const;
+	vector<int> selected_columns() const noexcept;
 };

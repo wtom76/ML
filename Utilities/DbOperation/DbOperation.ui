@@ -27,6 +27,12 @@
     <property name="title">
      <string>Ready</string>
     </property>
+    <widget class="QMenu" name="menuOHLC">
+     <property name="title">
+      <string>OHLC</string>
+     </property>
+     <addaction name="action_splits_ohlcv_"/>
+    </widget>
     <addaction name="actionDeleteColumn"/>
     <addaction name="separator"/>
     <addaction name="actionAdjustSplits"/>
@@ -35,6 +41,8 @@
     <addaction name="separator"/>
     <addaction name="actionMake_target"/>
     <addaction name="actionCreate_features"/>
+    <addaction name="separator"/>
+    <addaction name="menuOHLC"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -106,6 +114,11 @@
   <action name="actionCandlestick">
    <property name="text">
     <string>Candlestick</string>
+   </property>
+  </action>
+  <action name="action_splits_ohlcv_">
+   <property name="text">
+    <string>Adjust splits...</string>
    </property>
   </action>
  </widget>

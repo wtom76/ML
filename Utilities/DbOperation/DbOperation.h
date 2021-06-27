@@ -11,6 +11,7 @@
 #include "SourcesModel.h"
 #include "MetaDataView.h"
 #include "SourcesView.h"
+#include "operation/Factory.h"
 
 //----------------------------------------------------------------------------------------------------------
 // class DbOperation
@@ -34,16 +35,20 @@ private:
 	std::unique_ptr<SourcesModel>	sources_model_;
 	std::unique_ptr<SourcesView>	sources_view_;
 
+	operation::Container			operations_;
+
 // methods
 private:
 	void _createSourcesView();
 	void _createMetadataView();
+	void _fill_operation_menu();
 
 public:
 	DbOperation(QWidget* parent = Q_NULLPTR);
 	~DbOperation();
 
 	DbAccess& db() const { return *db_; }
+	MetaDataModel& meta_model() const { return *metadata_model_; }
 
 	static DbOperation* instance() noexcept { return instance_; }
 

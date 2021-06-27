@@ -28,5 +28,6 @@ public slots:
 	void normalize_all();
 	void make_target();
 	void adjust_splits();
+	void adjust_splits_ohlcv();
 	void create_features();
 };

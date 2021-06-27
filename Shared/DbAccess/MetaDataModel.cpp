@@ -11,8 +11,8 @@ using namespace wtom::ml;
 //----------------------------------------------------------------------------------------------------------
 MetaDataModel::MetaDataModel(DbAccess& db, QObject* parent)
 	: QAbstractTableModel(parent)
-	, col_names_{"column", "table", "description", "origin", "normalized", "orig_min", "orig_max", "unit_id", "target"}
-	, db_(db)
+	, col_names_{"column", "table", "description", "origin", "normalized", "orig_min", "orig_max", "unit_id", "target", "first date", "last date"}
+	, db_{db}
 {
 	// TEST
 	//wtom::ml::math::test_make_delta();
@@ -67,6 +67,8 @@ QVariant MetaDataModel::data(const QModelIndex& index, int role) const
 			case 5:	return data_[index.row()].norm_min_;
 			case 6:	return data_[index.row()].norm_max_;
 			case 7:	return data_[index.row()].unit_id_;
+			case 9:	return data_[index.row()].date_min_ ? QString::fromStdString(util::time::to_date_string(data_[index.row()].date_min_.value())) : "n/a";
+			case 10:return data_[index.row()].date_max_ ? QString::fromStdString(util::time::to_date_string(data_[index.row()].date_max_.value())) : "n/a";
 			}
 		}
 		break;
@@ -140,6 +142,11 @@ void MetaDataModel::add_column(const ColumnPath& path, const std::string& dest_t
 	db_.add_column(db_.dest_schema(), meta);
 	db_.copy_column_data(db_.dest_schema(), dest_table, path);
 	load();
+}
+//----------------------------------------------------------------------------------------------------------
+void MetaDataModel::store_col_meta(int idx)
+{
+	db_.store_column_metadata(data_[idx]);
 }
 //----------------------------------------------------------------------------------------------------------
 void MetaDataModel::delete_checked_columns()
@@ -387,4 +394,17 @@ DataFrame MetaDataModel::load_column(size_t idx) const
 void MetaDataModel::store_column(size_t idx, const DataFrame& df) const
 {
 	db_.store_column(data_[idx], df);
+}
+//----------------------------------------------------------------------------------------------------------
+vector<int> MetaDataModel::selected_columns() const noexcept
+{
+	vector<int> result;
+	for (int idx = 0; idx != checked_.size(); ++idx)
+	{
+		if (checked_[idx] == Qt::CheckState::Checked)
+		{
+			result.emplace_back(idx);
+		}
+	}
+	return result;
 }

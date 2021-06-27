@@ -8,7 +8,6 @@ long round_split_den(long den)
 {
 	return den > 100 ? (den / 10) * 10 : den;
 }
-
 //----------------------------------------------------------------------------------------------------------
 std::vector<Split> detect_splits(const DataFrame& df, size_t col_idx)
 {
@@ -35,6 +34,43 @@ std::vector<Split> detect_splits(const DataFrame& df, size_t col_idx)
 	return result;
 }
 //----------------------------------------------------------------------------------------------------------
+std::vector<Split> detect_splits_ohlc(const DataFrame& df)
+{
+	constexpr double threshold = 2.;
+	constexpr double deviation_threshold = 0.01;
+	std::vector<Split> result;
+
+	const DataFrame::index_series_t& index{df.index()};
+	const DataFrame::data_t& data{df.data()};
+	if (index.size() < 2 || data.empty())
+	{
+		return result;
+	}
+	for (size_t i = 1; i != index.size(); ++i)
+	{
+		double split{0.};
+		size_t split_count{0};
+		for (size_t s = 0; s != data.size(); ++s)
+		{
+			const DataFrame::series_t& series{data[s]};
+			if (!isnan(series[i]))
+			{
+				const double chg{series[i - 1] / series[i]};
+				if (chg >= threshold && (split == 0. || abs(chg - split) / split < deviation_threshold))
+				{
+					split = split == 0. ? chg : (split * split_count + chg) / (split_count + 1);
+					++split_count;
+				}
+			}
+		}
+		if (split_count == data.size())
+		{
+			result.emplace_back(index[i], round_split_den(static_cast<long>(split)));
+		}
+	}
+	return result;
+}
+//----------------------------------------------------------------------------------------------------------
 void apply_splits(const std::vector<Split>& splits, DataFrame& df, size_t col_idx)
 {
 	const DataFrame::index_series_t& index = df.index();
@@ -49,6 +85,14 @@ void apply_splits(const std::vector<Split>& splits, DataFrame& df, size_t col_id
 		{
 			*price_i = *price_i / split.den_;
 		}
+	}
+}
+//----------------------------------------------------------------------------------------------------------
+void apply_splits_ohlc(const std::vector<Split>& splits, DataFrame& df)
+{
+	for (size_t i = 0; i != df.data().size(); ++i)
+	{
+		apply_splits(splits, df, i);
 	}
 }
 

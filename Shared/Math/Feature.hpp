@@ -204,13 +204,13 @@ namespace wtom::ml::math
 		auto dst_i = std::begin(dst);
 		auto src_o_e = std::cend(*ohlc[0]);
 		// 1.
-		if (!safe_advance(src_o_i, *ohlc[0], future_shift))
+		if (!safe_advance(src_o_i, *ohlc[0], future_shift) ||
+			!safe_advance(src_h_i, *ohlc[1], future_shift) ||
+			!safe_advance(src_l_i, *ohlc[2], future_shift) ||
+			!safe_advance(src_c_i, *ohlc[3], future_shift))
 		{
 			return;
 		}
-		++src_h_i;
-		++src_l_i;
-		++src_c_i;
 		// 2.
 		for (; src_o_i != src_o_e; ++src_o_i, ++src_h_i, ++src_l_i, ++src_c_i, ++dst_i)
 		{

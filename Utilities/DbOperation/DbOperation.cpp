@@ -8,13 +8,16 @@ DbOperation* DbOperation::instance_ = nullptr;
 
 //----------------------------------------------------------------------------------------------------------
 DbOperation::DbOperation(QWidget* parent)
-	: QMainWindow(parent)
-	, db_(std::make_unique<DbAccess>())
+	: QMainWindow{parent}
+	, db_{std::make_unique<DbAccess>()}
+	, operations_{operation::create_operations()}
 {
 	assert(!instance_);
 	instance_ = this;
 
 	ui_.setupUi(this);
+
+	_fill_operation_menu();
 
 	_createMetadataView();
 	_createSourcesView();
@@ -41,6 +44,7 @@ void DbOperation::_createMetadataView()
 	QObject::connect(ui_.actionNormalizeAll, &QAction::triggered, metadata_view_.get(), &MetaDataView::normalize_all);
 	QObject::connect(ui_.actionMake_target, &QAction::triggered, metadata_view_.get(), &MetaDataView::make_target);
 	QObject::connect(ui_.actionAdjustSplits, &QAction::triggered, metadata_view_.get(), &MetaDataView::adjust_splits);
+	QObject::connect(ui_.action_splits_ohlcv_, &QAction::triggered, metadata_view_.get(), &MetaDataView::adjust_splits_ohlcv);
 	QObject::connect(ui_.actionCreate_features, &QAction::triggered, metadata_view_.get(), &MetaDataView::create_features);
 }
 //----------------------------------------------------------------------------------------------------------
@@ -60,6 +64,24 @@ void DbOperation::_createSourcesView()
 	sources_view_->setModel(sources_model_.get());
 	
 	sources_widget_->setWidget(sources_view_.get());
+}
+//----------------------------------------------------------------------------------------------------------
+void DbOperation::_fill_operation_menu()
+{
+	auto menu{menuBar()->addMenu("&Operations")};
+
+	for (auto& op : operations_)
+	{
+		unique_ptr<QAction> act{make_unique<QAction>(QString::fromStdString(op->name()), this)};
+		act->setStatusTip(QString::fromStdString(op->description()));
+		QObject::connect(act.get(), &QAction::triggered, this,
+			[op, this]()
+			{
+				op->run(this);
+			}
+		);
+		menu->addAction(act.release());
+	}
 }
 //----------------------------------------------------------------------------------------------------------
 void DbOperation::show_candlestick()

@@ -36,6 +36,29 @@ namespace util::config
 	}
 	//---------------------------------------------------------------------------------------------------------
 	template <class ConfigT>
+	inline void load_or_create(ConfigT& config, const std::filesystem::path& file_path)
+	{
+		try
+		{
+			std::ifstream cfg_file(file_path);
+			if (!cfg_file)
+			{
+				throw std::runtime_error(std::string("Can't open ") + file_path.string());
+			}
+			else
+			{
+				cfg_file >> config;
+			}
+		}
+		catch ([[maybe_unused]] const std::exception& ex)
+		{
+			SPDLOG_LOGGER_CRITICAL(log(), "Default config {:s} is created due to {:s}.",
+				file_path.string() + ".default", ex.what());
+			std::ofstream(file_path.string()) << config;
+		}
+	}
+	//---------------------------------------------------------------------------------------------------------
+	template <class ConfigT>
 	inline void store(ConfigT& config, const std::filesystem::path& file_path)
 	{
 		std::ofstream cfg_file(file_path);

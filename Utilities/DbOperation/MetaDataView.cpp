@@ -3,6 +3,7 @@
 #include <QMimeData>
 #include <QMessageBox>
 #include <Shared/DbAccess/MetaDataModel.h>
+#include <Shared/DbAccess/OhlcDlg.h>
 #include "MetaDataView.h"
 #include "AddColumnDialog.h"
 #include "NormalizationDlg.h"
@@ -154,13 +155,43 @@ void MetaDataView::adjust_splits()
 	QModelIndex idx = currentIndex();
 	if (idx.isValid())
 	{
-		DataFrame df = model_->load_column(idx.row());
-		std::vector<Split> splits = detect_splits(df, 0);
+		DataFrame df{model_->load_column(idx.row())};
+		std::vector<Split> splits{detect_splits(df, 0)};
 		AdjustSplitsDlg dlg(splits, this);
 		if (dlg.exec() == QDialog::Accepted)
 		{
 			apply_splits(dlg.splits(), df, 0);
 			model_->store_column(idx.row(), df);
+			model_->load();
+		}
+	}
+}
+//----------------------------------------------------------------------------------------------------------
+void MetaDataView::adjust_splits_ohlcv()
+{
+	unique_ptr<OhlcDlg> dlg{make_unique<OhlcDlg>()};
+	util::config::load_or_create(*dlg, util::config::file_path("ohlc_dialog"));
+	if (QDialog::Accepted == dlg->exec())
+	{
+		util::config::store(*dlg, util::config::file_path("ohlc_dialog"));
+
+		DataFrame df{
+			model_->db().load_data(
+				dlg->schema(),
+				dlg->table(),
+				{dlg->open_col(), dlg->high_col(), dlg->low_col(), dlg->close_col(), dlg->close_col()}
+			)
+		};
+
+		std::vector<Split> splits{detect_splits_ohlc(df)};
+		AdjustSplitsDlg adjust_dlg(splits, this);
+		if (adjust_dlg.exec() == QDialog::Accepted)
+		{
+			apply_splits_ohlc(adjust_dlg.splits(), df);
+			for (int i = 0; i < df.col_count(); ++i)
+			{
+				model_->store_column(i, df);
+			}
 			model_->load();
 		}
 	}

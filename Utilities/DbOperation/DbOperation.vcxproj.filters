@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
       <Extensions>qrc;*</Extensions>
@@ -28,99 +20,59 @@
       <Extensions>moc;h;cpp</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="operation">
+      <UniqueIdentifier>{8886d2fd-3478-4460-8fe1-e1093c94ebae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="AddColumnDialog.cpp" />
+    <ClCompile Include="AdjustSplitsDlg.cpp" />
+    <ClCompile Include="ColumnMetrics.cpp" />
+    <ClCompile Include="CreateFeaturesDlg.cpp" />
+    <ClCompile Include="DbOperation.cpp" />
+    <ClCompile Include="DbParamsDlg.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MakeTargetDlg.cpp" />
+    <ClCompile Include="MetaDataView.cpp" />
+    <ClCompile Include="NormalizationDlg.cpp" />
+    <ClCompile Include="SourcesModel.cpp" />
+    <ClCompile Include="SourcesView.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="TargetOhlcSourceDlg.cpp" />
+    <ClCompile Include="TreeItem.cpp" />
+    <ClCompile Include="operation\Factory.cpp">
+      <Filter>operation</Filter>
     </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DbOperation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SourcesModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TreeItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SourcesView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MetaDataView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AddColumnDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ColumnMetrics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NormalizationDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AdjustSplitsDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CreateFeaturesDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MakeTargetDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TargetOhlcSourceDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DbParamsDlg.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="operation\UpdateDates.cpp">
+      <Filter>operation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="operation\Interface.h">
+      <Filter>operation</Filter>
     </ClInclude>
-    <ClInclude Include="TreeItem.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ColumnMetrics.h" />
+    <ClInclude Include="MetaDataView.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TreeItem.h" />
+    <ClInclude Include="operation\Factory.h">
+      <Filter>operation</Filter>
     </ClInclude>
-    <ClInclude Include="MetaDataView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ColumnMetrics.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="operation\UpdateDates.h">
+      <Filter>operation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="DbOperation.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="SourcesModel.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="SourcesView.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="AddColumnDialog.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="NormalizationDlg.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="AdjustSplitsDlg.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="CreateFeaturesDlg.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="MakeTargetDlg.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="TargetOhlcSourceDlg.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="DbParamsDlg.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
+    <QtMoc Include="AddColumnDialog.h" />
+    <QtMoc Include="AdjustSplitsDlg.h" />
+    <QtMoc Include="CreateFeaturesDlg.h" />
+    <QtMoc Include="DbOperation.h" />
+    <QtMoc Include="DbParamsDlg.h" />
+    <QtMoc Include="MakeTargetDlg.h" />
+    <QtMoc Include="NormalizationDlg.h" />
+    <QtMoc Include="SourcesModel.h" />
+    <QtMoc Include="SourcesView.h" />
+    <QtMoc Include="TargetOhlcSourceDlg.h" />
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="DbOperation.ui">

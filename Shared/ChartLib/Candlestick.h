@@ -15,7 +15,6 @@ namespace chart
 		Q_OBJECT;
 
 	private:
-		void _load_data(const std::string& schema, const std::string& table_name, const std::vector<std::string>& col_names, DbAccess& db);
 		void _set_data(const DataFrame& df);
 
 	public:

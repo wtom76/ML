@@ -48,6 +48,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility", "Utility", "{8735
 		Shared\Utility\ScopeLifeTime.hpp = Shared\Utility\ScopeLifeTime.hpp
 		Shared\Utility\SysIncludes.hpp = Shared\Utility\SysIncludes.hpp
 		Shared\Utility\System.hpp = Shared\Utility\System.hpp
+		Shared\Utility\Time.hpp = Shared\Utility\Time.hpp
 		Shared\Utility\Types.hpp = Shared\Utility\Types.hpp
 		Shared\Utility\Unicode.hpp = Shared\Utility\Unicode.hpp
 		Shared\Utility\util.h = Shared\Utility\util.h

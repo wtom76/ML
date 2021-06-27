@@ -11,17 +11,19 @@
 //----------------------------------------------------------------------------------------------------------
 struct Split
 {
-	std::chrono::system_clock::time_point time_;	// first date/time of splitted price
-	long den_ = 0;									// denominator
+	system_clock::time_point time_;	// first date/time of splitted price
+	long den_ = 0;					// denominator
 
 	Split() = default;
-	Split(std::chrono::system_clock::time_point time, long den) : time_{time}, den_{den}
+	Split(system_clock::time_point time, long den) : time_{time}, den_{den}
 	{}
 };
 
 //----------------------------------------------------------------------------------------------------------
 std::vector<Split> detect_splits(const DataFrame& df, size_t col_idx);
+std::vector<Split> detect_splits_ohlc(const DataFrame& df);
 void apply_splits(const std::vector<Split>& splits, DataFrame& df, size_t col_idx);
+void apply_splits_ohlc(const std::vector<Split>& splits, DataFrame& df);
 //----------------------------------------------------------------------------------------------------------
 // class SplitsModel
 //----------------------------------------------------------------------------------------------------------
