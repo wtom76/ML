@@ -130,17 +130,17 @@ void MetaDataModel::load()
 	endResetModel();
 }
 //----------------------------------------------------------------------------------------------------------
-void MetaDataModel::add_column(const ColumnPath& path, const std::string& dest_table, int unit_id, bool is_target, double target_error)
+void MetaDataModel::add_column(const ColumnPath& path, const std::string& dest_column, const std::string& dest_table, int unit_id, bool is_target, double target_error)
 {
 	assert(!dest_table.empty());
-	set<string> std_existing_cols = db_.tableColumns(db_.dest_schema(), dest_table);
-	if (std_existing_cols.find(path.column_) != std_existing_cols.cend())
+	set<string> dst_existing_cols = db_.tableColumns(db_.dest_schema(), dest_table);
+	if (dst_existing_cols.find(dest_column) != dst_existing_cols.cend())
 	{
 		return;
 	}
-	const ColumnMetaData meta{dest_table, path.column_, unit_id, path, is_target, target_error};
+	const ColumnMetaData meta{dest_table, dest_column, unit_id, path, is_target, target_error};
 	db_.add_column(db_.dest_schema(), meta);
-	db_.copy_column_data(db_.dest_schema(), dest_table, path);
+	db_.copy_column_data(path, db_.dest_schema(), meta);
 	load();
 }
 //----------------------------------------------------------------------------------------------------------

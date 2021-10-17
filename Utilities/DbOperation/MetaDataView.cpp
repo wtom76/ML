@@ -72,7 +72,7 @@ void MetaDataView::dropEvent(QDropEvent* event)
 			{
 				throw std::runtime_error("Unit is not selected");
 			}
-			model_->add_column(path, dlg.dest_table(), unit_id, dlg.is_target(), dlg.target_error());
+			model_->add_column(path, dlg.dest_column(), dlg.dest_table(), unit_id, dlg.is_target(), dlg.target_error());
 		}
 		catch (const std::exception& ex)
 		{

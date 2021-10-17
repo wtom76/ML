@@ -1,7 +1,5 @@
 #pragma once
 #include <Shared/LibIncludes/IncludeSpdlog.h>
-//#include <Shared/Utility/System.hpp>
-//#include <Shared/Utility/ScopeLifeTime.hpp>
 
 // TODO: now createConsoleLogger should be called before creation of any derivative of Logged with "log". Refactor.
 

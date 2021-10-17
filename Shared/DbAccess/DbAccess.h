@@ -44,7 +44,7 @@ public:
 
 	std::set<std::string> tableColumns(const std::string& schema_name, const std::string& table_name) const;
 	void add_column(const std::string& dest_schema_name, const ColumnMetaData& col_meta);
-	void copy_column_data(const std::string& dest_schema_name, const std::string& dest_table_name, const ColumnPath& col_info);
+	void copy_column_data(const ColumnPath& src, const std::string& dest_schema_name, const ColumnMetaData& dst_meta);
 	void delete_column(const std::string& dest_schema_name, const ColumnMetaData& col_info);
 	std::vector<UnitInfo> load_units() const;
 	std::vector<ColumnMetaData> load_meta_data() const;

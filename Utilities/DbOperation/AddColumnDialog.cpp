@@ -35,6 +35,7 @@ void AddColumnDialog::_loadUnits()
 void AddColumnDialog::setColumn(const ColumnPath& path)
 {
 	ui_.column_->setText(QString::fromStdString(path.to_string()));
+	ui_.dest_column_->setText(QString::fromStdString(path.column_));
 	DataFrame df = DbOperation::instance()->db().load_data(path.schema_, path.table_, {path.column_});
 	const ColumnMetrics metrics(df.series(path.column_));
 	ui_.min_->setText(QString::number(metrics.min_max_.min()));
@@ -52,6 +53,11 @@ int AddColumnDialog::selectedUnitId() const
 std::string AddColumnDialog::dest_table() const
 {
 	return ui_.dest_table_->currentText().toStdString();
+}
+//----------------------------------------------------------------------------------------------------------
+std::string AddColumnDialog::dest_column() const
+{
+	return ui_.dest_column_->text().toStdString();
 }
 //----------------------------------------------------------------------------------------------------------
 bool AddColumnDialog::is_target() const

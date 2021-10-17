@@ -5,4 +5,5 @@
 
 extern const QString column_name_mime_type_name;
 using namespace std;
-using namespace std::chrono;
+
+using system_clock = std::chrono::system_clock;

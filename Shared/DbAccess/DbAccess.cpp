@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include <chrono>
 #include <Shared/LibIncludes/IncludeSoci.h>
 #include "DbAccess.h"
 
@@ -83,16 +82,15 @@ void DbAccess::add_column(const string& dest_schema_name, const ColumnMetaData& 
 //----------------------------------------------------------------------------------------------------------
 /// 2. Copy data to dest table
 /// 3. Update metadata
-void DbAccess::copy_column_data(const string& dest_schema_name, const string& dest_table_name,
-	const ColumnPath& col_info)
+void DbAccess::copy_column_data(const ColumnPath& src, const std::string& dest_schema_name, const ColumnMetaData& dst_meta)
 {
 	try
 	{
 		// 1.
 		impl_->sql_ <<
-			"INSERT INTO " << dest_schema_name << "." << dest_table_name << " (date, " << col_info.column_ << ")"
-			" SELECT date, " << col_info.column_ << " FROM " << col_info.schema_ << "." << col_info.table_ <<
-			" ON CONFLICT (date) DO UPDATE SET " << col_info.column_ << " = excluded." << col_info.column_;
+			"INSERT INTO " << dest_schema_name << "." << dst_meta.table_ << " (date, " << dst_meta.column_ << ")"
+			" SELECT date, " << src.column_ << " FROM " << src.schema_ << "." << src.table_ <<
+			" ON CONFLICT (date) DO UPDATE SET " << dst_meta.column_ << " = excluded." << dst_meta.column_;
 	}
 	catch (const exception & ex)
 	{

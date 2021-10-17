@@ -45,7 +45,7 @@ public:
 	Qt::DropActions supportedDropActions() const override { return Qt::CopyAction; }
 
 	void load();
-	void add_column(const ColumnPath& path, const std::string& dest_table, int unit_id, bool is_target, double target_error);
+	void add_column(const ColumnPath& path, const std::string& dest_column, const std::string& dest_table, int unit_id, bool is_target, double target_error);
 	void store_col_meta(int idx);
 	void delete_checked_columns();
 	void normalize_checked_columns(wtom::ml::math::NormalizationMethod method);

@@ -22,6 +22,7 @@ public:
 	void setColumn(const ColumnPath& path);
 	int selectedUnitId() const;
 	std::string dest_table() const;
+	std::string dest_column() const;
 	bool is_target() const;
 	double target_error() const;
 };
