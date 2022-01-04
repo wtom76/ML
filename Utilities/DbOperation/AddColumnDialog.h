@@ -14,6 +14,7 @@ private:
 
 protected:
 	void _loadUnits();
+	void _load_data_tables();
 
 public:
 	AddColumnDialog(QWidget* parent = nullptr);

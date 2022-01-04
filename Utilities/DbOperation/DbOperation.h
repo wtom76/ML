@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <QtWidgets/QMainWindow>
-//#include <QSqlTableModel>
 #include <QTableView>
 #include <QDockWidget>
 #include <Shared/DbAccess/DbAccess.h>
@@ -54,4 +53,5 @@ public:
 
 private	slots:
 	void show_candlestick();
+	void show_line();
 };

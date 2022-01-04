@@ -130,7 +130,11 @@
     </ClCompile>
     <ClCompile Include="CandlestickDlg.cpp" />
     <ClCompile Include="ChartLib.cpp" />
+    <QtMoc Include="line.h" />
+    <QtMoc Include="line_dlg.h" />
     <ClInclude Include="stdafx.h" />
+    <ClCompile Include="line.cpp" />
+    <ClCompile Include="line_dlg.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">Create</PrecompiledHeader>
@@ -138,6 +142,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="CandlestickDlg.ui" />
+    <QtUic Include="line_dlg.ui" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

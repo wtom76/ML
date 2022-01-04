@@ -42,6 +42,7 @@ public:
 	const std::string& dest_schema() const noexcept { return dest_schema_; }
 	void set_dest_schema(const std::string& value) { dest_schema_ = value; }
 
+	std::set<string> data_tables() const;
 	std::set<std::string> tableColumns(const std::string& schema_name, const std::string& table_name) const;
 	void add_column(const std::string& dest_schema_name, const ColumnMetaData& col_meta);
 	void copy_column_data(const ColumnPath& src, const std::string& dest_schema_name, const ColumnMetaData& dst_meta);

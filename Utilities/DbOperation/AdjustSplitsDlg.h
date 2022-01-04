@@ -51,7 +51,7 @@ public:
 	//~QAbstractTableModel impl
 
 	void set(const std::vector<Split>& data);
-	const std::vector<Split>& splits() const noexcept { return data_; }
+	std::vector<Split> splits() const noexcept;
 };
 
 //---------------------------------------------------------------------------------------------------------
@@ -66,8 +66,8 @@ private:
 	std::unique_ptr<SplitsModel> model_;
 
 public:
-	AdjustSplitsDlg(const std::vector<Split>& data, QWidget* parent = nullptr);
+	AdjustSplitsDlg(const string& series_name, const std::vector<Split>& data, QWidget* parent = nullptr);
 	~AdjustSplitsDlg();
 
-	const std::vector<Split>& splits() const noexcept { return model_->splits(); }
+	std::vector<Split> splits() const noexcept { return model_->splits(); }
 };

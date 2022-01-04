@@ -2,6 +2,7 @@
 #include "DbOperation.h"
 #include <QSqlError>
 #include <Shared/ChartLib/Candlestick.h>
+#include <Shared/ChartLib/line.h>
 
 //----------------------------------------------------------------------------------------------------------
 DbOperation* DbOperation::instance_ = nullptr;
@@ -23,6 +24,7 @@ DbOperation::DbOperation(QWidget* parent)
 	_createSourcesView();
 
 	QObject::connect(ui_.actionCandlestick, &QAction::triggered, this, &DbOperation::show_candlestick);
+	QObject::connect(ui_.actionLine, &QAction::triggered, this, &DbOperation::show_line);
 }
 //----------------------------------------------------------------------------------------------------------
 DbOperation::~DbOperation()
@@ -90,6 +92,25 @@ void DbOperation::show_candlestick()
 	dock->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::RightDockWidgetArea, dock.get());
 	unique_ptr<chart::Candlestick> chart{make_unique<chart::Candlestick>()};
+	if (!chart->show_load_data_dlg(*db_))
+	{
+		return;
+	}
+	unique_ptr<QtCharts::QChartView> chart_view{make_unique<QtCharts::QChartView>(chart.get())};
+	chart_view->setRenderHint(QPainter::Antialiasing);
+	dock->setWidget(chart_view.get());
+
+	chart.release();
+	chart_view.release();
+	dock.release();
+}
+//----------------------------------------------------------------------------------------------------------
+void DbOperation::show_line()
+{
+	unique_ptr<QDockWidget> dock{make_unique<QDockWidget>("Line", this)};
+	dock->setAllowedAreas(Qt::AllDockWidgetAreas);
+	addDockWidget(Qt::RightDockWidgetArea, dock.get());
+	unique_ptr<chart::line> chart{make_unique<chart::line>()};
 	if (!chart->show_load_data_dlg(*db_))
 	{
 		return;

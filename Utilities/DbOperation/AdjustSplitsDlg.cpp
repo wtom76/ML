@@ -179,15 +179,30 @@ void SplitsModel::set(const std::vector<Split>& data)
 	data_ = data;
 	endResetModel();
 }
+//---------------------------------------------------------------------------------------------------------
+std::vector<Split> SplitsModel::splits() const noexcept
+{
+	std::vector<Split> result;
+	result.reserve(data_.size());
+	for (const auto& entry : data_)
+	{
+		if (entry.den_ > 1)
+		{
+			result.emplace_back(entry);
+		}
+	}
+	return result;
+}
 
 //---------------------------------------------------------------------------------------------------------
 // class AdjustSplitsDlg
 //---------------------------------------------------------------------------------------------------------
-AdjustSplitsDlg::AdjustSplitsDlg(const std::vector<Split>& data, QWidget *parent)
+AdjustSplitsDlg::AdjustSplitsDlg(const string& series_name, const std::vector<Split>& data, QWidget* parent)
 	: QDialog{parent}
 	, model_{make_unique<SplitsModel>(data, nullptr)}
 {
 	ui_.setupUi(this);
+	ui_.series_name_->setText(QString::fromStdString(series_name));
 	ui_.splits_table_view_->setModel(model_.get());
 }
 //---------------------------------------------------------------------------------------------------------

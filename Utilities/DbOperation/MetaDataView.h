@@ -8,7 +8,7 @@ class MetaDataModel;
 //---------------------------------------------------------------------------------------------------------
 class MetaDataView : public QTableView
 {
-	MetaDataModel* model_ = nullptr;
+	MetaDataModel* model_{nullptr};
 
 protected:
 	void dragEnterEvent(QDragEnterEvent* event) override;

@@ -11,6 +11,7 @@ AddColumnDialog::AddColumnDialog(QWidget* parent)
 	ui_.setupUi(this);
 
 	_loadUnits();
+	_load_data_tables();
 }
 //----------------------------------------------------------------------------------------------------------
 AddColumnDialog::~AddColumnDialog()
@@ -18,8 +19,8 @@ AddColumnDialog::~AddColumnDialog()
 //----------------------------------------------------------------------------------------------------------
 void AddColumnDialog::_loadUnits()
 {
-	DbAccess& db = DbOperation::instance()->db();
-	std::vector<UnitInfo> units = db.load_units();
+	DbAccess& db{DbOperation::instance()->db()};
+	std::vector<UnitInfo> units{db.load_units()};
 	QStringList names;
 	for (const auto& unit : units)
 	{
@@ -30,6 +31,18 @@ void AddColumnDialog::_loadUnits()
 	{
 		ui_.units_->setItemData(i, QVariant{units[i].id_}, Qt::UserRole);
 	}
+}
+//----------------------------------------------------------------------------------------------------------
+void AddColumnDialog::_load_data_tables()
+{
+	DbAccess& db{DbOperation::instance()->db()};
+	std::set<string> tables{db.data_tables()};
+	QStringList names;
+	for (const auto& table : tables)
+	{
+		names << QString::fromStdString(table);
+	}
+	ui_.dest_table_->insertItems(0, names);
 }
 //----------------------------------------------------------------------------------------------------------
 void AddColumnDialog::setColumn(const ColumnPath& path)

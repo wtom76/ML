@@ -54,6 +54,7 @@
      <string>Chart</string>
     </property>
     <addaction name="actionCandlestick"/>
+    <addaction name="actionLine"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuReady"/>
@@ -119,6 +120,11 @@
   <action name="action_splits_ohlcv_">
    <property name="text">
     <string>Adjust splits...</string>
+   </property>
+  </action>
+  <action name="actionLine">
+   <property name="text">
+    <string>Line</string>
    </property>
   </action>
  </widget>

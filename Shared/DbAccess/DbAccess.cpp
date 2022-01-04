@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <algorithm>
 #include <Shared/LibIncludes/IncludeSoci.h>
 #include "DbAccess.h"
 
@@ -29,6 +30,25 @@ DbAccess::DbAccess(const std::string& connection_str)
 //----------------------------------------------------------------------------------------------------------
 DbAccess::~DbAccess()
 {
+}
+//----------------------------------------------------------------------------------------------------------
+set<string> DbAccess::data_tables() const
+{
+	set<string> aux_tables{"meta_data"s, "trained_nets"s, "units"s};
+	try
+	{
+		rowset<string> rs = (impl_->sql_.prepare <<
+			"SELECT table_name FROM information_schema.tables "
+			"WHERE table_schema = 'ready'");
+		set<string> result;
+		std::copy_if(begin(rs), end(rs), std::inserter(result, result.end()),
+				[&aux_tables](const string& val){ return !aux_tables.contains(val); });
+		return result;
+	}
+	catch (const exception& ex)
+	{
+		throw runtime_error("Failed to load data table names. "s + ex.what());
+	}
 }
 //----------------------------------------------------------------------------------------------------------
 set<string> DbAccess::tableColumns(const string& schema_name, const string& table_name) const

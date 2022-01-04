@@ -152,12 +152,12 @@ void MetaDataView::_show_make_target_ohlc_dlg(double wl_threshold) const
 //----------------------------------------------------------------------------------------------------------
 void MetaDataView::adjust_splits()
 {
-	QModelIndex idx = currentIndex();
+	const QModelIndex idx{currentIndex()};
 	if (idx.isValid())
 	{
 		DataFrame df{model_->load_column(idx.row())};
 		std::vector<Split> splits{detect_splits(df, 0)};
-		AdjustSplitsDlg dlg(splits, this);
+		AdjustSplitsDlg dlg{model_->col_meta(idx.row()).column_, splits, this};
 		if (dlg.exec() == QDialog::Accepted)
 		{
 			apply_splits(dlg.splits(), df, 0);
@@ -184,7 +184,7 @@ void MetaDataView::adjust_splits_ohlcv()
 		};
 
 		std::vector<Split> splits{detect_splits_ohlc(df)};
-		AdjustSplitsDlg adjust_dlg(splits, this);
+		AdjustSplitsDlg adjust_dlg("OHLC set"s, splits, this);
 		if (adjust_dlg.exec() == QDialog::Accepted)
 		{
 			apply_splits_ohlc(adjust_dlg.splits(), df);

@@ -31,23 +31,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="dest_table_">
-       <item>
-        <property name="text">
-         <string>daily_0001</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>test_data</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>sber_week</string>
-        </property>
-       </item>
-      </widget>
+      <widget class="QComboBox" name="dest_table_"/>
      </item>
     </layout>
    </item>
