@@ -21,6 +21,6 @@ namespace chart
 		line();
 		~line();
 
-		bool show_load_data_dlg(DbAccess& db);
+		void set_columns(DbAccess& db, const string& schema, const string& table, const vector<string>& col_names);
 	};
 }

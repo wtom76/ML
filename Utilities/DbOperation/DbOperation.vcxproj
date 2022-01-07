@@ -147,6 +147,7 @@
     <ClCompile Include="MetaDataView.cpp" />
     <ClCompile Include="NormalizationDlg.cpp" />
     <ClCompile Include="operation\Factory.cpp" />
+    <ClCompile Include="operation\show_line_chart.cpp" />
     <ClCompile Include="operation\UpdateDates.cpp" />
     <ClCompile Include="SourcesModel.cpp" />
     <ClCompile Include="SourcesView.cpp" />
@@ -170,6 +171,7 @@
     <QtMoc Include="TargetOhlcSourceDlg.h" />
     <ClInclude Include="operation\Factory.h" />
     <ClInclude Include="operation\Interface.h" />
+    <ClInclude Include="operation\show_line_chart.h" />
     <ClInclude Include="operation\UpdateDates.h" />
     <ClInclude Include="TreeItem.h" />
     <QtMoc Include="DbOperation.h" />

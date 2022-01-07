@@ -43,7 +43,7 @@ private:
 	void _fill_operation_menu();
 
 public:
-	DbOperation(QWidget* parent = Q_NULLPTR);
+	DbOperation(QWidget* parent = nullptr);
 	~DbOperation();
 
 	DbAccess& db() const { return *db_; }
@@ -53,5 +53,4 @@ public:
 
 private	slots:
 	void show_candlestick();
-	void show_line();
 };

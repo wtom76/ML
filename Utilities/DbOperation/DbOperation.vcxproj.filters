@@ -46,6 +46,9 @@
     <ClCompile Include="operation\UpdateDates.cpp">
       <Filter>operation</Filter>
     </ClCompile>
+    <ClCompile Include="operation\show_line_chart.cpp">
+      <Filter>operation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="operation\Interface.h">
@@ -59,6 +62,9 @@
       <Filter>operation</Filter>
     </ClInclude>
     <ClInclude Include="operation\UpdateDates.h">
+      <Filter>operation</Filter>
+    </ClInclude>
+    <ClInclude Include="operation\show_line_chart.h">
       <Filter>operation</Filter>
     </ClInclude>
   </ItemGroup>

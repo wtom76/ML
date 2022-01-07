@@ -16,49 +16,44 @@ namespace chart
 	{
 	}
 	//---------------------------------------------------------------------------------------------------------
-	bool line::show_load_data_dlg(DbAccess& db)
+	void line::set_columns(DbAccess& db, const string& schema, const string& table, const vector<string>& col_names)
 	{
-		unique_ptr<chart::line_dlg> dlg{make_unique<chart::line_dlg>()};
-		util::config::load(*dlg, util::config::file_path("line_chart"));
-		if (QDialog::Accepted == dlg->exec())
-		{
-			util::config::store(*dlg, util::config::file_path("line_chart"));
-			_set_data(db.load_data(dlg->schema(), dlg->table(), {dlg->values_col()}));
-			return true;
-		}
-		return false;
+		_set_data(db.load_data(schema, table, col_names));
 	}
 	//---------------------------------------------------------------------------------------------------------
 	void line::_set_data(const DataFrame& df)
 	{
-		setTitle(QString::fromStdString(df.names().front()));
+		setTitle("Line chart");
 		setAnimationOptions(QChart::SeriesAnimations);
 
-		unique_ptr<QtCharts::QLineSeries> series{make_unique<QtCharts::QLineSeries>()};
-		series->setColor(QColor(Qt::blue));
-
 		const DataFrame::index_series_t& index{df.index()};
-		const DataFrame::series_t& values{df.series(0)};
-
-		for (size_t i = 0; i != df.row_count(); ++i)
-		{
-			series->append(
-				static_cast<double>(chrono::duration_cast<chrono::milliseconds>(index[i].time_since_epoch()).count()),
-				values[i]);
-		}
-
-		addSeries(series.get());
-
 		createDefaultAxes();
+		unique_ptr<QtCharts::QDateTimeAxis> x{make_unique<QtCharts::QDateTimeAxis>()};
+		x->setFormat("yyyy-MM-dd");
+		addAxis(x.get(), Qt::AlignBottom);
 
+		for (int series_idx{0}; series_idx < df.col_count(); ++series_idx)
 		{
-			unique_ptr<QtCharts::QDateTimeAxis> x{make_unique<QtCharts::QDateTimeAxis>()};
-			x->setFormat("yyyy-MM-dd");
-			addAxis(x.get(), Qt::AlignBottom);
-			series->attachAxis(x.get());
-			x.release();
-		}
+			unique_ptr<QtCharts::QLineSeries> series{make_unique<QtCharts::QLineSeries>()};
+			series->setName(QString::fromStdString(df.names()[series_idx]));
+			{
+				const QColor color{static_cast<Qt::GlobalColor>(Qt::darkRed + (series_idx % (Qt::transparent - Qt::darkRed)))};
+				series->setColor(color);
+			}
 
-		series.release();
+			const DataFrame::series_t& values{df.series(series_idx)};
+
+			for (size_t i = 0; i < df.row_count(); ++i)
+			{
+				series->append(
+					static_cast<double>(chrono::duration_cast<chrono::milliseconds>(index[i].time_since_epoch()).count()),
+					values[i]);
+			}
+
+			addSeries(series.get());
+			series->attachAxis(x.get());
+			series.release();
+		}
+		x.release();
 	}
 }

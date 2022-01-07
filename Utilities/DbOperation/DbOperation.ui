@@ -54,7 +54,6 @@
      <string>Chart</string>
     </property>
     <addaction name="actionCandlestick"/>
-    <addaction name="actionLine"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuReady"/>
